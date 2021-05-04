@@ -10071,6 +10071,76 @@ module.exports.formatError = function(err) {
 
 /***/ }),
 
+/***/ "./src/Arrow.ts":
+/*!**********************!*\
+  !*** ./src/Arrow.ts ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
+class Arrow {
+    constructor(stage, assetManager, world, player) {
+        this.used = false;
+        this.stage = stage;
+        this.world = world;
+        this.player = player;
+        this.sprite = assetManager.getSprite("assets", "Arrow/arrow_up");
+        this.sprite.x = Constants_1.STAGE_WIDTH / 2;
+        this.sprite.y = Constants_1.STAGE_HEIGHT / 2;
+        this.aimDirection = 2;
+    }
+    Shoot() {
+        this.stage.addChild(this.sprite);
+        this.used = true;
+    }
+    remove() {
+        this.stage.removeChild(this.sprite);
+        this.used = false;
+        this.sprite.x = Constants_1.STAGE_WIDTH / 2;
+        this.sprite.y = Constants_1.STAGE_HEIGHT / 2;
+    }
+    Update() {
+        if (this.used == true) {
+            if (this.aimDirection == 1) {
+                this.sprite.gotoAndStop("Arrow/arrow_up");
+                this.sprite.y = this.sprite.y - Constants_1.ARROW_SPEED;
+            }
+            if (this.aimDirection == 2) {
+                this.sprite.gotoAndStop("Arrow/arrow_down");
+                this.sprite.y = this.sprite.y + Constants_1.ARROW_SPEED;
+            }
+            if (this.aimDirection == 3) {
+                this.sprite.gotoAndStop("Arrow/arrow_left");
+                this.sprite.x = this.sprite.x - Constants_1.ARROW_SPEED;
+            }
+            if (this.aimDirection == 4) {
+                this.sprite.gotoAndStop("Arrow/arrow_right");
+                this.sprite.x = this.sprite.x + Constants_1.ARROW_SPEED;
+            }
+            if (this.sprite.x <= 0) {
+                this.remove();
+            }
+            if (this.sprite.y <= 0) {
+                this.remove();
+            }
+            if (this.sprite.x >= Constants_1.STAGE_WIDTH) {
+                this.remove();
+            }
+            if (this.sprite.y >= Constants_1.STAGE_HEIGHT) {
+                this.remove();
+            }
+        }
+    }
+}
+exports.default = Arrow;
+
+
+/***/ }),
+
 /***/ "./src/AssetManager.ts":
 /*!*****************************!*\
   !*** ./src/AssetManager.ts ***!
@@ -10157,10 +10227,14 @@ exports.default = AssetManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ASSET_MANIFEST = exports.FRAME_RATE = exports.STAGE_HEIGHT = exports.STAGE_WIDTH = void 0;
-exports.STAGE_WIDTH = 600;
-exports.STAGE_HEIGHT = 600;
+exports.ASSET_MANIFEST = exports.ARROW_RELOAD = exports.ARROW_SPEED = exports.MAX_ARROWS_ON_SCREEN = exports.PLAYER_SPEED = exports.FRAME_RATE = exports.STAGE_HEIGHT = exports.STAGE_WIDTH = void 0;
+exports.STAGE_WIDTH = 400;
+exports.STAGE_HEIGHT = 400;
 exports.FRAME_RATE = 30;
+exports.PLAYER_SPEED = 3;
+exports.MAX_ARROWS_ON_SCREEN = 8;
+exports.ARROW_SPEED = 6;
+exports.ARROW_RELOAD = 10;
 exports.ASSET_MANIFEST = [
     {
         type: "json",
@@ -10198,18 +10272,140 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(/*! createjs */ "./node_modules/createjs/builds/1.0.0/createjs.min.js");
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 const AssetManager_1 = __webpack_require__(/*! ./AssetManager */ "./src/AssetManager.ts");
+const Player_1 = __webpack_require__(/*! ./Player */ "./src/Player.ts");
+const Map_1 = __webpack_require__(/*! ./Map */ "./src/Map.ts");
+const World_1 = __webpack_require__(/*! ./World */ "./src/World.ts");
+const Arrow_1 = __webpack_require__(/*! ./Arrow */ "./src/Arrow.ts");
 let stage;
 let canvas;
+let player;
+let arrowCoolDown = 0;
+let maxArrowsOnScreen = [];
+let map;
+let world;
 let assetManager;
+let left = false;
+let right = false;
+let up = false;
+let down = false;
+let shoot = false;
 function onReady(e) {
     console.log(">> adding sprites to game");
+    player = new Player_1.default(stage, assetManager);
+    world = new World_1.default(stage, assetManager, player);
+    for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+        maxArrowsOnScreen[i] = new Arrow_1.default(stage, assetManager, world, player);
+    }
+    map = new Map_1.default(stage, assetManager, world);
+    map.LoadMap();
+    player.SpawnPlayer(200, 200);
+    document.onkeydown = OnKeyDown;
+    document.onkeyup = OnKeyUp;
     createjs.Ticker.framerate = Constants_1.FRAME_RATE;
     createjs.Ticker.on("tick", onTick);
     console.log(">> game ready");
 }
 function onTick(e) {
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
+    arrowCoolDown--;
+    if (arrowCoolDown <= 0) {
+        arrowCoolDown = 0;
+    }
+    MonitorKeys();
+    player.Update();
+    world.Update();
+    map.Update();
+    for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+        maxArrowsOnScreen[i].Update();
+    }
     stage.update();
+}
+function OnKeyDown(e) {
+    if (e.key == "a") {
+        left = true;
+    }
+    else if (e.key == "w") {
+        up = true;
+    }
+    else if (e.key == "d") {
+        right = true;
+    }
+    else if (e.key == "s") {
+        down = true;
+    }
+    else if (e.key == " ") {
+        shoot = true;
+    }
+}
+function OnKeyUp(e) {
+    if (e.key == "a") {
+        left = false;
+    }
+    else if (e.key == "w") {
+        up = false;
+    }
+    else if (e.key == "d") {
+        right = false;
+    }
+    else if (e.key == "s") {
+        down = false;
+    }
+    else if (e.key == " ") {
+        shoot = false;
+    }
+}
+function MonitorKeys() {
+    for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+        if (left) {
+            player.movement = Player_1.default.LEFT;
+            if (maxArrowsOnScreen[i].used == false) {
+                maxArrowsOnScreen[i].aimDirection = 3;
+            }
+            if (maxArrowsOnScreen[i].used == true) {
+                maxArrowsOnScreen[i].sprite.x = maxArrowsOnScreen[i].sprite.x + Constants_1.PLAYER_SPEED;
+            }
+        }
+        else if (right) {
+            player.movement = Player_1.default.RIGHT;
+            if (maxArrowsOnScreen[i].used == false) {
+                maxArrowsOnScreen[i].aimDirection = 4;
+            }
+            if (maxArrowsOnScreen[i].used == true) {
+                maxArrowsOnScreen[i].sprite.x = maxArrowsOnScreen[i].sprite.x - Constants_1.PLAYER_SPEED;
+            }
+        }
+        else if (up) {
+            player.movement = Player_1.default.UP;
+            if (maxArrowsOnScreen[i].used == false) {
+                maxArrowsOnScreen[i].aimDirection = 1;
+            }
+            if (maxArrowsOnScreen[i].used == true) {
+                maxArrowsOnScreen[i].sprite.y = maxArrowsOnScreen[i].sprite.y + Constants_1.PLAYER_SPEED;
+            }
+        }
+        else if (down) {
+            player.movement = Player_1.default.DOWN;
+            if (maxArrowsOnScreen[i].used == false) {
+                maxArrowsOnScreen[i].aimDirection = 2;
+            }
+            if (maxArrowsOnScreen[i].used == true) {
+                maxArrowsOnScreen[i].sprite.y = maxArrowsOnScreen[i].sprite.y - Constants_1.PLAYER_SPEED;
+            }
+        }
+        else {
+            player.movement = Player_1.default.IDLE;
+        }
+    }
+    if (shoot) {
+        for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+            if (maxArrowsOnScreen[i].used == false) {
+                if (arrowCoolDown == 0) {
+                    maxArrowsOnScreen[i].Shoot();
+                    arrowCoolDown = Constants_1.ARROW_RELOAD;
+                }
+            }
+        }
+    }
 }
 function main() {
     console.log(">> initializing");
@@ -10226,6 +10422,163 @@ main();
 
 /***/ }),
 
+/***/ "./src/GameCharacter.ts":
+/*!******************************!*\
+  !*** ./src/GameCharacter.ts ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class GameCharacter {
+    constructor(stage, assetManager, animation) {
+        this.stage = stage;
+        this.vitalStatus = GameCharacter.ALIVE;
+        this.sprite = assetManager.getSprite("assets", animation);
+    }
+}
+exports.default = GameCharacter;
+GameCharacter.DEAD = 0;
+GameCharacter.ALIVE = 1;
+
+
+/***/ }),
+
+/***/ "./src/Map.ts":
+/*!********************!*\
+  !*** ./src/Map.ts ***!
+  \********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
+class Map {
+    constructor(stage, assetManager, world) {
+        this.stage = stage;
+        this.world = world;
+        this.map = assetManager.getSprite("assets", "other/tempMap");
+    }
+    LoadMap() {
+        this.map.x = Constants_1.STAGE_WIDTH / 2;
+        this.map.y = Constants_1.STAGE_HEIGHT / 2;
+        this.stage.addChild(this.map);
+    }
+    Update() {
+        this.map.x = this.world.offsetX;
+        this.map.y = this.world.offsetY;
+    }
+}
+exports.default = Map;
+
+
+/***/ }),
+
+/***/ "./src/Player.ts":
+/*!***********************!*\
+  !*** ./src/Player.ts ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
+const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
+class Player extends GameCharacter_1.default {
+    constructor(stage, assetmanager) {
+        super(stage, assetmanager, "Player/Idle_down");
+        this.availableArrows = 10;
+        this.sprite.x = Constants_1.STAGE_WIDTH / 2;
+        this.sprite.y = Constants_1.STAGE_HEIGHT / 2;
+    }
+    SpawnPlayer(xLoc, yLoc) {
+        this.xLoc = xLoc;
+        this.yLoc = yLoc;
+        this.stage.addChild(this.sprite);
+    }
+    Update() {
+        if (this.movement == Player.UP) {
+            this.direction = 1;
+            this.yLoc = this.yLoc + Constants_1.PLAYER_SPEED;
+        }
+        else if (this.movement == Player.DOWN) {
+            this.direction = 2;
+            this.yLoc = this.yLoc - Constants_1.PLAYER_SPEED;
+        }
+        else if (this.movement == Player.LEFT) {
+            this.xLoc = this.xLoc + Constants_1.PLAYER_SPEED;
+            if (this.direction == 3) {
+                return;
+            }
+            this.sprite.gotoAndPlay("Player/walk_left");
+            this.direction = 3;
+        }
+        else if (this.movement == Player.RIGHT) {
+            this.xLoc = this.xLoc - Constants_1.PLAYER_SPEED;
+            if (this.direction == 4) {
+                return;
+            }
+            this.sprite.gotoAndPlay("Player/walk_right");
+            this.direction = 4;
+        }
+        if (this.movement == Player.IDLE) {
+            if (this.direction == 1) {
+                this.sprite.gotoAndStop("Player/Idle_up");
+            }
+            if (this.direction == 2) {
+                this.sprite.gotoAndStop("Player/Idle_down");
+            }
+            if (this.direction == 3) {
+                this.sprite.gotoAndStop("Player/Idle_left");
+            }
+            if (this.direction == 4) {
+                this.sprite.gotoAndStop("Player/Idle_right");
+            }
+            this.direction = 0;
+        }
+    }
+}
+exports.default = Player;
+Player.UP = 1;
+Player.DOWN = 2;
+Player.LEFT = 3;
+Player.RIGHT = 4;
+Player.IDLE = 5;
+
+
+/***/ }),
+
+/***/ "./src/World.ts":
+/*!**********************!*\
+  !*** ./src/World.ts ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class World {
+    constructor(stage, assetManager, player) {
+        this.stage = stage;
+        this.player = player;
+    }
+    Update() {
+        this.offsetX = this.player.xLoc;
+        this.offsetY = this.player.yLoc;
+    }
+}
+exports.default = World;
+
+
+/***/ }),
+
 /***/ 0:
 /*!*****************************************************************************!*\
   !*** multi (webpack)-dev-server/client?http://localhost:5005 ./src/Game.ts ***!
@@ -10233,7 +10586,7 @@ main();
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/seanmorrow/OneDrive - Nova Scotia Community College/_workspace/GAME2050 Game Programming I/unit04/4-1/boilerplateGame/node_modules/webpack-dev-server/client/index.js?http://localhost:5005 */"./node_modules/webpack-dev-server/client/index.js?http://localhost:5005");
+__webpack_require__(/*! C:\Users\Trenton\OneDrive\Desktop\Lurk\node_modules\webpack-dev-server\client\index.js?http://localhost:5005 */"./node_modules/webpack-dev-server/client/index.js?http://localhost:5005");
 module.exports = __webpack_require__(/*! ./src/Game.ts */"./src/Game.ts");
 
 
