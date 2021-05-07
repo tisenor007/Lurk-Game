@@ -10086,7 +10086,6 @@ class Arrow {
     constructor(stage, assetManager, world, player) {
         this.used = false;
         this.stage = stage;
-        this.world = world;
         this.player = player;
         this.sprite = assetManager.getSprite("assets", "Arrow/arrow_up");
         this.sprite.x = Constants_1.STAGE_WIDTH / 2;
@@ -10094,8 +10093,34 @@ class Arrow {
         this.aimDirection = 2;
     }
     Shoot() {
-        this.stage.addChild(this.sprite);
-        this.used = true;
+        if (this.player.availableArrows <= 0) {
+        }
+        else {
+            if (this.player.direction == 1) {
+                this.sprite.x = Constants_1.STAGE_WIDTH / 2;
+                this.sprite.y = Constants_1.STAGE_HEIGHT / 2 - 25;
+                this.aimDirection = 1;
+            }
+            if (this.player.direction == 2) {
+                this.sprite.x = Constants_1.STAGE_WIDTH / 2;
+                this.sprite.y = Constants_1.STAGE_HEIGHT / 2 + 15;
+                this.aimDirection = 2;
+            }
+            if (this.player.direction == 3) {
+                this.sprite.x = Constants_1.STAGE_WIDTH / 2 - 12;
+                this.sprite.y = Constants_1.STAGE_HEIGHT / 2;
+                this.aimDirection = 3;
+            }
+            if (this.player.direction == 4) {
+                this.sprite.x = Constants_1.STAGE_WIDTH / 2 + 12;
+                this.sprite.y = Constants_1.STAGE_HEIGHT / 2;
+                this.aimDirection = 4;
+            }
+            this.stage.addChild(this.sprite);
+            this.player.availableArrows = this.player.availableArrows - 1;
+            this.used = true;
+        }
+        console.log(this.player.availableArrows);
     }
     remove() {
         this.stage.removeChild(this.sprite);
@@ -10227,11 +10252,12 @@ exports.default = AssetManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ASSET_MANIFEST = exports.ARROW_RELOAD = exports.ARROW_SPEED = exports.MAX_ARROWS_ON_SCREEN = exports.PLAYER_SPEED = exports.FRAME_RATE = exports.STAGE_HEIGHT = exports.STAGE_WIDTH = void 0;
+exports.ASSET_MANIFEST = exports.ARROW_RELOAD = exports.ARROW_SPEED = exports.MAX_ARROWS_ON_SCREEN = exports.STARTING_ARROW_AMOUNT = exports.PLAYER_SPEED = exports.FRAME_RATE = exports.STAGE_HEIGHT = exports.STAGE_WIDTH = void 0;
 exports.STAGE_WIDTH = 400;
 exports.STAGE_HEIGHT = 400;
 exports.FRAME_RATE = 30;
 exports.PLAYER_SPEED = 3;
+exports.STARTING_ARROW_AMOUNT = 15;
 exports.MAX_ARROWS_ON_SCREEN = 8;
 exports.ARROW_SPEED = 6;
 exports.ARROW_RELOAD = 10;
@@ -10253,6 +10279,18 @@ exports.ASSET_MANIFEST = [
         src: "./lib/sounds/beep.ogg",
         id: "beep",
         data: 4
+    },
+    {
+        type: "json",
+        src: "./lib/spritesheets/glyphs.json",
+        id: "glyphs",
+        data: 0
+    },
+    {
+        type: "image",
+        src: "./lib/spritesheets/glyphs.png",
+        id: "glyphs",
+        data: 0
     }
 ];
 
@@ -10276,6 +10314,7 @@ const Player_1 = __webpack_require__(/*! ./Player */ "./src/Player.ts");
 const Map_1 = __webpack_require__(/*! ./Map */ "./src/Map.ts");
 const World_1 = __webpack_require__(/*! ./World */ "./src/World.ts");
 const Arrow_1 = __webpack_require__(/*! ./Arrow */ "./src/Arrow.ts");
+const HUD_1 = __webpack_require__(/*! ./HUD */ "./src/HUD.ts");
 let stage;
 let canvas;
 let player;
@@ -10283,6 +10322,7 @@ let arrowCoolDown = 0;
 let maxArrowsOnScreen = [];
 let map;
 let world;
+let hud;
 let assetManager;
 let left = false;
 let right = false;
@@ -10297,8 +10337,10 @@ function onReady(e) {
         maxArrowsOnScreen[i] = new Arrow_1.default(stage, assetManager, world, player);
     }
     map = new Map_1.default(stage, assetManager, world);
+    hud = new HUD_1.default(stage, assetManager, player);
     map.LoadMap();
     player.SpawnPlayer(200, 200);
+    hud.ShowHUD();
     document.onkeydown = OnKeyDown;
     document.onkeyup = OnKeyUp;
     createjs.Ticker.framerate = Constants_1.FRAME_RATE;
@@ -10311,6 +10353,7 @@ function onTick(e) {
     if (arrowCoolDown <= 0) {
         arrowCoolDown = 0;
     }
+    MonitorCollisions();
     MonitorKeys();
     player.Update();
     world.Update();
@@ -10318,20 +10361,43 @@ function onTick(e) {
     for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
         maxArrowsOnScreen[i].Update();
     }
+    hud.Update();
     stage.update();
+}
+function MonitorCollisions() {
 }
 function OnKeyDown(e) {
     if (e.key == "a") {
-        left = true;
+        if (player.movement == Player_1.default.IDLE) {
+            left = true;
+        }
+        else {
+            return;
+        }
     }
     else if (e.key == "w") {
-        up = true;
+        if (player.movement == Player_1.default.IDLE) {
+            up = true;
+        }
+        else {
+            return;
+        }
     }
     else if (e.key == "d") {
-        right = true;
+        if (player.movement == Player_1.default.IDLE) {
+            right = true;
+        }
+        else {
+            return;
+        }
     }
     else if (e.key == "s") {
-        down = true;
+        if (player.movement == Player_1.default.IDLE) {
+            down = true;
+        }
+        else {
+            return;
+        }
     }
     else if (e.key == " ") {
         shoot = true;
@@ -10358,36 +10424,24 @@ function MonitorKeys() {
     for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
         if (left) {
             player.movement = Player_1.default.LEFT;
-            if (maxArrowsOnScreen[i].used == false) {
-                maxArrowsOnScreen[i].aimDirection = 3;
-            }
             if (maxArrowsOnScreen[i].used == true) {
                 maxArrowsOnScreen[i].sprite.x = maxArrowsOnScreen[i].sprite.x + Constants_1.PLAYER_SPEED;
             }
         }
         else if (right) {
             player.movement = Player_1.default.RIGHT;
-            if (maxArrowsOnScreen[i].used == false) {
-                maxArrowsOnScreen[i].aimDirection = 4;
-            }
             if (maxArrowsOnScreen[i].used == true) {
                 maxArrowsOnScreen[i].sprite.x = maxArrowsOnScreen[i].sprite.x - Constants_1.PLAYER_SPEED;
             }
         }
         else if (up) {
             player.movement = Player_1.default.UP;
-            if (maxArrowsOnScreen[i].used == false) {
-                maxArrowsOnScreen[i].aimDirection = 1;
-            }
             if (maxArrowsOnScreen[i].used == true) {
                 maxArrowsOnScreen[i].sprite.y = maxArrowsOnScreen[i].sprite.y + Constants_1.PLAYER_SPEED;
             }
         }
         else if (down) {
             player.movement = Player_1.default.DOWN;
-            if (maxArrowsOnScreen[i].used == false) {
-                maxArrowsOnScreen[i].aimDirection = 2;
-            }
             if (maxArrowsOnScreen[i].used == true) {
                 maxArrowsOnScreen[i].sprite.y = maxArrowsOnScreen[i].sprite.y - Constants_1.PLAYER_SPEED;
             }
@@ -10446,6 +10500,59 @@ GameCharacter.ALIVE = 1;
 
 /***/ }),
 
+/***/ "./src/HUD.ts":
+/*!********************!*\
+  !*** ./src/HUD.ts ***!
+  \********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
+class HUD {
+    constructor(stage, assetManager, player) {
+        this.stage = stage;
+        this.player = player;
+        this.livesTxt = new createjs.BitmapText("LIVES", assetManager.getSpriteSheet("glyphs"));
+        this.livesNumber = new createjs.BitmapText("00", assetManager.getSpriteSheet("glyphs"));
+        this.healthTxt = new createjs.BitmapText("HEALTH", assetManager.getSpriteSheet("glyphs"));
+        this.healthNumber = new createjs.BitmapText("00", assetManager.getSpriteSheet("glyphs"));
+        this.shieldTxt = new createjs.BitmapText("SHIELD", assetManager.getSpriteSheet("glyphs"));
+        this.shieldNumber = new createjs.BitmapText("00", assetManager.getSpriteSheet("glyphs"));
+    }
+    ShowHUD() {
+        this.livesTxt.x = Constants_1.STAGE_WIDTH - 140;
+        this.livesTxt.y = -17;
+        this.livesNumber.x = Constants_1.STAGE_WIDTH - 30;
+        this.livesNumber.y = -17;
+        this.healthTxt.x = 3;
+        this.healthTxt.y = Constants_1.STAGE_HEIGHT - 53;
+        this.healthNumber.x = 140;
+        this.healthNumber.y = Constants_1.STAGE_HEIGHT - 53;
+        this.shieldTxt.x = 3;
+        this.shieldTxt.y = Constants_1.STAGE_HEIGHT - 83;
+        this.shieldNumber.x = 140;
+        this.shieldNumber.y = Constants_1.STAGE_HEIGHT - 83;
+        this.stage.addChild(this.livesTxt);
+        this.stage.addChild(this.livesNumber);
+        this.stage.addChild(this.healthTxt);
+        this.stage.addChild(this.healthNumber);
+        this.stage.addChild(this.shieldTxt);
+        this.stage.addChild(this.shieldNumber);
+    }
+    Update() {
+        this.livesNumber.text = this.player.lives.toString();
+        this.healthNumber.text = this.player.health.toString();
+        this.shieldNumber.text = this.player.shield.toString();
+    }
+}
+exports.default = HUD;
+
+
+/***/ }),
+
 /***/ "./src/Map.ts":
 /*!********************!*\
   !*** ./src/Map.ts ***!
@@ -10493,9 +10600,14 @@ const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts")
 class Player extends GameCharacter_1.default {
     constructor(stage, assetmanager) {
         super(stage, assetmanager, "Player/Idle_down");
-        this.availableArrows = 10;
+        this.health = 100;
+        this.lives = 3;
+        this.shield = 50;
+        this.direction = 2;
         this.sprite.x = Constants_1.STAGE_WIDTH / 2;
         this.sprite.y = Constants_1.STAGE_HEIGHT / 2;
+        this.availableArrows = Constants_1.STARTING_ARROW_AMOUNT;
+        this.canWalk = true;
     }
     SpawnPlayer(xLoc, yLoc) {
         this.xLoc = xLoc;
@@ -10503,31 +10615,49 @@ class Player extends GameCharacter_1.default {
         this.stage.addChild(this.sprite);
     }
     Update() {
-        if (this.movement == Player.UP) {
-            this.direction = 1;
-            this.yLoc = this.yLoc + Constants_1.PLAYER_SPEED;
-        }
-        else if (this.movement == Player.DOWN) {
-            this.direction = 2;
-            this.yLoc = this.yLoc - Constants_1.PLAYER_SPEED;
-        }
-        else if (this.movement == Player.LEFT) {
-            this.xLoc = this.xLoc + Constants_1.PLAYER_SPEED;
-            if (this.direction == 3) {
-                return;
+        if (this.canWalk == true) {
+            if (this.movement == Player.UP) {
+                this.yLoc = this.yLoc + Constants_1.PLAYER_SPEED;
+                if (this.isWalking == true) {
+                    return;
+                }
+                this.sprite.gotoAndPlay("Player/walk_up");
+                this.direction = 1;
+                this.isWalking = true;
             }
-            this.sprite.gotoAndPlay("Player/walk_left");
-            this.direction = 3;
-        }
-        else if (this.movement == Player.RIGHT) {
-            this.xLoc = this.xLoc - Constants_1.PLAYER_SPEED;
-            if (this.direction == 4) {
-                return;
+            else if (this.movement == Player.DOWN) {
+                this.yLoc = this.yLoc - Constants_1.PLAYER_SPEED;
+                if (this.isWalking == true) {
+                    return;
+                }
+                this.sprite.gotoAndPlay("Player/walk_down");
+                this.direction = 2;
+                this.isWalking = true;
             }
-            this.sprite.gotoAndPlay("Player/walk_right");
-            this.direction = 4;
+            else if (this.movement == Player.LEFT) {
+                this.xLoc = this.xLoc + Constants_1.PLAYER_SPEED;
+                if (this.isWalking == true) {
+                    return;
+                }
+                this.sprite.gotoAndPlay("Player/walk_left");
+                this.direction = 3;
+                this.isWalking = true;
+            }
+            else if (this.movement == Player.RIGHT) {
+                this.xLoc = this.xLoc - Constants_1.PLAYER_SPEED;
+                if (this.isWalking == true) {
+                    return;
+                }
+                this.sprite.gotoAndPlay("Player/walk_right");
+                this.direction = 4;
+                this.isWalking = true;
+            }
+        }
+        else {
+            this.movement == Player.IDLE;
         }
         if (this.movement == Player.IDLE) {
+            this.isWalking = false;
             if (this.direction == 1) {
                 this.sprite.gotoAndStop("Player/Idle_up");
             }
@@ -10540,7 +10670,6 @@ class Player extends GameCharacter_1.default {
             if (this.direction == 4) {
                 this.sprite.gotoAndStop("Player/Idle_right");
             }
-            this.direction = 0;
         }
     }
 }

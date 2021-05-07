@@ -9,13 +9,11 @@ export default class Arrow{
     public aimDirection:number;
     public used:boolean = false;
     private stage:createjs.StageGL;
-    private world:World;
     private player:Player;
     
     
     constructor(stage:createjs.StageGL, assetManager:AssetManager, world:World, player:Player){
         this.stage = stage;
-        this.world = world;
         this.player = player;
         this.sprite = assetManager.getSprite("assets", "Arrow/arrow_up");
         this.sprite.x = STAGE_WIDTH / 2;
@@ -24,8 +22,35 @@ export default class Arrow{
     }
 
     public Shoot():void{
-        this.stage.addChild(this.sprite);
-        this.used = true;
+        if (this.player.availableArrows <= 0){
+            //no arrows available.....
+        }
+        else{
+            if (this.player.direction == 1){
+                this.sprite.x = STAGE_WIDTH / 2;
+                this.sprite.y = STAGE_HEIGHT / 2 - 25;
+                this.aimDirection = 1;
+            }
+            if (this.player.direction == 2){
+                this.sprite.x = STAGE_WIDTH / 2;
+                this.sprite.y = STAGE_HEIGHT / 2 + 15;
+                this.aimDirection = 2;
+            }
+            if (this.player.direction == 3){
+                this.sprite.x = STAGE_WIDTH / 2 - 12;
+                this.sprite.y = STAGE_HEIGHT / 2;
+                this.aimDirection = 3;
+            }
+            if (this.player.direction == 4){
+                this.sprite.x = STAGE_WIDTH / 2 + 12;
+                this.sprite.y = STAGE_HEIGHT / 2;
+                this.aimDirection = 4;
+            }
+            this.stage.addChild(this.sprite);
+            this.player.availableArrows = this.player.availableArrows - 1;
+            this.used = true;
+        }
+        console.log(this.player.availableArrows);
     }
 
     public remove():void{
@@ -40,17 +65,14 @@ export default class Arrow{
             if (this.aimDirection == 1){
                 this.sprite.gotoAndStop("Arrow/arrow_up");
                 this.sprite.y = this.sprite.y - ARROW_SPEED;
-                
             }
             if (this.aimDirection == 2){
                 this.sprite.gotoAndStop("Arrow/arrow_down");
                 this.sprite.y = this.sprite.y + ARROW_SPEED;
-                
             }
             if (this.aimDirection == 3){
                 this.sprite.gotoAndStop("Arrow/arrow_left");
                 this.sprite.x = this.sprite.x - ARROW_SPEED;
-                
             }
             if (this.aimDirection == 4){
                 this.sprite.gotoAndStop("Arrow/arrow_right");

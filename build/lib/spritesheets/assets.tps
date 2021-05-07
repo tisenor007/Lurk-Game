@@ -203,6 +203,14 @@
             <key type="filename">Player/Idle_left.png</key>
             <key type="filename">Player/Idle_right.png</key>
             <key type="filename">Player/Idle_up.png</key>
+            <key type="filename">Player/walk_down_1.png</key>
+            <key type="filename">Player/walk_down_2.png</key>
+            <key type="filename">Player/walk_down_3.png</key>
+            <key type="filename">Player/walk_down_4.png</key>
+            <key type="filename">Player/walk_down_5.png</key>
+            <key type="filename">Player/walk_down_6.png</key>
+            <key type="filename">Player/walk_down_7.png</key>
+            <key type="filename">Player/walk_down_8.png</key>
             <key type="filename">Player/walk_left_1.png</key>
             <key type="filename">Player/walk_left_2.png</key>
             <key type="filename">Player/walk_left_3.png</key>
@@ -219,6 +227,14 @@
             <key type="filename">Player/walk_right_6.png</key>
             <key type="filename">Player/walk_right_7.png</key>
             <key type="filename">Player/walk_right_8.png</key>
+            <key type="filename">Player/walk_up_1.png</key>
+            <key type="filename">Player/walk_up_2.png</key>
+            <key type="filename">Player/walk_up_3.png</key>
+            <key type="filename">Player/walk_up_4.png</key>
+            <key type="filename">Player/walk_up_5.png</key>
+            <key type="filename">Player/walk_up_6.png</key>
+            <key type="filename">Player/walk_up_7.png</key>
+            <key type="filename">Player/walk_up_8.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>

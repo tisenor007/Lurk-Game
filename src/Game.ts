@@ -10,6 +10,8 @@ import Player from "./Player";
 import Map from "./Map";
 import World from "./World";
 import Arrow from "./Arrow";
+import HUD from "./HUD";
+import { radiusHit } from "./ToolBox";
 
 // game variables
 let stage:createjs.StageGL;
@@ -22,6 +24,8 @@ let maxArrowsOnScreen:Arrow[] = [];
 
 let map:Map;
 let world:World;
+
+let hud:HUD;
 // assetmanager object
 let assetManager:AssetManager;
 
@@ -44,10 +48,11 @@ function onReady(e:createjs.Event):void {
         maxArrowsOnScreen[i] = new Arrow(stage, assetManager, world, player);
     }
     map = new Map(stage, assetManager, world);
+    hud = new HUD(stage, assetManager, player);
     
     map.LoadMap();
     player.SpawnPlayer(200, 200);
-    
+    hud.ShowHUD();
     
     document.onkeydown = OnKeyDown;
     document.onkeyup = OnKeyUp;
@@ -65,6 +70,7 @@ function onTick(e:createjs.Event):void {
     if (arrowCoolDown <=0){arrowCoolDown = 0;}
     // This is your game loop :)
     // ...
+    MonitorCollisions();
     MonitorKeys();
     player.Update();
     world.Update();
@@ -72,14 +78,24 @@ function onTick(e:createjs.Event):void {
     for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
         maxArrowsOnScreen[i].Update();
     }
+    hud.Update();
     // update the stage!
     stage.update();
 }
+function MonitorCollisions():void{
+    // if (radiusHit(player.sprite, 1, map.map, 500)){
+    //     player.canWalk = true;
+    // }
+    // else{
+    //     player.canWalk = false;
+    // }
+
+}
 function OnKeyDown(e:KeyboardEvent):void{
-    if (e.key == "a"){left = true;}
-    else if (e.key == "w"){up = true}
-    else if (e.key == "d"){right = true;}
-    else if (e.key == "s"){down = true;}
+    if (e.key == "a"){if (player.movement == Player.IDLE){left = true;} else{return;}}
+    else if (e.key == "w"){if (player.movement == Player.IDLE){up = true} else{return;}}
+    else if (e.key == "d"){if (player.movement == Player.IDLE){right = true;} else{return;}}
+    else if (e.key == "s"){if (player.movement == Player.IDLE){down = true;} else{return;}}
     else if (e.key == " "){shoot = true;}
 }
 function OnKeyUp(e:KeyboardEvent):void{
@@ -91,31 +107,27 @@ function OnKeyUp(e:KeyboardEvent):void{
 }
 function MonitorKeys():void{
     for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
-    if (left)
-    { 
-        player.movement = Player.LEFT; 
-        if (maxArrowsOnScreen[i].used == false){maxArrowsOnScreen[i].aimDirection = 3;}
-        if (maxArrowsOnScreen[i].used == true){maxArrowsOnScreen[i].sprite.x = maxArrowsOnScreen[i].sprite.x + PLAYER_SPEED;}
-    }
-    else if (right)
-    {
-        player.movement = Player.RIGHT;
-        if (maxArrowsOnScreen[i].used == false){maxArrowsOnScreen[i].aimDirection = 4;}
-        if (maxArrowsOnScreen[i].used == true){maxArrowsOnScreen[i].sprite.x = maxArrowsOnScreen[i].sprite.x - PLAYER_SPEED;}
-    }
-    else if (up)
-    {
-        player.movement = Player.UP;
-        if (maxArrowsOnScreen[i].used == false){maxArrowsOnScreen[i].aimDirection = 1;}
-        if (maxArrowsOnScreen[i].used == true){maxArrowsOnScreen[i].sprite.y = maxArrowsOnScreen[i].sprite.y + PLAYER_SPEED;}
-    }
-    else if (down)
-    {
-        player.movement = Player.DOWN;
-        if (maxArrowsOnScreen[i].used == false){maxArrowsOnScreen[i].aimDirection = 2;}
-        if (maxArrowsOnScreen[i].used == true){maxArrowsOnScreen[i].sprite.y = maxArrowsOnScreen[i].sprite.y - PLAYER_SPEED;}
-    }
-    else{player.movement = Player.IDLE;}
+        if (left)
+        { 
+            player.movement = Player.LEFT; 
+            if (maxArrowsOnScreen[i].used == true){maxArrowsOnScreen[i].sprite.x = maxArrowsOnScreen[i].sprite.x + PLAYER_SPEED;}
+        }
+        else if (right)
+        {
+            player.movement = Player.RIGHT;
+            if (maxArrowsOnScreen[i].used == true){maxArrowsOnScreen[i].sprite.x = maxArrowsOnScreen[i].sprite.x - PLAYER_SPEED;}
+        }
+        else if (up)
+        {
+            player.movement = Player.UP;
+            if (maxArrowsOnScreen[i].used == true){maxArrowsOnScreen[i].sprite.y = maxArrowsOnScreen[i].sprite.y + PLAYER_SPEED;}
+        }
+        else if (down)
+        {
+            player.movement = Player.DOWN;
+            if (maxArrowsOnScreen[i].used == true){maxArrowsOnScreen[i].sprite.y = maxArrowsOnScreen[i].sprite.y - PLAYER_SPEED;}
+        }
+        else{player.movement = Player.IDLE;}
     }
     if (shoot){for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
         if (maxArrowsOnScreen[i].used == false){

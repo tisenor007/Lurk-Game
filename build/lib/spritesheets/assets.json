@@ -27,10 +27,26 @@
     [1203, 479, 34, 52, 0, 10, 27],
     [1203, 533, 30, 52, 0, 19, 26],
     [1203, 587, 30, 52, 0, 11, 26],
-    [1203, 641, 16, 8, 0, 8, 4],
-    [1221, 641, 16, 8, 0, 8, 4],
-    [1203, 651, 8, 16, 0, 4, 8],
-    [1213, 651, 8, 16, 0, 4, 8]
+    [1203, 641, 30, 52, 0, 19, 27],
+    [1203, 641, 30, 52, 0, 19, 27],
+    [1203, 695, 30, 52, 0, 19, 28],
+    [1203, 749, 30, 52, 0, 19, 26],
+    [1203, 749, 30, 52, 0, 19, 26],
+    [1203, 803, 30, 52, 0, 19, 27],
+    [1203, 803, 30, 52, 0, 19, 27],
+    [1203, 857, 30, 52, 0, 19, 28],
+    [1203, 911, 30, 52, 0, 11, 27],
+    [1203, 911, 30, 52, 0, 11, 27],
+    [1203, 965, 30, 52, 0, 11, 28],
+    [1203, 1019, 30, 52, 0, 11, 26],
+    [1203, 1019, 30, 52, 0, 11, 26],
+    [1203, 1073, 30, 52, 0, 11, 27],
+    [1203, 1073, 30, 52, 0, 11, 27],
+    [1203, 1127, 30, 52, 0, 11, 28],
+    [1203, 1181, 8, 16, 0, 4, 8],
+    [1213, 1181, 8, 16, 0, 4, 8],
+    [1223, 1181, 16, 8, 0, 8, 4],
+    [1223, 1191, 16, 8, 0, 8, 4]
 ],
 
 "animations": {
@@ -41,14 +57,16 @@
     "Player/Idle_right": { "frames": [8] },
     "Player/Idle_down": { "frames": [19] },
     "Player/Idle_up": { "frames": [20] },
-    "Arrow/arrow_left": { "frames": [21] },
-    "Arrow/arrow_right": { "frames": [22] },
-    "Arrow/arrow_down": { "frames": [23] },
-    "Arrow/arrow_up": { "frames": [24] }
+    "Player/walk_down": { "frames": [21, 23, 22, 24, 26, 28, 27, 25] },
+    "Player/walk_up": { "frames": [29, 31, 30, 32, 34, 36, 35, 33] },
+    "Arrow/arrow_down": { "frames": [37] },
+    "Arrow/arrow_up": { "frames": [38] },
+    "Arrow/arrow_left": { "frames": [39] },
+    "Arrow/arrow_right": { "frames": [40] }
 },
 
 "texturepacker": [
-        "SmartUpdateHash: $TexturePacker:SmartUpdate:03068d6c999d507b96ac0d24bf9601ae:87042b287f8760b397e7ddc604687c43:a759b6bbc8381ac9c472b28f589ad0d6$",
+        "SmartUpdateHash: $TexturePacker:SmartUpdate:ef72cad40438605d165109898ccdda53:fc996cf2f18625fa00b48b73493b7ecc:a759b6bbc8381ac9c472b28f589ad0d6$",
         "Created with TexturePacker (https://www.codeandweb.com/texturepacker) for EaselJS"
 ]
 
