@@ -10,6 +10,8 @@ export const MAX_ARROWS_ON_SCREEN = 8;
 export const ARROW_SPEED:number = 6;
 export const ARROW_RELOAD:number = 10;
 
+export const MAX_ENEMIES:number = 100;
+
 export const ASSET_MANIFEST:Object[] = [
     {
         type:"json",

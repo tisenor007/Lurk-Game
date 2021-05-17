@@ -2,13 +2,27 @@ import AssetManager from "./AssetManager";
 
 export default class GameCharacter{
 
-    public static DEAD:number = 0;
-    public static ALIVE:number = 1;
+    //enums the gamecharcter share
+    public static UP:number = 1;
+    public static DOWN:number = 2;
+    public static LEFT:number = 3;
+    public static RIGHT:number = 4;
+    public static IDLE:number = 5;
+
+    //vital statuses
+    public static DEAD:number = 6;
+    public static ALIVE:number = 7;
+
+    public canWalk:boolean;
 
     public health:number;
     public shield:number;
     public lives:number;
     public vitalStatus:number;
+    public speed:number;
+    public attackDamage:number;
+    public direction:number;
+
     public stage:createjs.StageGL;
     public sprite:createjs.Sprite;
 
@@ -16,5 +30,33 @@ export default class GameCharacter{
         this.stage = stage;
         this.vitalStatus = GameCharacter.ALIVE;
         this.sprite = assetManager.getSprite("assets", animation);
+    }
+
+    public TakeDamage(damage:number):void{
+        let remainingDamage:number = damage - this.shield;
+        this.shield = this.shield - damage;
+        if (this.shield <= 0){
+            this.shield = 0;
+            this.health = this.health - remainingDamage;
+        }
+        if (this.health <= 0){
+            this.lives = this.lives - 1;
+            this.health = 100;
+        }
+        if (this.lives <= 0){
+            this.lives = 0;
+            this.health = 0;
+
+        }
+    }
+
+    public Update():void{
+        if (this.health <= 0){
+            this.vitalStatus = GameCharacter.DEAD;
+        }
+        if (this.health >= 1){
+            this.vitalStatus = GameCharacter.ALIVE;
+        }
+        //if vitalstatus play dead animation / restart level
     }
 }

@@ -15,6 +15,9 @@ export default class HUD{
     private shieldTxt:createjs.BitmapText;
     private shieldNumber:createjs.BitmapText;
 
+    private arrowAmtTxt:createjs.BitmapText;
+    private arrowAmtNumber:createjs.BitmapText;
+
     constructor(stage:createjs.StageGL, assetManager:AssetManager, player:Player){
         this.stage = stage;
         this.player = player;
@@ -27,6 +30,9 @@ export default class HUD{
 
         this.shieldTxt = new createjs.BitmapText("SHIELD", assetManager.getSpriteSheet("glyphs"));
         this.shieldNumber = new createjs.BitmapText("00", assetManager.getSpriteSheet("glyphs"));
+
+        this.arrowAmtTxt = new createjs.BitmapText("ARROWS", assetManager.getSpriteSheet("glyphs"));
+        this.arrowAmtNumber = new createjs.BitmapText("00", assetManager.getSpriteSheet("glyphs"));
     }
 
     public ShowHUD():void{
@@ -45,17 +51,25 @@ export default class HUD{
         this.shieldNumber.x = 140;
         this.shieldNumber.y = STAGE_HEIGHT - 83;
 
+        this.arrowAmtTxt.x = 3;
+        this.arrowAmtTxt.y = -17;
+        this.arrowAmtNumber.x = 142;
+        this.arrowAmtNumber.y = -17;
+
         this.stage.addChild(this.livesTxt);
         this.stage.addChild(this.livesNumber);
         this.stage.addChild(this.healthTxt);
         this.stage.addChild(this.healthNumber);
         this.stage.addChild(this.shieldTxt);
         this.stage.addChild(this.shieldNumber);
+        this.stage.addChild(this.arrowAmtTxt);
+        this.stage.addChild(this.arrowAmtNumber);
     }
 
     public Update():void{
         this.livesNumber.text = this.player.lives.toString();
         this.healthNumber.text = this.player.health.toString();
         this.shieldNumber.text = this.player.shield.toString();
+        this.arrowAmtNumber.text = this.player.availableArrows.toString();
     }
 }

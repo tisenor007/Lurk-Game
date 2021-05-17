@@ -10252,7 +10252,7 @@ exports.default = AssetManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ASSET_MANIFEST = exports.ARROW_RELOAD = exports.ARROW_SPEED = exports.MAX_ARROWS_ON_SCREEN = exports.STARTING_ARROW_AMOUNT = exports.PLAYER_SPEED = exports.FRAME_RATE = exports.STAGE_HEIGHT = exports.STAGE_WIDTH = void 0;
+exports.ASSET_MANIFEST = exports.MAX_ENEMIES = exports.ARROW_RELOAD = exports.ARROW_SPEED = exports.MAX_ARROWS_ON_SCREEN = exports.STARTING_ARROW_AMOUNT = exports.PLAYER_SPEED = exports.FRAME_RATE = exports.STAGE_HEIGHT = exports.STAGE_WIDTH = void 0;
 exports.STAGE_WIDTH = 400;
 exports.STAGE_HEIGHT = 400;
 exports.FRAME_RATE = 30;
@@ -10261,6 +10261,7 @@ exports.STARTING_ARROW_AMOUNT = 15;
 exports.MAX_ARROWS_ON_SCREEN = 8;
 exports.ARROW_SPEED = 6;
 exports.ARROW_RELOAD = 10;
+exports.MAX_ENEMIES = 100;
 exports.ASSET_MANIFEST = [
     {
         type: "json",
@@ -10297,6 +10298,227 @@ exports.ASSET_MANIFEST = [
 
 /***/ }),
 
+/***/ "./src/Default.ts":
+/*!************************!*\
+  !*** ./src/Default.ts ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Enemy_1 = __webpack_require__(/*! ./Enemy */ "./src/Enemy.ts");
+class Default extends Enemy_1.default {
+    constructor(stage, assetManager, xLoc, yLoc, player) {
+        super(stage, assetManager, xLoc, yLoc, player);
+        this.sightRange = 60;
+        this.attackSpeed = 50;
+        this.form = "Enemy/Default";
+        this.speed = 1;
+        this.attackDamage = 5;
+        this.health = 50;
+    }
+    Spawn() {
+        super.Spawn();
+    }
+    Update() {
+        super.Update();
+    }
+}
+exports.default = Default;
+
+
+/***/ }),
+
+/***/ "./src/Enemy.ts":
+/*!**********************!*\
+  !*** ./src/Enemy.ts ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
+const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
+class Enemy extends GameCharacter_1.default {
+    constructor(stage, assetManager, xLoc, yLoc, player) {
+        super(stage, assetManager, "Enemy/Default");
+        this.isIdle = true;
+        this.player = player;
+        this.vitalStatus = GameCharacter_1.default.IDLE;
+        this.sprite.x = +(player.xLoc - 600) + xLoc;
+        this.sprite.y = +(player.yLoc - 600) + yLoc;
+        this.attackCoolDown = 0;
+        this.shield = 0;
+        this.lives = 1;
+    }
+    Spawn() {
+        this.sprite.gotoAndStop(this.form);
+        this.stage.addChild(this.sprite);
+        this.state = GameCharacter_1.default.IDLE;
+    }
+    Update() {
+        super.Update();
+        if (this.canWalk == false) {
+            this.state == GameCharacter_1.default.IDLE;
+        }
+        if (this.state == GameCharacter_1.default.IDLE) {
+            if (this.isIdle == true) {
+                let movementToBeDetermined = ToolBox_1.randomNum(1, 4);
+                if (movementToBeDetermined <= 1) {
+                    this.state = GameCharacter_1.default.UP;
+                }
+                else if (movementToBeDetermined == 2) {
+                    this.state = GameCharacter_1.default.DOWN;
+                }
+                else if (movementToBeDetermined == 3) {
+                    this.state = GameCharacter_1.default.LEFT;
+                }
+                else if (movementToBeDetermined >= 4) {
+                    this.state = GameCharacter_1.default.RIGHT;
+                }
+                this.stateDuration = ToolBox_1.randomNum(50, 100);
+            }
+        }
+        else if (this.state == GameCharacter_1.default.UP) {
+            this.sprite.y = this.sprite.y + this.speed;
+            this.direction = 1;
+        }
+        else if (this.state == GameCharacter_1.default.DOWN) {
+            this.sprite.y = this.sprite.y - this.speed;
+            this.direction = 2;
+        }
+        else if (this.state == GameCharacter_1.default.LEFT) {
+            this.sprite.x = this.sprite.x + this.speed;
+            this.direction = 3;
+        }
+        if (this.state == GameCharacter_1.default.RIGHT) {
+            this.sprite.x = this.sprite.x - this.speed;
+            this.direction = 4;
+        }
+        else if (this.state == Enemy.RETREATING) {
+            this.isIdle = true;
+            this.state = GameCharacter_1.default.IDLE;
+        }
+        else if (this.state == Enemy.CHASING) {
+            if (this.sprite.y > this.player.sprite.y) {
+                this.sprite.y = this.sprite.y - this.speed;
+            }
+            if (this.sprite.y < this.player.sprite.y) {
+                this.sprite.y = this.sprite.y + this.speed;
+            }
+            if (this.sprite.x < this.player.sprite.x) {
+                this.sprite.x = this.sprite.x + this.speed;
+            }
+            if (this.sprite.x > this.player.sprite.x) {
+                this.sprite.x = this.sprite.x - this.speed;
+            }
+        }
+        else if (this.state == Enemy.ATTACKING) {
+            if (this.attackCoolDown >= 1) {
+                this.attackCoolDown--;
+            }
+            else if (this.attackCoolDown <= 0) {
+                this.attackCoolDown = this.attackSpeed;
+                this.player.TakeDamage(this.attackDamage);
+            }
+        }
+        if (this.stateDuration <= 0) {
+            this.state = GameCharacter_1.default.IDLE;
+        }
+        this.stateDuration--;
+    }
+}
+exports.default = Enemy;
+Enemy.ATTACKING = 8;
+Enemy.CHASING = 9;
+Enemy.RETREATING = 10;
+Enemy.ROAMING = 11;
+
+
+/***/ }),
+
+/***/ "./src/EnemyManager.ts":
+/*!*****************************!*\
+  !*** ./src/EnemyManager.ts ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
+const Default_1 = __webpack_require__(/*! ./Default */ "./src/Default.ts");
+const Enemy_1 = __webpack_require__(/*! ./Enemy */ "./src/Enemy.ts");
+const Heavy_1 = __webpack_require__(/*! ./Heavy */ "./src/Heavy.ts");
+const Light_1 = __webpack_require__(/*! ./Light */ "./src/Light.ts");
+const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
+class EnemyManager {
+    constructor(stage, assetManager, player) {
+        this.enemies = [];
+        this.stage = stage;
+        this.player = player;
+        this.assetManager = assetManager;
+    }
+    InitEnemies() {
+        this.enemies[0] = new Default_1.default(this.stage, this.assetManager, 400, 600, this.player);
+        this.enemies[1] = new Light_1.default(this.stage, this.assetManager, 200, 200, this.player);
+        this.enemies[2] = new Heavy_1.default(this.stage, this.assetManager, 400, 400, this.player);
+        this.enemies[3] = new Light_1.default(this.stage, this.assetManager, 600, 800, this.player);
+    }
+    SpawmEnemies() {
+        for (let i = 0; i <= Constants_1.MAX_ENEMIES; i++) {
+            if (this.enemies[i] == null) { }
+            else {
+                this.enemies[i].Spawn();
+            }
+        }
+    }
+    UpdateEnemies() {
+        for (let i = 0; i <= Constants_1.MAX_ENEMIES; i++) {
+            if (this.enemies[i] == null) { }
+            else {
+                this.enemies[i].Update();
+            }
+        }
+    }
+    MonitorCollisions() {
+        for (let i = 0; i <= Constants_1.MAX_ENEMIES; i++) {
+            if (this.enemies[i] == null) { }
+            else {
+                if (ToolBox_1.radiusHit(this.enemies[i].sprite, this.enemies[i].sightRange, this.player.sprite, this.enemies[i].sightRange) == true) {
+                    this.enemies[i].isIdle = false;
+                    this.enemies[i].state = Enemy_1.default.CHASING;
+                }
+                if (ToolBox_1.boxHit(this.enemies[i].sprite, this.player.sprite) == true) {
+                    if (this.enemies[i].isIdle == false) {
+                        this.enemies[i].state = Enemy_1.default.ATTACKING;
+                    }
+                }
+                else if (ToolBox_1.radiusHit(this.enemies[i].sprite, this.enemies[i].sightRange, this.player.sprite, this.enemies[i].sightRange) == false) {
+                    if (this.enemies[i].isIdle == false) {
+                        this.enemies[i].state = Enemy_1.default.RETREATING;
+                        this.enemies[i].isIdle = true;
+                    }
+                }
+                else if (ToolBox_1.boxHit(this.enemies[i].sprite, this.player.sprite) == false) {
+                    if (this.enemies[i].isIdle == false) {
+                        this.enemies[i].state = Enemy_1.default.CHASING;
+                    }
+                }
+            }
+        }
+    }
+}
+exports.default = EnemyManager;
+
+
+/***/ }),
+
 /***/ "./src/Game.ts":
 /*!*********************!*\
   !*** ./src/Game.ts ***!
@@ -10315,6 +10537,9 @@ const Map_1 = __webpack_require__(/*! ./Map */ "./src/Map.ts");
 const World_1 = __webpack_require__(/*! ./World */ "./src/World.ts");
 const Arrow_1 = __webpack_require__(/*! ./Arrow */ "./src/Arrow.ts");
 const HUD_1 = __webpack_require__(/*! ./HUD */ "./src/HUD.ts");
+const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
+const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
+const EnemyManager_1 = __webpack_require__(/*! ./EnemyManager */ "./src/EnemyManager.ts");
 let stage;
 let canvas;
 let player;
@@ -10324,6 +10549,7 @@ let map;
 let world;
 let hud;
 let assetManager;
+let enemyManager;
 let left = false;
 let right = false;
 let up = false;
@@ -10331,15 +10557,18 @@ let down = false;
 let shoot = false;
 function onReady(e) {
     console.log(">> adding sprites to game");
-    player = new Player_1.default(stage, assetManager);
-    world = new World_1.default(stage, assetManager, player);
+    player = new Player_1.default(stage, assetManager, 600, 600);
+    enemyManager = new EnemyManager_1.default(stage, assetManager, player);
+    enemyManager.InitEnemies();
     for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
         maxArrowsOnScreen[i] = new Arrow_1.default(stage, assetManager, world, player);
     }
+    world = new World_1.default(stage, assetManager, player, maxArrowsOnScreen, enemyManager.enemies);
     map = new Map_1.default(stage, assetManager, world);
     hud = new HUD_1.default(stage, assetManager, player);
-    map.LoadMap();
-    player.SpawnPlayer(200, 200);
+    map.LoadMain();
+    enemyManager.SpawmEnemies();
+    player.SpawnPlayer();
     hud.ShowHUD();
     document.onkeydown = OnKeyDown;
     document.onkeyup = OnKeyUp;
@@ -10353,22 +10582,39 @@ function onTick(e) {
     if (arrowCoolDown <= 0) {
         arrowCoolDown = 0;
     }
-    MonitorCollisions();
-    MonitorKeys();
+    enemyManager.UpdateEnemies();
     player.Update();
-    world.Update();
     map.Update();
+    world.Update();
     for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
         maxArrowsOnScreen[i].Update();
     }
     hud.Update();
+    MonitorKeys();
+    MonitorCollisions();
     stage.update();
 }
 function MonitorCollisions() {
+    if (ToolBox_1.boxHit(player.sprite, map.northWall) == true) {
+        player.canWalk = false;
+    }
+    else if (ToolBox_1.boxHit(player.sprite, map.eastWall) == true) {
+        player.canWalk = false;
+    }
+    else if (ToolBox_1.boxHit(player.sprite, map.southWall) == true) {
+        player.canWalk = false;
+    }
+    else if (ToolBox_1.boxHit(player.sprite, map.westWall) == true) {
+        player.canWalk = false;
+    }
+    else {
+        player.canWalk = true;
+    }
+    enemyManager.MonitorCollisions();
 }
 function OnKeyDown(e) {
     if (e.key == "a") {
-        if (player.movement == Player_1.default.IDLE) {
+        if (player.movement == GameCharacter_1.default.IDLE) {
             left = true;
         }
         else {
@@ -10376,7 +10622,7 @@ function OnKeyDown(e) {
         }
     }
     else if (e.key == "w") {
-        if (player.movement == Player_1.default.IDLE) {
+        if (player.movement == GameCharacter_1.default.IDLE) {
             up = true;
         }
         else {
@@ -10384,7 +10630,7 @@ function OnKeyDown(e) {
         }
     }
     else if (e.key == "d") {
-        if (player.movement == Player_1.default.IDLE) {
+        if (player.movement == GameCharacter_1.default.IDLE) {
             right = true;
         }
         else {
@@ -10392,7 +10638,7 @@ function OnKeyDown(e) {
         }
     }
     else if (e.key == "s") {
-        if (player.movement == Player_1.default.IDLE) {
+        if (player.movement == GameCharacter_1.default.IDLE) {
             down = true;
         }
         else {
@@ -10421,34 +10667,25 @@ function OnKeyUp(e) {
     }
 }
 function MonitorKeys() {
-    for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
-        if (left) {
-            player.movement = Player_1.default.LEFT;
-            if (maxArrowsOnScreen[i].used == true) {
-                maxArrowsOnScreen[i].sprite.x = maxArrowsOnScreen[i].sprite.x + Constants_1.PLAYER_SPEED;
-            }
-        }
-        else if (right) {
-            player.movement = Player_1.default.RIGHT;
-            if (maxArrowsOnScreen[i].used == true) {
-                maxArrowsOnScreen[i].sprite.x = maxArrowsOnScreen[i].sprite.x - Constants_1.PLAYER_SPEED;
-            }
-        }
-        else if (up) {
-            player.movement = Player_1.default.UP;
-            if (maxArrowsOnScreen[i].used == true) {
-                maxArrowsOnScreen[i].sprite.y = maxArrowsOnScreen[i].sprite.y + Constants_1.PLAYER_SPEED;
-            }
-        }
-        else if (down) {
-            player.movement = Player_1.default.DOWN;
-            if (maxArrowsOnScreen[i].used == true) {
-                maxArrowsOnScreen[i].sprite.y = maxArrowsOnScreen[i].sprite.y - Constants_1.PLAYER_SPEED;
-            }
-        }
-        else {
-            player.movement = Player_1.default.IDLE;
-        }
+    if (left && player.canWalk == true) {
+        player.movement = GameCharacter_1.default.IDLE;
+        player.movement = GameCharacter_1.default.LEFT;
+        world.OffSetWorld();
+    }
+    else if (right && player.canWalk == true) {
+        player.movement = GameCharacter_1.default.RIGHT;
+        world.OffSetWorld();
+    }
+    else if (up && player.canWalk == true) {
+        player.movement = GameCharacter_1.default.UP;
+        world.OffSetWorld();
+    }
+    else if (down && player.canWalk == true) {
+        player.movement = GameCharacter_1.default.DOWN;
+        world.OffSetWorld();
+    }
+    else {
+        player.movement = GameCharacter_1.default.IDLE;
     }
     if (shoot) {
         for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
@@ -10492,10 +10729,39 @@ class GameCharacter {
         this.vitalStatus = GameCharacter.ALIVE;
         this.sprite = assetManager.getSprite("assets", animation);
     }
+    TakeDamage(damage) {
+        let remainingDamage = damage - this.shield;
+        this.shield = this.shield - damage;
+        if (this.shield <= 0) {
+            this.shield = 0;
+            this.health = this.health - remainingDamage;
+        }
+        if (this.health <= 0) {
+            this.lives = this.lives - 1;
+            this.health = 100;
+        }
+        if (this.lives <= 0) {
+            this.lives = 0;
+            this.health = 0;
+        }
+    }
+    Update() {
+        if (this.health <= 0) {
+            this.vitalStatus = GameCharacter.DEAD;
+        }
+        if (this.health >= 1) {
+            this.vitalStatus = GameCharacter.ALIVE;
+        }
+    }
 }
 exports.default = GameCharacter;
-GameCharacter.DEAD = 0;
-GameCharacter.ALIVE = 1;
+GameCharacter.UP = 1;
+GameCharacter.DOWN = 2;
+GameCharacter.LEFT = 3;
+GameCharacter.RIGHT = 4;
+GameCharacter.IDLE = 5;
+GameCharacter.DEAD = 6;
+GameCharacter.ALIVE = 7;
 
 
 /***/ }),
@@ -10521,6 +10787,8 @@ class HUD {
         this.healthNumber = new createjs.BitmapText("00", assetManager.getSpriteSheet("glyphs"));
         this.shieldTxt = new createjs.BitmapText("SHIELD", assetManager.getSpriteSheet("glyphs"));
         this.shieldNumber = new createjs.BitmapText("00", assetManager.getSpriteSheet("glyphs"));
+        this.arrowAmtTxt = new createjs.BitmapText("ARROWS", assetManager.getSpriteSheet("glyphs"));
+        this.arrowAmtNumber = new createjs.BitmapText("00", assetManager.getSpriteSheet("glyphs"));
     }
     ShowHUD() {
         this.livesTxt.x = Constants_1.STAGE_WIDTH - 140;
@@ -10535,20 +10803,93 @@ class HUD {
         this.shieldTxt.y = Constants_1.STAGE_HEIGHT - 83;
         this.shieldNumber.x = 140;
         this.shieldNumber.y = Constants_1.STAGE_HEIGHT - 83;
+        this.arrowAmtTxt.x = 3;
+        this.arrowAmtTxt.y = -17;
+        this.arrowAmtNumber.x = 142;
+        this.arrowAmtNumber.y = -17;
         this.stage.addChild(this.livesTxt);
         this.stage.addChild(this.livesNumber);
         this.stage.addChild(this.healthTxt);
         this.stage.addChild(this.healthNumber);
         this.stage.addChild(this.shieldTxt);
         this.stage.addChild(this.shieldNumber);
+        this.stage.addChild(this.arrowAmtTxt);
+        this.stage.addChild(this.arrowAmtNumber);
     }
     Update() {
         this.livesNumber.text = this.player.lives.toString();
         this.healthNumber.text = this.player.health.toString();
         this.shieldNumber.text = this.player.shield.toString();
+        this.arrowAmtNumber.text = this.player.availableArrows.toString();
     }
 }
 exports.default = HUD;
+
+
+/***/ }),
+
+/***/ "./src/Heavy.ts":
+/*!**********************!*\
+  !*** ./src/Heavy.ts ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Enemy_1 = __webpack_require__(/*! ./Enemy */ "./src/Enemy.ts");
+class Heavy extends Enemy_1.default {
+    constructor(stage, assetManager, xLoc, yLoc, player) {
+        super(stage, assetManager, xLoc, yLoc, player);
+        this.sightRange = 90;
+        this.attackSpeed = 80;
+        this.form = "Enemy/Heavy";
+        this.speed = 0.5;
+        this.attackDamage = 10;
+        this.health = 75;
+    }
+    Spawn() {
+        super.Spawn();
+    }
+    Update() {
+        super.Update();
+    }
+}
+exports.default = Heavy;
+
+
+/***/ }),
+
+/***/ "./src/Light.ts":
+/*!**********************!*\
+  !*** ./src/Light.ts ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Enemy_1 = __webpack_require__(/*! ./Enemy */ "./src/Enemy.ts");
+class Light extends Enemy_1.default {
+    constructor(stage, assetManager, xLoc, yLoc, player) {
+        super(stage, assetManager, xLoc, yLoc, player);
+        this.sightRange = 50;
+        this.attackSpeed = 20;
+        this.form = "Enemy/Light";
+        this.speed = 2;
+        this.attackDamage = 2;
+        this.health = 25;
+    }
+    Spawn() {
+        super.Spawn();
+    }
+    Update() {
+        super.Update();
+    }
+}
+exports.default = Light;
 
 
 /***/ }),
@@ -10563,21 +10904,40 @@ exports.default = HUD;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 class Map {
     constructor(stage, assetManager, world) {
         this.stage = stage;
         this.world = world;
-        this.map = assetManager.getSprite("assets", "other/tempMap");
+        this.assetManager = assetManager;
     }
-    LoadMap() {
-        this.map.x = Constants_1.STAGE_WIDTH / 2;
-        this.map.y = Constants_1.STAGE_HEIGHT / 2;
+    LoadMain() {
+        this.stage.removeAllChildren();
+        this.map = this.assetManager.getSprite("assets", "other/tempMap");
+        this.northWall = this.assetManager.getSprite("assets", "other/NorthWall");
+        this.southWall = this.assetManager.getSprite("assets", "other/SouthWall");
+        this.eastWall = this.assetManager.getSprite("assets", "other/EastWall");
+        this.westWall = this.assetManager.getSprite("assets", "other/WestWall");
+        this.centerWallOne = this.assetManager.getSprite("assets", "other/WallOne");
         this.stage.addChild(this.map);
+        this.stage.addChild(this.northWall);
+        this.stage.addChild(this.southWall);
+        this.stage.addChild(this.eastWall);
+        this.stage.addChild(this.westWall);
+        this.stage.addChild(this.centerWallOne);
     }
     Update() {
         this.map.x = this.world.offsetX;
         this.map.y = this.world.offsetY;
+        this.northWall.x = this.world.offsetX;
+        this.northWall.y = this.world.offsetY - 600;
+        this.southWall.x = this.world.offsetX;
+        this.southWall.y = this.world.offsetY + 600;
+        this.eastWall.x = this.world.offsetX + 600;
+        this.eastWall.y = this.world.offsetY;
+        this.westWall.x = this.world.offsetX - 600;
+        this.westWall.y = this.world.offsetY;
+        this.centerWallOne.x = this.world.offsetX - 400;
+        this.centerWallOne.y = this.world.offsetY - 400;
     }
 }
 exports.default = Map;
@@ -10598,26 +10958,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 class Player extends GameCharacter_1.default {
-    constructor(stage, assetmanager) {
+    constructor(stage, assetmanager, xLoc, yLoc) {
         super(stage, assetmanager, "Player/Idle_down");
+        this.vitalStatus = GameCharacter_1.default.ALIVE;
         this.health = 100;
         this.lives = 3;
         this.shield = 50;
+        this.speed = Constants_1.PLAYER_SPEED;
         this.direction = 2;
         this.sprite.x = Constants_1.STAGE_WIDTH / 2;
         this.sprite.y = Constants_1.STAGE_HEIGHT / 2;
         this.availableArrows = Constants_1.STARTING_ARROW_AMOUNT;
         this.canWalk = true;
+        this.xLoc = -xLoc + 800;
+        this.yLoc = -yLoc + 800;
     }
-    SpawnPlayer(xLoc, yLoc) {
-        this.xLoc = xLoc;
-        this.yLoc = yLoc;
+    SpawnPlayer() {
         this.stage.addChild(this.sprite);
     }
     Update() {
+        super.Update();
         if (this.canWalk == true) {
             if (this.movement == Player.UP) {
-                this.yLoc = this.yLoc + Constants_1.PLAYER_SPEED;
+                this.yLoc = this.yLoc + this.speed;
                 if (this.isWalking == true) {
                     return;
                 }
@@ -10626,7 +10989,7 @@ class Player extends GameCharacter_1.default {
                 this.isWalking = true;
             }
             else if (this.movement == Player.DOWN) {
-                this.yLoc = this.yLoc - Constants_1.PLAYER_SPEED;
+                this.yLoc = this.yLoc - this.speed;
                 if (this.isWalking == true) {
                     return;
                 }
@@ -10635,7 +10998,7 @@ class Player extends GameCharacter_1.default {
                 this.isWalking = true;
             }
             else if (this.movement == Player.LEFT) {
-                this.xLoc = this.xLoc + Constants_1.PLAYER_SPEED;
+                this.xLoc = this.xLoc + this.speed;
                 if (this.isWalking == true) {
                     return;
                 }
@@ -10644,7 +11007,7 @@ class Player extends GameCharacter_1.default {
                 this.isWalking = true;
             }
             else if (this.movement == Player.RIGHT) {
-                this.xLoc = this.xLoc - Constants_1.PLAYER_SPEED;
+                this.xLoc = this.xLoc - this.speed;
                 if (this.isWalking == true) {
                     return;
                 }
@@ -10674,11 +11037,77 @@ class Player extends GameCharacter_1.default {
     }
 }
 exports.default = Player;
-Player.UP = 1;
-Player.DOWN = 2;
-Player.LEFT = 3;
-Player.RIGHT = 4;
-Player.IDLE = 5;
+
+
+/***/ }),
+
+/***/ "./src/ToolBox.ts":
+/*!************************!*\
+  !*** ./src/ToolBox.ts ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.pointHit = exports.boxHit = exports.radiusHit = exports.randomNum = void 0;
+function randomNum(low, high) {
+    let randomNum = 0;
+    randomNum = Math.floor(Math.random() * (high - low + 1)) + low;
+    return randomNum;
+}
+exports.randomNum = randomNum;
+function radiusHit(sprite1, radius1, sprite2, radius2) {
+    let a = sprite1.x - sprite2.x;
+    let b = sprite1.y - sprite2.y;
+    let c = Math.sqrt((a * a) + (b * b));
+    if (c <= (radius1 + radius2)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+exports.radiusHit = radiusHit;
+function boxHit(sprite1, sprite2) {
+    let width1 = sprite1.getBounds().width;
+    let height1 = sprite1.getBounds().height;
+    let width2 = sprite2.getBounds().width;
+    let height2 = sprite2.getBounds().height;
+    if ((sprite1.x + width1 / 2 > sprite2.x - width2 / 2) &&
+        (sprite1.y + height2 / 2 > sprite2.y - height2 / 2) &&
+        (sprite1.x - width1 / 2 < sprite2.x + width2 / 2) &&
+        (sprite1.y - height1 / 2 < sprite2.y + height2 / 2)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+exports.boxHit = boxHit;
+function pointHit(sprite1, sprite2, sprite1HitX = 0, sprite1HitY = 0, stage = null) {
+    if (stage != null) {
+        let markerPoint = sprite1.localToGlobal(sprite1HitX, sprite1HitY);
+        let marker = new createjs.Shape();
+        marker.graphics.beginFill("#FF00EC");
+        marker.graphics.drawRect(0, 0, 4, 4);
+        marker.regX = 2;
+        marker.regY = 2;
+        marker.x = markerPoint.x;
+        marker.y = markerPoint.y;
+        marker.cache(0, 0, 4, 4);
+        stage.addChild(marker);
+    }
+    let point = sprite1.localToLocal(sprite1HitX, sprite1HitY, sprite2);
+    if (sprite2.hitTest(point.x, point.y)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+exports.pointHit = pointHit;
 
 
 /***/ }),
@@ -10693,14 +11122,75 @@ Player.IDLE = 5;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 class World {
-    constructor(stage, assetManager, player) {
+    constructor(stage, assetManager, player, maxArrowsOnScreen, enemies) {
+        this.maxArrowsOnScreen = [];
+        this.enemies = [];
         this.stage = stage;
         this.player = player;
+        this.maxArrowsOnScreen = maxArrowsOnScreen;
+        this.enemies = enemies;
     }
     Update() {
         this.offsetX = this.player.xLoc;
         this.offsetY = this.player.yLoc;
+        if (this.player.canWalk == false) {
+            if (this.player.direction == 1) {
+                this.player.yLoc = this.player.yLoc - 1;
+            }
+            else if (this.player.direction == 2) {
+                this.player.yLoc = this.player.yLoc + 1;
+            }
+            else if (this.player.direction == 3) {
+                this.player.xLoc = this.player.xLoc - 1;
+            }
+            else if (this.player.direction == 4) {
+                this.player.xLoc = this.player.xLoc + 1;
+            }
+        }
+    }
+    OffSetWorld() {
+        for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+            for (let e = 0; e <= Constants_1.MAX_ENEMIES; e++) {
+                if (this.player.direction == 3) {
+                    if (this.maxArrowsOnScreen[i].used == true) {
+                        this.maxArrowsOnScreen[i].sprite.x = this.maxArrowsOnScreen[i].sprite.x + Constants_1.PLAYER_SPEED / 90;
+                    }
+                    if (this.enemies[e] == null) { }
+                    else {
+                        this.enemies[e].sprite.x = this.enemies[e].sprite.x + Constants_1.PLAYER_SPEED / 9;
+                    }
+                }
+                if (this.player.direction == 4) {
+                    if (this.maxArrowsOnScreen[i].used == true) {
+                        this.maxArrowsOnScreen[i].sprite.x = this.maxArrowsOnScreen[i].sprite.x - Constants_1.PLAYER_SPEED / 90;
+                    }
+                    if (this.enemies[e] == null) { }
+                    else {
+                        this.enemies[e].sprite.x = this.enemies[e].sprite.x - Constants_1.PLAYER_SPEED / 9;
+                    }
+                }
+                if (this.player.direction == 1) {
+                    if (this.maxArrowsOnScreen[i].used == true) {
+                        this.maxArrowsOnScreen[i].sprite.y = this.maxArrowsOnScreen[i].sprite.y + Constants_1.PLAYER_SPEED / 90;
+                    }
+                    if (this.enemies[e] == null) { }
+                    else {
+                        this.enemies[e].sprite.y = this.enemies[e].sprite.y + Constants_1.PLAYER_SPEED / 9;
+                    }
+                }
+                if (this.player.direction == 2) {
+                    if (this.maxArrowsOnScreen[i].used == true) {
+                        this.maxArrowsOnScreen[i].sprite.y = this.maxArrowsOnScreen[i].sprite.y - Constants_1.PLAYER_SPEED / 90;
+                    }
+                    if (this.enemies[e] == null) { }
+                    else {
+                        this.enemies[e].sprite.y = this.enemies[e].sprite.y - Constants_1.PLAYER_SPEED / 9;
+                    }
+                }
+            }
+        }
     }
 }
 exports.default = World;

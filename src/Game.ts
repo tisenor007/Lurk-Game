@@ -4,20 +4,29 @@
 // importing createjs framework
 import "createjs";
 // importing game constants
-import { STAGE_WIDTH, STAGE_HEIGHT, FRAME_RATE, ASSET_MANIFEST, MAX_ARROWS_ON_SCREEN, PLAYER_SPEED, ARROW_RELOAD } from "./Constants";
+import { STAGE_WIDTH, STAGE_HEIGHT, FRAME_RATE, ASSET_MANIFEST, MAX_ARROWS_ON_SCREEN, PLAYER_SPEED, ARROW_RELOAD, MAX_ENEMIES} from "./Constants";
 import AssetManager from "./AssetManager";
 import Player from "./Player";
 import Map from "./Map";
 import World from "./World";
 import Arrow from "./Arrow";
 import HUD from "./HUD";
-import { radiusHit } from "./ToolBox";
+import { radiusHit, boxHit } from "./ToolBox";
+import GameCharacter from "./GameCharacter";
+import Enemy from "./Enemy";
+import Heavy from "./Heavy";
+import Default from "./Default";
+import Light from "./Light";
+import Boss from "./Boss";
+import EnemyManager from "./EnemyManager";
 
 // game variables
 let stage:createjs.StageGL;
 let canvas:HTMLCanvasElement;
 
 let player:Player;
+
+//let testEnemy:Enemy;
 
 let arrowCoolDown:number = 0;
 let maxArrowsOnScreen:Arrow[] = [];
@@ -28,6 +37,8 @@ let world:World;
 let hud:HUD;
 // assetmanager object
 let assetManager:AssetManager;
+
+let enemyManager:EnemyManager;
 
 let left:boolean = false;
 let right:boolean = false;
@@ -41,17 +52,20 @@ function onReady(e:createjs.Event):void {
     // construct game objects/sprites
     // ...
     
-    player = new Player(stage, assetManager);
-    world = new World(stage, assetManager, player);
-
+    player = new Player(stage, assetManager,600, 600);
+    enemyManager = new EnemyManager(stage, assetManager, player);
+    enemyManager.InitEnemies();
     for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
         maxArrowsOnScreen[i] = new Arrow(stage, assetManager, world, player);
     }
+    world = new World(stage, assetManager, player, maxArrowsOnScreen, enemyManager.enemies);
+
     map = new Map(stage, assetManager, world);
     hud = new HUD(stage, assetManager, player);
     
-    map.LoadMap();
-    player.SpawnPlayer(200, 200);
+    map.LoadMain();
+    enemyManager.SpawmEnemies();
+    player.SpawnPlayer();
     hud.ShowHUD();
     
     document.onkeydown = OnKeyDown;
@@ -70,32 +84,46 @@ function onTick(e:createjs.Event):void {
     if (arrowCoolDown <=0){arrowCoolDown = 0;}
     // This is your game loop :)
     // ...
-    MonitorCollisions();
-    MonitorKeys();
+    enemyManager.UpdateEnemies();
+    
     player.Update();
-    world.Update();
     map.Update();
+    world.Update();
     for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
         maxArrowsOnScreen[i].Update();
     }
     hud.Update();
+    MonitorKeys();
+    MonitorCollisions();
     // update the stage!
     stage.update();
 }
 function MonitorCollisions():void{
-    // if (radiusHit(player.sprite, 1, map.map, 500)){
-    //     player.canWalk = true;
-    // }
-    // else{
-    //     player.canWalk = false;
-    // }
-
+    
+    if (boxHit(player.sprite, map.northWall) == true){
+        player.canWalk = false;
+    }
+    else if (boxHit(player.sprite, map.eastWall) == true){
+        player.canWalk = false;
+    }
+    else if (boxHit(player.sprite, map.southWall) == true){
+        player.canWalk = false;
+    }
+    else if (boxHit(player.sprite, map.westWall) == true){
+        player.canWalk = false;
+    }
+    else{
+        player.canWalk = true;
+    }
+    
+    enemyManager.MonitorCollisions();
+  
 }
 function OnKeyDown(e:KeyboardEvent):void{
-    if (e.key == "a"){if (player.movement == Player.IDLE){left = true;} else{return;}}
-    else if (e.key == "w"){if (player.movement == Player.IDLE){up = true} else{return;}}
-    else if (e.key == "d"){if (player.movement == Player.IDLE){right = true;} else{return;}}
-    else if (e.key == "s"){if (player.movement == Player.IDLE){down = true;} else{return;}}
+    if (e.key == "a"){if (player.movement == GameCharacter.IDLE){left = true;} else{return;}}
+    else if (e.key == "w"){if (player.movement == GameCharacter.IDLE){up = true} else{return;}}
+    else if (e.key == "d"){if (player.movement == GameCharacter.IDLE){right = true;} else{return;}}
+    else if (e.key == "s"){if (player.movement == GameCharacter.IDLE){down = true;} else{return;}}
     else if (e.key == " "){shoot = true;}
 }
 function OnKeyUp(e:KeyboardEvent):void{
@@ -106,29 +134,31 @@ function OnKeyUp(e:KeyboardEvent):void{
     else if (e.key == " "){shoot = false}
 }
 function MonitorKeys():void{
-    for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
-        if (left)
-        { 
-            player.movement = Player.LEFT; 
-            if (maxArrowsOnScreen[i].used == true){maxArrowsOnScreen[i].sprite.x = maxArrowsOnScreen[i].sprite.x + PLAYER_SPEED;}
-        }
-        else if (right)
-        {
-            player.movement = Player.RIGHT;
-            if (maxArrowsOnScreen[i].used == true){maxArrowsOnScreen[i].sprite.x = maxArrowsOnScreen[i].sprite.x - PLAYER_SPEED;}
-        }
-        else if (up)
-        {
-            player.movement = Player.UP;
-            if (maxArrowsOnScreen[i].used == true){maxArrowsOnScreen[i].sprite.y = maxArrowsOnScreen[i].sprite.y + PLAYER_SPEED;}
-        }
-        else if (down)
-        {
-            player.movement = Player.DOWN;
-            if (maxArrowsOnScreen[i].used == true){maxArrowsOnScreen[i].sprite.y = maxArrowsOnScreen[i].sprite.y - PLAYER_SPEED;}
-        }
-        else{player.movement = Player.IDLE;}
+    
+    if (left && player.canWalk == true)
+    { 
+        player.movement = GameCharacter.IDLE;
+    
+        player.movement = GameCharacter.LEFT;
+        world.OffSetWorld();   
     }
+    else if (right && player.canWalk == true)
+    {
+        player.movement = GameCharacter.RIGHT;
+        world.OffSetWorld();
+    }
+    else if (up && player.canWalk == true)
+    {
+        player.movement = GameCharacter.UP;
+        world.OffSetWorld();
+    }
+    else if (down && player.canWalk == true)
+    {
+        player.movement = GameCharacter.DOWN;
+        world.OffSetWorld();
+    }
+    else{player.movement = GameCharacter.IDLE;}
+    
     if (shoot){for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
         if (maxArrowsOnScreen[i].used == false){
             if (arrowCoolDown == 0){
