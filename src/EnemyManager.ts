@@ -5,6 +5,7 @@ import Default from "./Default";
 import Enemy from "./Enemy";
 import Heavy from "./Heavy";
 import Light from "./Light";
+import Map from "./Map";
 import Player from "./Player";
 import { boxHit, radiusHit } from "./ToolBox";
 
@@ -13,20 +14,22 @@ export default class EnemyManager{
     private assetManager:AssetManager;
     private stage:createjs.StageGL;
     private player:Player;
+    private map:Map;
 
     public enemies:Enemy[] = [];
 
-    constructor(stage:createjs.StageGL, assetManager:AssetManager, player:Player){
+    constructor(stage:createjs.StageGL, assetManager:AssetManager, player:Player, map:Map){
         this.stage = stage;
         this.player = player;
+        this.map = map;
         this.assetManager = assetManager;
     }   
 
     public InitEnemies():void{
         this.enemies[0] = new Default(this.stage, this.assetManager,400, 600, this.player);
-        this.enemies[1] = new Light(this.stage, this.assetManager, 200, 200, this.player);
+        this.enemies[1] = new Light(this.stage, this.assetManager, 600, 200, this.player);
         this.enemies[2] = new Heavy(this.stage, this.assetManager, 400, 400, this.player);
-        this.enemies[3] = new Light(this.stage, this.assetManager, 600, 800, this.player);
+        this.enemies[3] = new Default(this.stage, this.assetManager, 600, 800, this.player);
     }
 
     public SpawmEnemies():void{
@@ -36,7 +39,6 @@ export default class EnemyManager{
                 this.enemies[i].Spawn();
             }
         }
-
     }
 
     public UpdateEnemies():void{
@@ -71,6 +73,13 @@ export default class EnemyManager{
                     if (this.enemies[i].isIdle == false){
                         this.enemies[i].state = Enemy.CHASING;
                     }
+                }
+                if(this.enemies[i].canWalk == true){
+                    if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.eastWall) == true){this.enemies[i].TurnAround();}
+                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.northWall) == true){this.enemies[i].TurnAround();}
+                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.westWall) == true){this.enemies[i].TurnAround();}
+                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.southWall) == true){this.enemies[i].TurnAround();}
+                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallOne) == true){this.enemies[i].TurnAround();}
                 }
             }
         }

@@ -10242,6 +10242,31 @@ exports.default = AssetManager;
 
 /***/ }),
 
+/***/ "./src/Camera.ts":
+/*!***********************!*\
+  !*** ./src/Camera.ts ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Camera {
+    constructor(stage, assetManager, player) {
+        this.stage = stage;
+        this.player = player;
+    }
+    Update() {
+        this.offsetX = this.player.xLoc;
+        this.offsetY = this.player.yLoc;
+    }
+}
+exports.default = Camera;
+
+
+/***/ }),
+
 /***/ "./src/Constants.ts":
 /*!**************************!*\
   !*** ./src/Constants.ts ***!
@@ -10348,7 +10373,7 @@ class Enemy extends GameCharacter_1.default {
         super(stage, assetManager, "Enemy/Default");
         this.isIdle = true;
         this.player = player;
-        this.vitalStatus = GameCharacter_1.default.IDLE;
+        this.vitalStatus = GameCharacter_1.default.ALIVE;
         this.sprite.x = +(player.xLoc - 600) + xLoc;
         this.sprite.y = +(player.yLoc - 600) + yLoc;
         this.attackCoolDown = 0;
@@ -10358,14 +10383,28 @@ class Enemy extends GameCharacter_1.default {
     Spawn() {
         this.sprite.gotoAndStop(this.form);
         this.stage.addChild(this.sprite);
-        this.state = GameCharacter_1.default.IDLE;
+        this.state = Enemy.ROAMING;
+    }
+    TurnAround() {
+        this.canWalk = false;
+        if (this.direction == 1) {
+            this.state = GameCharacter_1.default.DOWN;
+        }
+        if (this.direction == 2) {
+            this.state = GameCharacter_1.default.UP;
+        }
+        if (this.direction == 3) {
+            this.state = GameCharacter_1.default.RIGHT;
+        }
+        if (this.direction == 4) {
+            this.state = GameCharacter_1.default.LEFT;
+        }
     }
     Update() {
         super.Update();
-        if (this.canWalk == false) {
-            this.state == GameCharacter_1.default.IDLE;
-        }
-        if (this.state == GameCharacter_1.default.IDLE) {
+        this.stateDuration--;
+        if (this.state == Enemy.ROAMING) {
+            this.canWalk = true;
             if (this.isIdle == true) {
                 let movementToBeDetermined = ToolBox_1.randomNum(1, 4);
                 if (movementToBeDetermined <= 1) {
@@ -10401,20 +10440,24 @@ class Enemy extends GameCharacter_1.default {
         }
         else if (this.state == Enemy.RETREATING) {
             this.isIdle = true;
-            this.state = GameCharacter_1.default.IDLE;
+            this.state = Enemy.ROAMING;
         }
         else if (this.state == Enemy.CHASING) {
             if (this.sprite.y > this.player.sprite.y) {
                 this.sprite.y = this.sprite.y - this.speed;
+                this.direction = 1;
             }
             if (this.sprite.y < this.player.sprite.y) {
                 this.sprite.y = this.sprite.y + this.speed;
+                this.direction = 2;
             }
             if (this.sprite.x < this.player.sprite.x) {
                 this.sprite.x = this.sprite.x + this.speed;
+                this.direction = 4;
             }
             if (this.sprite.x > this.player.sprite.x) {
                 this.sprite.x = this.sprite.x - this.speed;
+                this.direction = 3;
             }
         }
         else if (this.state == Enemy.ATTACKING) {
@@ -10427,7 +10470,7 @@ class Enemy extends GameCharacter_1.default {
             }
         }
         if (this.stateDuration <= 0) {
-            this.state = GameCharacter_1.default.IDLE;
+            this.state = Enemy.ROAMING;
         }
         this.stateDuration--;
     }
@@ -10458,17 +10501,18 @@ const Heavy_1 = __webpack_require__(/*! ./Heavy */ "./src/Heavy.ts");
 const Light_1 = __webpack_require__(/*! ./Light */ "./src/Light.ts");
 const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
 class EnemyManager {
-    constructor(stage, assetManager, player) {
+    constructor(stage, assetManager, player, map) {
         this.enemies = [];
         this.stage = stage;
         this.player = player;
+        this.map = map;
         this.assetManager = assetManager;
     }
     InitEnemies() {
         this.enemies[0] = new Default_1.default(this.stage, this.assetManager, 400, 600, this.player);
-        this.enemies[1] = new Light_1.default(this.stage, this.assetManager, 200, 200, this.player);
+        this.enemies[1] = new Light_1.default(this.stage, this.assetManager, 600, 200, this.player);
         this.enemies[2] = new Heavy_1.default(this.stage, this.assetManager, 400, 400, this.player);
-        this.enemies[3] = new Light_1.default(this.stage, this.assetManager, 600, 800, this.player);
+        this.enemies[3] = new Default_1.default(this.stage, this.assetManager, 600, 800, this.player);
     }
     SpawmEnemies() {
         for (let i = 0; i <= Constants_1.MAX_ENEMIES; i++) {
@@ -10510,6 +10554,23 @@ class EnemyManager {
                         this.enemies[i].state = Enemy_1.default.CHASING;
                     }
                 }
+                if (this.enemies[i].canWalk == true) {
+                    if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.eastWall) == true) {
+                        this.enemies[i].TurnAround();
+                    }
+                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.northWall) == true) {
+                        this.enemies[i].TurnAround();
+                    }
+                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.westWall) == true) {
+                        this.enemies[i].TurnAround();
+                    }
+                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.southWall) == true) {
+                        this.enemies[i].TurnAround();
+                    }
+                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallOne) == true) {
+                        this.enemies[i].TurnAround();
+                    }
+                }
             }
         }
     }
@@ -10537,9 +10598,9 @@ const Map_1 = __webpack_require__(/*! ./Map */ "./src/Map.ts");
 const World_1 = __webpack_require__(/*! ./World */ "./src/World.ts");
 const Arrow_1 = __webpack_require__(/*! ./Arrow */ "./src/Arrow.ts");
 const HUD_1 = __webpack_require__(/*! ./HUD */ "./src/HUD.ts");
-const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
 const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
 const EnemyManager_1 = __webpack_require__(/*! ./EnemyManager */ "./src/EnemyManager.ts");
+const Camera_1 = __webpack_require__(/*! ./Camera */ "./src/Camera.ts");
 let stage;
 let canvas;
 let player;
@@ -10547,6 +10608,7 @@ let arrowCoolDown = 0;
 let maxArrowsOnScreen = [];
 let map;
 let world;
+let camera;
 let hud;
 let assetManager;
 let enemyManager;
@@ -10558,13 +10620,14 @@ let shoot = false;
 function onReady(e) {
     console.log(">> adding sprites to game");
     player = new Player_1.default(stage, assetManager, 600, 600);
-    enemyManager = new EnemyManager_1.default(stage, assetManager, player);
+    camera = new Camera_1.default(stage, assetManager, player);
+    map = new Map_1.default(stage, assetManager, camera);
+    enemyManager = new EnemyManager_1.default(stage, assetManager, player, map);
     enemyManager.InitEnemies();
     for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
         maxArrowsOnScreen[i] = new Arrow_1.default(stage, assetManager, world, player);
     }
     world = new World_1.default(stage, assetManager, player, maxArrowsOnScreen, enemyManager.enemies);
-    map = new Map_1.default(stage, assetManager, world);
     hud = new HUD_1.default(stage, assetManager, player);
     map.LoadMain();
     enemyManager.SpawmEnemies();
@@ -10585,26 +10648,29 @@ function onTick(e) {
     enemyManager.UpdateEnemies();
     player.Update();
     map.Update();
-    world.Update();
     for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
         maxArrowsOnScreen[i].Update();
     }
     hud.Update();
+    camera.Update();
     MonitorKeys();
     MonitorCollisions();
     stage.update();
 }
 function MonitorCollisions() {
-    if (ToolBox_1.boxHit(player.sprite, map.northWall) == true) {
+    if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall) == true) {
         player.canWalk = false;
     }
-    else if (ToolBox_1.boxHit(player.sprite, map.eastWall) == true) {
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.northWall) == true) {
         player.canWalk = false;
     }
-    else if (ToolBox_1.boxHit(player.sprite, map.southWall) == true) {
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.westWall) == true) {
         player.canWalk = false;
     }
-    else if (ToolBox_1.boxHit(player.sprite, map.westWall) == true) {
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall) == true) {
+        player.canWalk = false;
+    }
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallOne) == true) {
         player.canWalk = false;
     }
     else {
@@ -10667,22 +10733,33 @@ function OnKeyUp(e) {
     }
 }
 function MonitorKeys() {
-    if (left && player.canWalk == true) {
-        player.movement = GameCharacter_1.default.IDLE;
-        player.movement = GameCharacter_1.default.LEFT;
-        world.OffSetWorld();
+    if (left) {
+        player.direction = 3;
+        if (player.canWalk == true) {
+            player.movement = GameCharacter_1.default.LEFT;
+            world.OffSetWorld();
+        }
     }
-    else if (right && player.canWalk == true) {
-        player.movement = GameCharacter_1.default.RIGHT;
-        world.OffSetWorld();
+    else if (right) {
+        player.direction = 4;
+        if (player.canWalk == true) {
+            player.movement = GameCharacter_1.default.RIGHT;
+            world.OffSetWorld();
+        }
     }
-    else if (up && player.canWalk == true) {
-        player.movement = GameCharacter_1.default.UP;
-        world.OffSetWorld();
+    else if (up) {
+        player.direction = 1;
+        if (player.canWalk == true) {
+            player.movement = GameCharacter_1.default.UP;
+            world.OffSetWorld();
+        }
     }
-    else if (down && player.canWalk == true) {
-        player.movement = GameCharacter_1.default.DOWN;
-        world.OffSetWorld();
+    else if (down) {
+        player.direction = 2;
+        if (player.canWalk == true) {
+            player.movement = GameCharacter_1.default.DOWN;
+            world.OffSetWorld();
+        }
     }
     else {
         player.movement = GameCharacter_1.default.IDLE;
@@ -10905,12 +10982,14 @@ exports.default = Light;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class Map {
-    constructor(stage, assetManager, world) {
+    constructor(stage, assetManager, camera) {
         this.stage = stage;
-        this.world = world;
+        this.camera = camera;
         this.assetManager = assetManager;
     }
     LoadMain() {
+        this.mainLoaded = true;
+        this.bossLoaded = false;
         this.stage.removeAllChildren();
         this.map = this.assetManager.getSprite("assets", "other/tempMap");
         this.northWall = this.assetManager.getSprite("assets", "other/NorthWall");
@@ -10926,18 +11005,69 @@ class Map {
         this.stage.addChild(this.centerWallOne);
     }
     Update() {
-        this.map.x = this.world.offsetX;
-        this.map.y = this.world.offsetY;
-        this.northWall.x = this.world.offsetX;
-        this.northWall.y = this.world.offsetY - 600;
-        this.southWall.x = this.world.offsetX;
-        this.southWall.y = this.world.offsetY + 600;
-        this.eastWall.x = this.world.offsetX + 600;
-        this.eastWall.y = this.world.offsetY;
-        this.westWall.x = this.world.offsetX - 600;
-        this.westWall.y = this.world.offsetY;
-        this.centerWallOne.x = this.world.offsetX - 400;
-        this.centerWallOne.y = this.world.offsetY - 400;
+        this.map.x = this.camera.offsetX;
+        this.map.y = this.camera.offsetY;
+        this.northWall.x = this.camera.offsetX;
+        this.northWall.y = this.camera.offsetY - 600;
+        this.southWall.x = this.camera.offsetX;
+        this.southWall.y = this.camera.offsetY + 600;
+        this.eastWall.x = this.camera.offsetX + 600;
+        this.eastWall.y = this.camera.offsetY;
+        this.westWall.x = this.camera.offsetX - 600;
+        this.westWall.y = this.camera.offsetY;
+        this.centerWallOne.x = this.camera.offsetX - 400;
+        this.centerWallOne.y = this.camera.offsetY - 400;
+    }
+    IsCollidingWithWall(character, direction, wall) {
+        let width1 = character.getBounds().width;
+        let height1 = character.getBounds().height;
+        let width2 = wall.getBounds().width;
+        let height2 = wall.getBounds().height;
+        if (direction == 4) {
+            if ((character.x + width1 / 2 + 3 > wall.x - width2 / 2) &&
+                (character.y + height2 / 2 > wall.y - height2 / 2) &&
+                (character.x - width1 / 2 + 3 < wall.x + width2 / 2) &&
+                (character.y - height1 / 2 < wall.y + height2 / 2)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        if (direction == 3) {
+            if ((character.x + width1 / 2 - 3 > wall.x - width2 / 2) &&
+                (character.y + height2 / 2 > wall.y - height2 / 2) &&
+                (character.x - width1 / 2 - 3 < wall.x + width2 / 2) &&
+                (character.y - height1 / 2 < wall.y + height2 / 2)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        if (direction == 2) {
+            if ((character.x + width1 / 2 > wall.x - width2 / 2) &&
+                (character.y + height2 / 2 + 3 > wall.y - height2 / 2) &&
+                (character.x - width1 / 2 < wall.x + width2 / 2) &&
+                (character.y - height1 / 2 + 3 < wall.y + height2 / 2)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        if (direction == 1) {
+            if ((character.x + width1 / 2 > wall.x - width2 / 2) &&
+                (character.y + height2 / 2 - 3 > wall.y - height2 / 2) &&
+                (character.x - width1 / 2 < wall.x + width2 / 2) &&
+                (character.y - height1 / 2 - 3 < wall.y + height2 / 2)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        return false;
     }
 }
 exports.default = Map;
@@ -10978,6 +11108,9 @@ class Player extends GameCharacter_1.default {
     }
     Update() {
         super.Update();
+        if (this.canWalk == false) {
+            this.movement = GameCharacter_1.default.IDLE;
+        }
         if (this.canWalk == true) {
             if (this.movement == Player.UP) {
                 this.yLoc = this.yLoc + this.speed;
@@ -11123,6 +11256,7 @@ exports.pointHit = pointHit;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
+const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
 class World {
     constructor(stage, assetManager, player, maxArrowsOnScreen, enemies) {
         this.maxArrowsOnScreen = [];
@@ -11132,28 +11266,10 @@ class World {
         this.maxArrowsOnScreen = maxArrowsOnScreen;
         this.enemies = enemies;
     }
-    Update() {
-        this.offsetX = this.player.xLoc;
-        this.offsetY = this.player.yLoc;
-        if (this.player.canWalk == false) {
-            if (this.player.direction == 1) {
-                this.player.yLoc = this.player.yLoc - 1;
-            }
-            else if (this.player.direction == 2) {
-                this.player.yLoc = this.player.yLoc + 1;
-            }
-            else if (this.player.direction == 3) {
-                this.player.xLoc = this.player.xLoc - 1;
-            }
-            else if (this.player.direction == 4) {
-                this.player.xLoc = this.player.xLoc + 1;
-            }
-        }
-    }
     OffSetWorld() {
         for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
             for (let e = 0; e <= Constants_1.MAX_ENEMIES; e++) {
-                if (this.player.direction == 3) {
+                if (this.player.movement == GameCharacter_1.default.LEFT) {
                     if (this.maxArrowsOnScreen[i].used == true) {
                         this.maxArrowsOnScreen[i].sprite.x = this.maxArrowsOnScreen[i].sprite.x + Constants_1.PLAYER_SPEED / 90;
                     }
@@ -11162,7 +11278,7 @@ class World {
                         this.enemies[e].sprite.x = this.enemies[e].sprite.x + Constants_1.PLAYER_SPEED / 9;
                     }
                 }
-                if (this.player.direction == 4) {
+                if (this.player.movement == GameCharacter_1.default.RIGHT) {
                     if (this.maxArrowsOnScreen[i].used == true) {
                         this.maxArrowsOnScreen[i].sprite.x = this.maxArrowsOnScreen[i].sprite.x - Constants_1.PLAYER_SPEED / 90;
                     }
@@ -11171,7 +11287,7 @@ class World {
                         this.enemies[e].sprite.x = this.enemies[e].sprite.x - Constants_1.PLAYER_SPEED / 9;
                     }
                 }
-                if (this.player.direction == 1) {
+                if (this.player.movement == GameCharacter_1.default.UP) {
                     if (this.maxArrowsOnScreen[i].used == true) {
                         this.maxArrowsOnScreen[i].sprite.y = this.maxArrowsOnScreen[i].sprite.y + Constants_1.PLAYER_SPEED / 90;
                     }
@@ -11180,7 +11296,7 @@ class World {
                         this.enemies[e].sprite.y = this.enemies[e].sprite.y + Constants_1.PLAYER_SPEED / 9;
                     }
                 }
-                if (this.player.direction == 2) {
+                if (this.player.movement == GameCharacter_1.default.DOWN) {
                     if (this.maxArrowsOnScreen[i].used == true) {
                         this.maxArrowsOnScreen[i].sprite.y = this.maxArrowsOnScreen[i].sprite.y - Constants_1.PLAYER_SPEED / 90;
                     }

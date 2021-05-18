@@ -23,9 +23,7 @@ export default class Enemy extends GameCharacter{
     constructor(stage:createjs.StageGL, assetManager:AssetManager, xLoc:number, yLoc:number, player:Player){
         super(stage, assetManager, "Enemy/Default")
         this.player = player;
-        this.vitalStatus = GameCharacter.IDLE;
-    //   this.sprite.x = xLoc - player.xLoc * 2;
-    //   this.sprite.y = yLoc - player.yLoc * 2;
+        this.vitalStatus = GameCharacter.ALIVE;
         this.sprite.x = +(player.xLoc - 600) + xLoc;
         this.sprite.y = +(player.yLoc - 600) + yLoc;
         this.attackCoolDown = 0;
@@ -36,16 +34,30 @@ export default class Enemy extends GameCharacter{
     public Spawn():void{
         this.sprite.gotoAndStop(this.form);
         this.stage.addChild(this.sprite);
-        this.state = GameCharacter.IDLE;
+        this.state = Enemy.ROAMING;
+    }
+    public TurnAround():void{
+        this.canWalk = false;
+        if (this.direction == 1){
+            this.state = GameCharacter.DOWN;
+        }
+        if (this.direction == 2){
+            this.state = GameCharacter.UP;
+        }
+        if (this.direction == 3){
+            this.state = GameCharacter.RIGHT;
+        }
+        if (this.direction == 4){
+            this.state = GameCharacter.LEFT;
+        }
     }
 
     Update():void{
         super.Update();
         //console.log("🚀 ~ Enemy ~ Update ~ this.isIdle", this.isIdle);
-        if (this.canWalk == false){
-            this.state == GameCharacter.IDLE
-        }
-        if (this.state == GameCharacter.IDLE){
+        this.stateDuration--;
+        if (this.state == Enemy.ROAMING){
+            this.canWalk = true;
             if (this.isIdle == true){
                 let movementToBeDetermined:number = randomNum(1, 4);
                 if (movementToBeDetermined <= 1){
@@ -81,20 +93,24 @@ export default class Enemy extends GameCharacter{
         }
         else if (this.state == Enemy.RETREATING){
             this.isIdle = true;
-            this.state = GameCharacter.IDLE;
+            this.state = Enemy.ROAMING;
         }
         else if (this.state == Enemy.CHASING){
             if (this.sprite.y > this.player.sprite.y){
                 this.sprite.y = this.sprite.y - this.speed;
+                this.direction = 1;
             }
             if (this.sprite.y < this.player.sprite.y){
                 this.sprite.y = this.sprite.y + this.speed;
+                this.direction = 2;
             }
             if (this.sprite.x < this.player.sprite.x){
                 this.sprite.x = this.sprite.x + this.speed;
+                this.direction = 4;
             }
             if (this.sprite.x > this.player.sprite.x){
                 this.sprite.x = this.sprite.x - this.speed;
+                this.direction = 3;
             }
         }
         else if (this.state == Enemy.ATTACKING){
@@ -108,8 +124,9 @@ export default class Enemy extends GameCharacter{
             
         }
         if (this.stateDuration <= 0){
-            this.state = GameCharacter.IDLE;
+            this.state = Enemy.ROAMING;
         }
         this.stateDuration--;
     }
+    
 }

@@ -36,6 +36,9 @@ export default class Player extends GameCharacter{
 
     public Update():void{
         super.Update();
+        if (this.canWalk == false){
+            this.movement = GameCharacter.IDLE
+        }
         if (this.canWalk == true)
         {   
             if (this.movement == Player.UP){

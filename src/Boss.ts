@@ -16,6 +16,7 @@ export default class Boss extends Enemy{
 
     public Spawn():void{
         super.Spawn();
+        this.health = 300;
     }
 
     public Update():void{

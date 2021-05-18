@@ -19,6 +19,7 @@ import Default from "./Default";
 import Light from "./Light";
 import Boss from "./Boss";
 import EnemyManager from "./EnemyManager";
+import Camera from "./Camera";
 
 // game variables
 let stage:createjs.StageGL;
@@ -33,6 +34,7 @@ let maxArrowsOnScreen:Arrow[] = [];
 
 let map:Map;
 let world:World;
+let camera:Camera;
 
 let hud:HUD;
 // assetmanager object
@@ -53,14 +55,14 @@ function onReady(e:createjs.Event):void {
     // ...
     
     player = new Player(stage, assetManager,600, 600);
-    enemyManager = new EnemyManager(stage, assetManager, player);
+    camera = new Camera(stage, assetManager, player);
+    map = new Map(stage, assetManager, camera);
+    enemyManager = new EnemyManager(stage, assetManager, player, map);
     enemyManager.InitEnemies();
     for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
         maxArrowsOnScreen[i] = new Arrow(stage, assetManager, world, player);
     }
     world = new World(stage, assetManager, player, maxArrowsOnScreen, enemyManager.enemies);
-
-    map = new Map(stage, assetManager, world);
     hud = new HUD(stage, assetManager, player);
     
     map.LoadMain();
@@ -88,36 +90,27 @@ function onTick(e:createjs.Event):void {
     
     player.Update();
     map.Update();
-    world.Update();
     for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
         maxArrowsOnScreen[i].Update();
     }
     hud.Update();
+    camera.Update();
     MonitorKeys();
     MonitorCollisions();
     // update the stage!
     stage.update();
 }
 function MonitorCollisions():void{
-    
-    if (boxHit(player.sprite, map.northWall) == true){
-        player.canWalk = false;
-    }
-    else if (boxHit(player.sprite, map.eastWall) == true){
-        player.canWalk = false;
-    }
-    else if (boxHit(player.sprite, map.southWall) == true){
-        player.canWalk = false;
-    }
-    else if (boxHit(player.sprite, map.westWall) == true){
-        player.canWalk = false;
-    }
-    else{
-        player.canWalk = true;
-    }
-    
+   
+    if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall) == true){player.canWalk = false;}
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.northWall) == true){player.canWalk = false;}
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.westWall) == true){player.canWalk = false;}
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall) == true){player.canWalk = false;}
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallOne) == true){player.canWalk = false;}
+    else{ player.canWalk = true;}
+
     enemyManager.MonitorCollisions();
-  
+    
 }
 function OnKeyDown(e:KeyboardEvent):void{
     if (e.key == "a"){if (player.movement == GameCharacter.IDLE){left = true;} else{return;}}
@@ -134,28 +127,38 @@ function OnKeyUp(e:KeyboardEvent):void{
     else if (e.key == " "){shoot = false}
 }
 function MonitorKeys():void{
-    
-    if (left && player.canWalk == true)
+
+    if (left)
     { 
-        player.movement = GameCharacter.IDLE;
-    
+        player.direction = 3;
+        if (player.canWalk == true){
         player.movement = GameCharacter.LEFT;
-        world.OffSetWorld();   
+        world.OffSetWorld();
+        }   
     }
-    else if (right && player.canWalk == true)
+    else if (right)
     {
+        player.direction = 4;
+        if (player.canWalk == true){
         player.movement = GameCharacter.RIGHT;
         world.OffSetWorld();
+        }
     }
-    else if (up && player.canWalk == true)
+    else if (up)
     {
+        player.direction = 1;
+        if (player.canWalk == true){
         player.movement = GameCharacter.UP;
         world.OffSetWorld();
+        }
     }
-    else if (down && player.canWalk == true)
+    else if (down)
     {
+        player.direction = 2;
+        if (player.canWalk == true){
         player.movement = GameCharacter.DOWN;
         world.OffSetWorld();
+        }
     }
     else{player.movement = GameCharacter.IDLE;}
     
