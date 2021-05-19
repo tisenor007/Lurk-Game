@@ -1,5 +1,6 @@
 import AssetManager from "./AssetManager";
 import Enemy from "./Enemy";
+import Map from "./Map";
 import Player from "./Player";
 
 export default class Boss extends Enemy{

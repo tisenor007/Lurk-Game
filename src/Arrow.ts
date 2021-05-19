@@ -50,7 +50,6 @@ export default class Arrow{
             this.player.availableArrows = this.player.availableArrows - 1;
             this.used = true;
         }
-        console.log(this.player.availableArrows);
     }
 
     public remove():void{

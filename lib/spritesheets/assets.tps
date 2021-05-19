@@ -200,6 +200,8 @@
                 <false/>
             </struct>
             <key type="filename">Enemy/Boss.png</key>
+            <key type="filename">Mainlevel/wallEight.png</key>
+            <key type="filename">Mainlevel/wallSix.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -219,6 +221,15 @@
             <key type="filename">Player/Idle_left.png</key>
             <key type="filename">Player/Idle_right.png</key>
             <key type="filename">Player/Idle_up.png</key>
+            <key type="filename">Player/death_1.png</key>
+            <key type="filename">Player/death_2.png</key>
+            <key type="filename">Player/death_3.png</key>
+            <key type="filename">Player/death_4.png</key>
+            <key type="filename">Player/death_5.png</key>
+            <key type="filename">Player/death_6.png</key>
+            <key type="filename">Player/death_7.png</key>
+            <key type="filename">Player/death_8.png</key>
+            <key type="filename">Player/death_9.png</key>
             <key type="filename">Player/walk_down_1.png</key>
             <key type="filename">Player/walk_down_2.png</key>
             <key type="filename">Player/walk_down_3.png</key>
@@ -295,8 +306,8 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">other/EastWall.png</key>
-            <key type="filename">other/WestWall.png</key>
+            <key type="filename">Enemy/health_green.png</key>
+            <key type="filename">Enemy/health_red.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -305,14 +316,14 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>5,300,10,600</rect>
+                <rect>16,3,32,5</rect>
                 <key>scale9Paddings</key>
-                <rect>5,300,10,600</rect>
+                <rect>16,3,32,5</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">other/NorthWall.png</key>
-            <key type="filename">other/SouthWall.png</key>
+            <key type="filename">Mainlevel/EastWall.png</key>
+            <key type="filename">Mainlevel/WestWall.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -321,13 +332,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>300,5,600,10</rect>
+                <rect>10,202,19,403</rect>
                 <key>scale9Paddings</key>
-                <rect>300,5,600,10</rect>
+                <rect>10,202,19,403</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">other/WallOne.png</key>
+            <key type="filename">Mainlevel/NorthWall.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -336,13 +347,13 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>100,5,200,10</rect>
+                <rect>212,10,423,19</rect>
                 <key>scale9Paddings</key>
-                <rect>100,5,200,10</rect>
+                <rect>212,10,423,19</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">other/tempMap.png</key>
+            <key type="filename">Mainlevel/SouthWall.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -351,9 +362,129 @@
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>300,300,600,600</rect>
+                <rect>192,10,384,19</rect>
                 <key>scale9Paddings</key>
-                <rect>300,300,600,600</rect>
+                <rect>192,10,384,19</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Mainlevel/floor.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>192,192,384,384</rect>
+                <key>scale9Paddings</key>
+                <rect>192,192,384,384</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Mainlevel/wallEleven.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>16,32,32,64</rect>
+                <key>scale9Paddings</key>
+                <rect>16,32,32,64</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Mainlevel/wallFive.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>128,32,256,64</rect>
+                <key>scale9Paddings</key>
+                <rect>128,32,256,64</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Mainlevel/wallNine.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>48,32,96,64</rect>
+                <key>scale9Paddings</key>
+                <rect>48,32,96,64</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Mainlevel/wallSeven.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>32,72,64,144</rect>
+                <key>scale9Paddings</key>
+                <rect>32,72,64,144</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Mainlevel/wallTen.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>32,48,64,96</rect>
+                <key>scale9Paddings</key>
+                <rect>32,48,64,96</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">other/GameOverScreen.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>75,75,150,150</rect>
+                <key>scale9Paddings</key>
+                <rect>75,75,150,150</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">other/door.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>12,8,23,16</rect>
+                <key>scale9Paddings</key>
+                <rect>12,8,23,16</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

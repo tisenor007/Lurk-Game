@@ -12,6 +12,8 @@ export const ARROW_RELOAD:number = 10;
 
 export const MAX_ENEMIES:number = 100;
 
+export const GENERAL_MAP_SIZE:number = 768;
+
 export const ASSET_MANIFEST:Object[] = [
     {
         type:"json",

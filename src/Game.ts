@@ -54,7 +54,7 @@ function onReady(e:createjs.Event):void {
     // construct game objects/sprites
     // ...
     
-    player = new Player(stage, assetManager,600, 600);
+    player = new Player(stage, assetManager,20, 30);
     camera = new Camera(stage, assetManager, player);
     map = new Map(stage, assetManager, camera);
     enemyManager = new EnemyManager(stage, assetManager, player, map);
@@ -64,7 +64,6 @@ function onReady(e:createjs.Event):void {
     }
     world = new World(stage, assetManager, player, maxArrowsOnScreen, enemyManager.enemies);
     hud = new HUD(stage, assetManager, player);
-    
     map.LoadMain();
     enemyManager.SpawmEnemies();
     player.SpawnPlayer();
@@ -107,9 +106,31 @@ function MonitorCollisions():void{
     else if (map.IsCollidingWithWall(player.sprite, player.direction, map.westWall) == true){player.canWalk = false;}
     else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall) == true){player.canWalk = false;}
     else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallOne) == true){player.canWalk = false;}
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallTwo) == true){player.canWalk = false;}
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallThree) == true){player.canWalk = false;}
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallFour) == true){player.canWalk = false;}
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallFive) == true){player.canWalk = false;}
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSix) == true){player.canWalk = false;}
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSeven) == true){player.canWalk = false;}
+    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallEight) == true){player.canWalk = false;}
     else{ player.canWalk = true;}
 
     enemyManager.MonitorCollisions();
+
+    for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
+        for (let e:number = 0; e <= MAX_ENEMIES; e++){
+            if (enemyManager.enemies[e] == null){return;
+            }
+            if (boxHit (maxArrowsOnScreen[i].sprite, enemyManager.enemies[e].sprite)){
+                if (enemyManager.enemies[e].vitalStatus == GameCharacter.ALIVE && maxArrowsOnScreen[i].used == true){
+                enemyManager.enemies[e].TakeDamage(player.attackDamage);
+                maxArrowsOnScreen[i].remove();
+                console.log(enemyManager.enemies[e].health);
+                return;
+                }
+            }
+        }
+    }
     
 }
 function OnKeyDown(e:KeyboardEvent):void{

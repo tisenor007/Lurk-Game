@@ -27,8 +27,8 @@ export function boxHit(sprite1:createjs.Sprite, sprite2:createjs.Sprite):boolean
 
     if ((sprite1.x + width1/2 > sprite2.x - width2/2) &&
         (sprite1.y + height2/2 > sprite2.y - height2/2) &&
-        (sprite1.x - width1/2 < sprite2.x + width2 / 2) &&
-        (sprite1.y - height1/2 < sprite2.y + height2 /2)) {
+        (sprite1.x - width1/2 < sprite2.x + width2/2) &&
+        (sprite1.y - height1/2 < sprite2.y + height2/2)) {
         return true;
     } else {
         return false;

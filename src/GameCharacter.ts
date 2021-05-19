@@ -22,6 +22,9 @@ export default class GameCharacter{
     public speed:number;
     public attackDamage:number;
     public direction:number;
+    public originPointX:number;
+    public originPointY:number;
+    public isDying:boolean;
 
     public stage:createjs.StageGL;
     public sprite:createjs.Sprite;
@@ -40,13 +43,7 @@ export default class GameCharacter{
             this.health = this.health - remainingDamage;
         }
         if (this.health <= 0){
-            this.lives = this.lives - 1;
-            this.health = 100;
-        }
-        if (this.lives <= 0){
-            this.lives = 0;
             this.health = 0;
-
         }
     }
 
@@ -56,6 +53,11 @@ export default class GameCharacter{
         }
         if (this.health >= 1){
             this.vitalStatus = GameCharacter.ALIVE;
+        }
+        if (this.lives <= 0){
+            this.lives = 0;
+            this.health = 0;
+            this.shield = 0;
         }
         //if vitalstatus play dead animation / restart level
     }

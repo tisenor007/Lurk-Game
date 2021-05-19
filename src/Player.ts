@@ -1,11 +1,11 @@
 import AssetManager from "./AssetManager";
 import GameCharacter from "./GameCharacter";
-import { MAX_ARROWS_ON_SCREEN, PLAYER_SPEED, STAGE_HEIGHT, STAGE_WIDTH, STARTING_ARROW_AMOUNT } from "./Constants";
+import { GENERAL_MAP_SIZE, MAX_ARROWS_ON_SCREEN, PLAYER_SPEED, STAGE_HEIGHT, STAGE_WIDTH, STARTING_ARROW_AMOUNT } from "./Constants";
 import Arrow from "./Arrow";
 
 export default class Player extends GameCharacter{
 
-
+    public playerKilled:createjs.Event;
     public isWalking:boolean;
     public movement:number;
     public xLoc:number;
@@ -14,71 +14,91 @@ export default class Player extends GameCharacter{
 
     constructor(stage:createjs.StageGL, assetmanager:AssetManager, xLoc:number, yLoc:number){
         super(stage, assetmanager, "Player/Idle_down");
-        this.vitalStatus = GameCharacter.ALIVE;
-        this.health = 100;
+        this.playerKilled = new createjs.Event("pKilled", true, false);
+        this.isDying = false;
         this.lives = 3;
-        this.shield = 50;
         this.speed = PLAYER_SPEED;
-
         this.direction = 2;
+        this.attackDamage = 10;
         this.sprite.x = STAGE_WIDTH / 2;
         this.sprite.y = STAGE_HEIGHT / 2;
         this.availableArrows = STARTING_ARROW_AMOUNT;
-        //temp until map collisions work
         this.canWalk = true;
-        this.xLoc = -xLoc + 800;
-        this.yLoc = -yLoc + 800;
+        this.originPointX = -xLoc + GENERAL_MAP_SIZE/2 + STAGE_WIDTH/2;
+        this.originPointY = -yLoc + GENERAL_MAP_SIZE/2 + STAGE_WIDTH/2;
     }
 
     public SpawnPlayer():void{
+        this.vitalStatus = GameCharacter.ALIVE;
+        this.health = 100;
+        this.shield = 50;
+        this.availableArrows = STARTING_ARROW_AMOUNT;
+        this.xLoc = this.originPointX;
+        this.yLoc = this.originPointY;
         this.stage.addChild(this.sprite);
+    }
+    public KillMe():void{
+        this.lives = this.lives - 1;
+        this.sprite.on("animationend", (e:createjs.Event) => {
+            this.stage.removeChild(this.sprite);
+            this.stage.dispatchEvent(this.playerKilled);
+        }, this, true)
+        this.sprite.gotoAndPlay("Player/death");
     }
 
     public Update():void{
         super.Update();
-        if (this.canWalk == false){
-            this.movement = GameCharacter.IDLE
-        }
-        if (this.canWalk == true)
-        {   
-            if (this.movement == Player.UP){
-                this.yLoc = this.yLoc + this.speed;
-                if (this.isWalking == true){return;}
-                this.sprite.gotoAndPlay("Player/walk_up");
-                this.direction = 1;
-                this.isWalking = true;
-            }
-            else if (this.movement == Player.DOWN){
-                this.yLoc = this.yLoc - this.speed;
-                if (this.isWalking == true){return;}
-                this.sprite.gotoAndPlay("Player/walk_down");
-                this.direction = 2;
-                this.isWalking = true;
-            }
-            else if (this.movement == Player.LEFT){
-                this.xLoc = this.xLoc + this.speed;
-                if (this.isWalking == true){return;}
-                this.sprite.gotoAndPlay("Player/walk_left");
-                this.direction = 3;
-                this.isWalking = true;
-            }
-            else if (this.movement == Player.RIGHT){
-                this.xLoc = this.xLoc - this.speed;
-                if (this.isWalking == true){return;}
-                this.sprite.gotoAndPlay("Player/walk_right");
-                this.direction = 4;
-                this.isWalking = true;
+        if (this.isDying == false){
+            if (this.vitalStatus == GameCharacter.DEAD){
+                this.isDying = true;
+                this.KillMe();
             }
         }
-        else{
-            this.movement == Player.IDLE
-        }
-        if (this.movement == Player.IDLE){
-            this.isWalking = false;
-            if (this.direction == 1){this.sprite.gotoAndStop("Player/Idle_up");}
-            if (this.direction == 2){this.sprite.gotoAndStop("Player/Idle_down");}
-            if (this.direction == 3){this.sprite.gotoAndStop("Player/Idle_left");}
-            if (this.direction == 4){this.sprite.gotoAndStop("Player/Idle_right");}
+        if (this.vitalStatus == GameCharacter.ALIVE){
+            if (this.canWalk == false){
+                this.movement = GameCharacter.IDLE
+            }
+            if (this.canWalk == true)
+            {   
+                if (this.movement == Player.UP){
+                    this.yLoc = this.yLoc + this.speed;
+                    if (this.isWalking == true){return;}
+                    this.sprite.gotoAndPlay("Player/walk_up");
+                    this.direction = 1;
+                    this.isWalking = true;
+                }
+                else if (this.movement == Player.DOWN){
+                    this.yLoc = this.yLoc - this.speed;
+                    if (this.isWalking == true){return;}
+                    this.sprite.gotoAndPlay("Player/walk_down");
+                    this.direction = 2;
+                    this.isWalking = true;
+                }
+                else if (this.movement == Player.LEFT){
+                    this.xLoc = this.xLoc + this.speed;
+                    if (this.isWalking == true){return;}
+                    this.sprite.gotoAndPlay("Player/walk_left");
+                    this.direction = 3;
+                    this.isWalking = true;
+                }
+                else if (this.movement == Player.RIGHT){
+                    this.xLoc = this.xLoc - this.speed;
+                    if (this.isWalking == true){return;}
+                    this.sprite.gotoAndPlay("Player/walk_right");
+                    this.direction = 4;
+                    this.isWalking = true;
+                }
+            }
+            else{
+                this.movement == Player.IDLE
+            }
+            if (this.movement == Player.IDLE){
+                this.isWalking = false;
+                if (this.direction == 1){this.sprite.gotoAndStop("Player/Idle_up");}
+                if (this.direction == 2){this.sprite.gotoAndStop("Player/Idle_down");}
+                if (this.direction == 3){this.sprite.gotoAndStop("Player/Idle_left");}
+                if (this.direction == 4){this.sprite.gotoAndStop("Player/Idle_right");}
+            }
         }
     }
 }

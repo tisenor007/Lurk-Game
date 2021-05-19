@@ -22,25 +22,25 @@ export default class World{
     public OffSetWorld():void{
         for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
             for (let e:number = 0; e <= MAX_ENEMIES; e++){
-                if (this.player.movement == GameCharacter.LEFT)
+                if (this.player.movement == GameCharacter.LEFT && this.player.vitalStatus == GameCharacter.ALIVE)
                 { 
                     if (this.maxArrowsOnScreen[i].used == true){this.maxArrowsOnScreen[i].sprite.x = this.maxArrowsOnScreen[i].sprite.x + PLAYER_SPEED / 90;}
                     if (this.enemies[e] == null){}
                     else{this.enemies[e].sprite.x = this.enemies[e].sprite.x + PLAYER_SPEED / 9;}
                 }
-                if (this.player.movement == GameCharacter.RIGHT)
+                if (this.player.movement == GameCharacter.RIGHT && this.player.vitalStatus == GameCharacter.ALIVE)
                 {
                     if (this.maxArrowsOnScreen[i].used == true){this.maxArrowsOnScreen[i].sprite.x = this.maxArrowsOnScreen[i].sprite.x - PLAYER_SPEED / 90 ;}
                     if (this.enemies[e] == null){}
                     else{this.enemies[e].sprite.x = this.enemies[e].sprite.x - PLAYER_SPEED / 9;}
                 }
-                if (this.player.movement == GameCharacter.UP)
+                if (this.player.movement == GameCharacter.UP && this.player.vitalStatus == GameCharacter.ALIVE)
                 {
                     if (this.maxArrowsOnScreen[i].used == true){this.maxArrowsOnScreen[i].sprite.y = this.maxArrowsOnScreen[i].sprite.y + PLAYER_SPEED /90;}
                     if (this.enemies[e] == null){}
                     else {this.enemies[e].sprite.y = this.enemies[e].sprite.y + PLAYER_SPEED / 9;}
                 }
-                if (this.player.movement == GameCharacter.DOWN)
+                if (this.player.movement == GameCharacter.DOWN && this.player.vitalStatus == GameCharacter.ALIVE)
                 {
                     if (this.maxArrowsOnScreen[i].used == true){this.maxArrowsOnScreen[i].sprite.y = this.maxArrowsOnScreen[i].sprite.y - PLAYER_SPEED /90;}
                     if (this.enemies[e] == null){}
