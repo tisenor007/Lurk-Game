@@ -1,6 +1,6 @@
 import AssetManager from "./AssetManager";
 import GameCharacter from "./GameCharacter";
-import { GENERAL_MAP_SIZE, MAX_ARROWS_ON_SCREEN, PLAYER_SPEED, STAGE_HEIGHT, STAGE_WIDTH, STARTING_ARROW_AMOUNT } from "./Constants";
+import { GENERAL_MAP_SIZE, MAX_ARROWS_ON_SCREEN, PLAYER_MAX_HEALTH, PLAYER_MAX_LIVES, PLAYER_MAX_SHIELD, PLAYER_SPEED, STAGE_HEIGHT, STAGE_WIDTH, STARTING_ARROW_AMOUNT } from "./Constants";
 import Arrow from "./Arrow";
 
 export default class Player extends GameCharacter{
@@ -12,26 +12,28 @@ export default class Player extends GameCharacter{
     public yLoc:number;
     public availableArrows:number;
 
-    constructor(stage:createjs.StageGL, assetmanager:AssetManager, xLoc:number, yLoc:number){
+    constructor(stage:createjs.StageGL, assetmanager:AssetManager){
         super(stage, assetmanager, "Player/Idle_down");
         this.playerKilled = new createjs.Event("pKilled", true, false);
         this.isDying = false;
-        this.lives = 3;
+        this.canWalk = true;
+        this.lives = PLAYER_MAX_LIVES;
+        this.health = PLAYER_MAX_HEALTH;
+        this.shield = PLAYER_MAX_SHIELD;
         this.speed = PLAYER_SPEED;
         this.direction = 2;
         this.attackDamage = 10;
         this.sprite.x = STAGE_WIDTH / 2;
         this.sprite.y = STAGE_HEIGHT / 2;
         this.availableArrows = STARTING_ARROW_AMOUNT;
-        this.canWalk = true;
-        this.originPointX = -xLoc + GENERAL_MAP_SIZE/2 + STAGE_WIDTH/2;
-        this.originPointY = -yLoc + GENERAL_MAP_SIZE/2 + STAGE_WIDTH/2;
     }
 
-    public SpawnPlayer():void{
+    public SpawnPlayer(xLoc:number, yLoc:number):void{
+        this.originPointX = -xLoc + GENERAL_MAP_SIZE/2 + STAGE_WIDTH/2;
+        this.originPointY = -yLoc + GENERAL_MAP_SIZE/2 + STAGE_WIDTH/2;
+        this.isDying = false;
+        this.canWalk = true;
         this.vitalStatus = GameCharacter.ALIVE;
-        this.health = 100;
-        this.shield = 50;
         this.availableArrows = STARTING_ARROW_AMOUNT;
         this.xLoc = this.originPointX;
         this.yLoc = this.originPointY;

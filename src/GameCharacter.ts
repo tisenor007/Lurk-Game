@@ -54,8 +54,7 @@ export default class GameCharacter{
         if (this.health >= 1){
             this.vitalStatus = GameCharacter.ALIVE;
         }
-        if (this.lives <= 0){
-            this.lives = 0;
+        if (this.lives < 0){
             this.health = 0;
             this.shield = 0;
         }

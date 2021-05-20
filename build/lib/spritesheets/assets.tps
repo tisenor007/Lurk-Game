@@ -199,6 +199,53 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">BossLevel/bossFloor.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>160,160,319,319</rect>
+                <key>scale9Paddings</key>
+                <rect>160,160,319,319</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">BossLevel/bossWallFour.png</key>
+            <key type="filename">BossLevel/bossWallOne.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>10,180,19,359</rect>
+                <key>scale9Paddings</key>
+                <rect>10,180,19,359</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">BossLevel/bossWallThree.png</key>
+            <key type="filename">BossLevel/bossWallTwo.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>160,10,320,19</rect>
+                <key>scale9Paddings</key>
+                <rect>160,10,320,19</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">Enemy/Boss.png</key>
             <key type="filename">Mainlevel/wallEight.png</key>
             <key type="filename">Mainlevel/wallSix.png</key>
@@ -319,6 +366,36 @@
                 <rect>16,3,32,5</rect>
                 <key>scale9Paddings</key>
                 <rect>16,3,32,5</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">Item/key_1.png</key>
+            <key type="filename">Item/key_2.png</key>
+            <key type="filename">Item/key_3.png</key>
+            <key type="filename">Item/key_4.png</key>
+            <key type="filename">Item/key_5.png</key>
+            <key type="filename">Item/key_6.png</key>
+            <key type="filename">Item/key_7.png</key>
+            <key type="filename">Item/key_8.png</key>
+            <key type="filename">Item/potion_1.png</key>
+            <key type="filename">Item/potion_2.png</key>
+            <key type="filename">Item/potion_3.png</key>
+            <key type="filename">Item/potion_4.png</key>
+            <key type="filename">Item/potion_5.png</key>
+            <key type="filename">Item/potion_6.png</key>
+            <key type="filename">Item/potion_7.png</key>
+            <key type="filename">Item/potion_8.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,8,16,16</rect>
+                <key>scale9Paddings</key>
+                <rect>8,8,16,16</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -459,6 +536,7 @@
                 <false/>
             </struct>
             <key type="filename">other/GameOverScreen.png</key>
+            <key type="filename">other/MainMenu.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -470,6 +548,22 @@
                 <rect>75,75,150,150</rect>
                 <key>scale9Paddings</key>
                 <rect>75,75,150,150</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">other/InfoScreen.png</key>
+            <key type="filename">other/WinScreen.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>100,100,200,200</rect>
+                <key>scale9Paddings</key>
+                <rect>100,100,200,200</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

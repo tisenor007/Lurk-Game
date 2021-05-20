@@ -31,13 +31,13 @@ export default class Enemy extends GameCharacter{
         this.healthBarBack = assetManager.getSprite("assets", "Enemy/health_red");
         this.originPointX = +(player.originPointX - GENERAL_MAP_SIZE/2) + xLoc;
         this.originPointY = +(player.originPointY - GENERAL_MAP_SIZE/2) + yLoc;
-        this.vitalStatus = GameCharacter.ALIVE;
         this.attackCoolDown = 0;
         this.shield = 0;
         this.lives = 1;
     }
 
     public Spawn():void{
+        this.vitalStatus = GameCharacter.ALIVE;
         this.isDying = false;
         this.sprite.gotoAndStop(this.form);
         this.sprite.x = this.originPointX;
@@ -73,9 +73,9 @@ export default class Enemy extends GameCharacter{
         super.Update();
 
         this.healthBar.x = this.sprite.x;
-        this.healthBar.y = this.sprite.y - this.sprite.getBounds().height / 2 - 10;
+        this.healthBar.y = this.sprite.y - this.sprite.getBounds().height / 2 - 20;
         this.healthBarBack.x = this.sprite.x;
-        this.healthBarBack.y = this.sprite.y - this.sprite.getBounds().height / 2 - 10;
+        this.healthBarBack.y = this.sprite.y - this.sprite.getBounds().height / 2 - 20;
         this.healthBar.scaleX = this.health * 0.02;
 
         if (this.isDying == false){

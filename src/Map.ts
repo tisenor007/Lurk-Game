@@ -21,26 +21,24 @@ export default class Map{
     public centerWallSeven:createjs.Sprite;
     public centerWallEight:createjs.Sprite;
 
+    public mainStartDoor:createjs.Sprite;
+    public mainEndDoor:createjs.Sprite;
+    public bossStartDoor:createjs.Sprite;
+
+    public mainLoaded:boolean;
+    public bossLoaded:boolean;
+
     public mapSize:number;
 
     private stage:createjs.StageGL;
     private assetManager:AssetManager;
     private camera:Camera;
 
-    private mainLoaded:boolean;
-    private bossLoaded:boolean;
-
     constructor(stage:createjs.StageGL, assetManager:AssetManager, camera:Camera){
         this.stage = stage;
         this.camera = camera;
         this.assetManager = assetManager;
 
-        //General Level Components
-        this.floor = this.assetManager.getSprite("assets", "Mainlevel/floor");
-        this.northWall = this.assetManager.getSprite("assets", "Mainlevel/NorthWall");
-        this.southWall = this.assetManager.getSprite("assets", "Mainlevel/SouthWall");
-        this.eastWall = this.assetManager.getSprite("assets", "Mainlevel/EastWall");
-        this.westWall = this.assetManager.getSprite("assets", "Mainlevel/WestWall");
         //Main Level Components
         this.centerWallOne = this.assetManager.getSprite("assets", "Mainlevel/wallFive");
         this.centerWallTwo = this.assetManager.getSprite("assets", "Mainlevel/wallSix");
@@ -51,13 +49,22 @@ export default class Map{
         this.centerWallSix = this.assetManager.getSprite("assets", "Mainlevel/wallEleven");
         this.centerWallSeven = this.assetManager.getSprite("assets", "Mainlevel/wallTen");
         this.centerWallEight = this.assetManager.getSprite("assets", "Mainlevel/wallNine");
+
+        this.mainStartDoor = this.assetManager.getSprite("assets", "other/door");
+        this.mainEndDoor = this.assetManager.getSprite("assets", "other/door");
+        this.bossStartDoor = this.assetManager.getSprite("assets", "other/door");
     }
 
     public LoadMain():void{
+        //General Level Components
+        this.floor = this.assetManager.getSprite("assets", "Mainlevel/floor");
+        this.northWall = this.assetManager.getSprite("assets", "Mainlevel/NorthWall");
+        this.southWall = this.assetManager.getSprite("assets", "Mainlevel/SouthWall");
+        this.eastWall = this.assetManager.getSprite("assets", "Mainlevel/EastWall");
+        this.westWall = this.assetManager.getSprite("assets", "Mainlevel/WestWall");
+
         this.mainLoaded = true;
         this.bossLoaded = false;
-
-        this.stage.removeAllChildren();
         
         this.stage.addChild(this.floor);
         this.stage.addChild(this.northWall);
@@ -72,41 +79,77 @@ export default class Map{
         this.stage.addChild(this.centerWallSix);
         this.stage.addChild(this.centerWallSeven);
         this.stage.addChild(this.centerWallEight);
+        this.stage.addChild(this.mainStartDoor);
+        this.stage.addChild(this.mainEndDoor);
 
         this.mapSize = GENERAL_MAP_SIZE;
     }
 
-    public Update():void{
-        if (this.mainLoaded == true){
+    public LoadBoss():void{
+        this.floor = this.assetManager.getSprite("assets", "BossLevel/bossFloor");
+        this.northWall = this.assetManager.getSprite("assets", "BossLevel/bossWallTwo");
+        this.southWall = this.assetManager.getSprite("assets", "BossLevel/bossWallThree");
+        this.eastWall = this.assetManager.getSprite("assets", "BossLevel/bossWallFour");
+        this.westWall = this.assetManager.getSprite("assets", "BossLevel/bossWallOne");
+        this.mainLoaded = false;
+        this.bossLoaded = true;
 
+        this.stage.addChild(this.floor);
+        this.stage.addChild(this.northWall);
+        this.stage.addChild(this.southWall);
+        this.stage.addChild(this.eastWall);
+        this.stage.addChild(this.westWall);
+        this.stage.addChild(this.bossStartDoor);
+
+        this.mapSize = 639;
+    }
+
+    public Update():void{
         this.floor.x = this.camera.offsetX;
         this.floor.y = this.camera.offsetY;
-        this.northWall.x = this.camera.offsetX;
-        this.northWall.y = this.camera.offsetY - (this.mapSize/2 + 19.5);
-        this.southWall.x = this.camera.offsetX;
-        this.southWall.y = this.camera.offsetY + (this.mapSize/2 + 19.5);
-        this.eastWall.x = this.camera.offsetX + (this.mapSize/2 + 19.5);
-        this.eastWall.y = this.camera.offsetY + 19.5;
-        this.westWall.x = this.camera.offsetX - (this.mapSize/2 + 19.5);
-        this.westWall.y = this.camera.offsetY + 19.5;
 
-        this.centerWallOne.x = this.camera.offsetX - 128;
-        this.centerWallOne.y = this.camera.offsetY - 192;
-        this.centerWallTwo.x = this.camera.offsetX + 256;
-        this.centerWallTwo.y = this.camera.offsetY - 192;
-        this.centerWallThree.x = this.camera.offsetX - 64;
-        this.centerWallThree.y = this.camera.offsetY + 64;
-        this.centerWallFour.x = this.camera.offsetX - 192;
-        this.centerWallFour.y = this.camera.offsetY + 144;
-        this.centerWallFive.x = this.camera.offsetX + 0;
-        this.centerWallFive.y = this.camera.offsetY + 256;
-        this.centerWallSix.x = this.camera.offsetX + 352;
-        this.centerWallSix.y = this.camera.offsetY + 192;
-        this.centerWallSeven.x = this.camera.offsetX + 256;
-        this.centerWallSeven.y = this.camera.offsetY + 223.5;
-        this.centerWallEight.x = this.camera.offsetX + 224;
-        this.centerWallEight.y = this.camera.offsetY + 64;
+        if (this.mainLoaded == true){
+            this.northWall.x = this.camera.offsetX;
+            this.northWall.y = this.camera.offsetY - (this.mapSize/2 + 19.5);
+            this.southWall.x = this.camera.offsetX;
+            this.southWall.y = this.camera.offsetY + (this.mapSize/2 + 19.5);
+            this.eastWall.x = this.camera.offsetX + (this.mapSize/2 + 19.5);
+            this.eastWall.y = this.camera.offsetY + 19.5;
+            this.westWall.x = this.camera.offsetX - (this.mapSize/2 + 19.5);
+            this.westWall.y = this.camera.offsetY + 19.5;
+            this.centerWallOne.x = this.camera.offsetX - 128;
+            this.centerWallOne.y = this.camera.offsetY - 192;
+            this.centerWallTwo.x = this.camera.offsetX + 256;
+            this.centerWallTwo.y = this.camera.offsetY - 192;
+            this.centerWallThree.x = this.camera.offsetX - 64;
+            this.centerWallThree.y = this.camera.offsetY + 64;
+            this.centerWallFour.x = this.camera.offsetX - 192;
+            this.centerWallFour.y = this.camera.offsetY + 144;
+            this.centerWallFive.x = this.camera.offsetX + 0;
+            this.centerWallFive.y = this.camera.offsetY + 256;
+            this.centerWallSix.x = this.camera.offsetX + 352;
+            this.centerWallSix.y = this.camera.offsetY + 192;
+            this.centerWallSeven.x = this.camera.offsetX + 256;
+            this.centerWallSeven.y = this.camera.offsetY + 223.5;
+            this.centerWallEight.x = this.camera.offsetX + 224;
+            this.centerWallEight.y = this.camera.offsetY + 64;
+
+            this.mainStartDoor.x = this.camera.offsetX -350;
+            this.mainStartDoor.y = this.camera.offsetY -400;
+            this.mainEndDoor.x = this.camera.offsetX +350;
+            this.mainEndDoor.y = this.camera.offsetY +240;
         }
+        if (this.bossLoaded == true){
+            this.northWall.x = this.camera.offsetX;
+            this.northWall.y = this.camera.offsetY - (this.mapSize/2 + 19.5);
+            this.southWall.x = this.camera.offsetX;
+            this.southWall.y = this.camera.offsetY + (this.mapSize/2 + 20.5);
+            this.eastWall.x = this.camera.offsetX + (this.mapSize/2 + 19.5);
+            this.eastWall.y = this.camera.offsetY + 0.5;
+            this.westWall.x = this.camera.offsetX - (this.mapSize/2 + 19.5);
+            this.westWall.y = this.camera.offsetY + 0.5;
+        }
+        
     }
     public IsCollidingWithWall(character:createjs.Sprite, direction:number, wall:createjs.Sprite):boolean {
        

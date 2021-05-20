@@ -10241,6 +10241,45 @@ exports.default = AssetManager;
 
 /***/ }),
 
+/***/ "./src/Boss.ts":
+/*!*********************!*\
+  !*** ./src/Boss.ts ***!
+  \*********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Enemy_1 = __webpack_require__(/*! ./Enemy */ "./src/Enemy.ts");
+class Boss extends Enemy_1.default {
+    constructor(stage, assetManager, xLoc, yLoc, player) {
+        super(stage, assetManager, xLoc, yLoc, player);
+        this.eventBossKilled = new createjs.Event("gameWon", true, false);
+        this.sightRange = 12000;
+        this.attackSpeed = 50;
+        this.form = "Enemy/Boss";
+        this.speed = 1;
+        this.attackDamage = 30;
+        this.health = 300;
+    }
+    Spawn() {
+        super.Spawn();
+        this.health = 300;
+    }
+    KillMe() {
+        super.KillMe();
+        this.stage.dispatchEvent(this.eventBossKilled);
+    }
+    Update() {
+        super.Update();
+    }
+}
+exports.default = Boss;
+
+
+/***/ }),
+
 /***/ "./src/Camera.ts":
 /*!***********************!*\
   !*** ./src/Camera.ts ***!
@@ -10276,15 +10315,18 @@ exports.default = Camera;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ASSET_MANIFEST = exports.GENERAL_MAP_SIZE = exports.MAX_ENEMIES = exports.ARROW_RELOAD = exports.ARROW_SPEED = exports.MAX_ARROWS_ON_SCREEN = exports.STARTING_ARROW_AMOUNT = exports.PLAYER_SPEED = exports.FRAME_RATE = exports.STAGE_HEIGHT = exports.STAGE_WIDTH = void 0;
+exports.ASSET_MANIFEST = exports.GENERAL_MAP_SIZE = exports.MAX_ENEMIES = exports.ARROW_RELOAD = exports.ARROW_SPEED = exports.MAX_ARROWS_ON_SCREEN = exports.STARTING_ARROW_AMOUNT = exports.PLAYER_MAX_SHIELD = exports.PLAYER_MAX_HEALTH = exports.PLAYER_MAX_LIVES = exports.PLAYER_SPEED = exports.FRAME_RATE = exports.STAGE_HEIGHT = exports.STAGE_WIDTH = void 0;
 exports.STAGE_WIDTH = 400;
 exports.STAGE_HEIGHT = 400;
 exports.FRAME_RATE = 30;
-exports.PLAYER_SPEED = 3;
-exports.STARTING_ARROW_AMOUNT = 15;
+exports.PLAYER_SPEED = 2.5;
+exports.PLAYER_MAX_LIVES = 3;
+exports.PLAYER_MAX_HEALTH = 100;
+exports.PLAYER_MAX_SHIELD = 50;
+exports.STARTING_ARROW_AMOUNT = 20;
 exports.MAX_ARROWS_ON_SCREEN = 8;
 exports.ARROW_SPEED = 6;
-exports.ARROW_RELOAD = 10;
+exports.ARROW_RELOAD = 20;
 exports.MAX_ENEMIES = 100;
 exports.GENERAL_MAP_SIZE = 768;
 exports.ASSET_MANIFEST = [
@@ -10378,12 +10420,12 @@ class Enemy extends GameCharacter_1.default {
         this.healthBarBack = assetManager.getSprite("assets", "Enemy/health_red");
         this.originPointX = +(player.originPointX - Constants_1.GENERAL_MAP_SIZE / 2) + xLoc;
         this.originPointY = +(player.originPointY - Constants_1.GENERAL_MAP_SIZE / 2) + yLoc;
-        this.vitalStatus = GameCharacter_1.default.ALIVE;
         this.attackCoolDown = 0;
         this.shield = 0;
         this.lives = 1;
     }
     Spawn() {
+        this.vitalStatus = GameCharacter_1.default.ALIVE;
         this.isDying = false;
         this.sprite.gotoAndStop(this.form);
         this.sprite.x = this.originPointX;
@@ -10417,9 +10459,9 @@ class Enemy extends GameCharacter_1.default {
     Update() {
         super.Update();
         this.healthBar.x = this.sprite.x;
-        this.healthBar.y = this.sprite.y - this.sprite.getBounds().height / 2 - 10;
+        this.healthBar.y = this.sprite.y - this.sprite.getBounds().height / 2 - 20;
         this.healthBarBack.x = this.sprite.x;
-        this.healthBarBack.y = this.sprite.y - this.sprite.getBounds().height / 2 - 10;
+        this.healthBarBack.y = this.sprite.y - this.sprite.getBounds().height / 2 - 20;
         this.healthBar.scaleX = this.health * 0.02;
         if (this.isDying == false) {
             if (this.vitalStatus == GameCharacter_1.default.DEAD) {
@@ -10520,6 +10562,7 @@ Enemy.ROAMING = 11;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const Boss_1 = __webpack_require__(/*! ./Boss */ "./src/Boss.ts");
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 const Default_1 = __webpack_require__(/*! ./Default */ "./src/Default.ts");
 const Enemy_1 = __webpack_require__(/*! ./Enemy */ "./src/Enemy.ts");
@@ -10534,11 +10577,20 @@ class EnemyManager {
         this.map = map;
         this.assetManager = assetManager;
     }
-    InitEnemies() {
+    InitMainEnemies() {
+        for (let i = 0; i <= Constants_1.MAX_ENEMIES; i++) {
+            this.enemies[i] = null;
+        }
         this.enemies[0] = new Default_1.default(this.stage, this.assetManager, 20, 30, this.player);
         this.enemies[1] = new Light_1.default(this.stage, this.assetManager, 600, 200, this.player);
         this.enemies[2] = new Heavy_1.default(this.stage, this.assetManager, 400, 400, this.player);
         this.enemies[3] = new Default_1.default(this.stage, this.assetManager, 600, 750, this.player);
+    }
+    InitBossEnemies() {
+        for (let i = 0; i <= Constants_1.MAX_ENEMIES; i++) {
+            this.enemies[i] = null;
+        }
+        this.enemies[0] = new Boss_1.default(this.stage, this.assetManager, 300, 300, this.player);
     }
     SpawmEnemies() {
         for (let i = 0; i <= Constants_1.MAX_ENEMIES; i++) {
@@ -10581,40 +10633,7 @@ class EnemyManager {
                     }
                 }
                 if (this.enemies[i].canWalk == true) {
-                    if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.eastWall) == true) {
-                        this.enemies[i].TurnAround();
-                    }
-                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.northWall) == true) {
-                        this.enemies[i].TurnAround();
-                    }
-                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.westWall) == true) {
-                        this.enemies[i].TurnAround();
-                    }
-                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.southWall) == true) {
-                        this.enemies[i].TurnAround();
-                    }
-                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallOne) == true) {
-                        this.enemies[i].TurnAround();
-                    }
-                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallTwo) == true) {
-                        this.enemies[i].TurnAround();
-                    }
-                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallThree) == true) {
-                        this.enemies[i].TurnAround();
-                    }
-                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallFour) == true) {
-                        this.enemies[i].TurnAround();
-                    }
-                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallFive) == true) {
-                        this.enemies[i].TurnAround();
-                    }
-                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallSix) == true) {
-                        this.enemies[i].TurnAround();
-                    }
-                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallSeven) == true) {
-                        this.enemies[i].TurnAround();
-                    }
-                    else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallEight) == true) {
+                    if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.floor) == false) {
                         this.enemies[i].TurnAround();
                     }
                 }
@@ -10649,6 +10668,8 @@ const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
 const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
 const EnemyManager_1 = __webpack_require__(/*! ./EnemyManager */ "./src/EnemyManager.ts");
 const Camera_1 = __webpack_require__(/*! ./Camera */ "./src/Camera.ts");
+const LevelManager_1 = __webpack_require__(/*! ./LevelManager */ "./src/LevelManager.ts");
+const ScreenManager_1 = __webpack_require__(/*! ./ScreenManager */ "./src/ScreenManager.ts");
 let stage;
 let canvas;
 let player;
@@ -10659,91 +10680,146 @@ let world;
 let camera;
 let hud;
 let assetManager;
+let levelManager;
 let enemyManager;
+let screenManager;
 let left = false;
 let right = false;
 let up = false;
 let down = false;
 let shoot = false;
+let interact = false;
 function onReady(e) {
     console.log(">> adding sprites to game");
-    player = new Player_1.default(stage, assetManager, 20, 30);
+    player = new Player_1.default(stage, assetManager);
     camera = new Camera_1.default(stage, assetManager, player);
     map = new Map_1.default(stage, assetManager, camera);
     enemyManager = new EnemyManager_1.default(stage, assetManager, player, map);
-    enemyManager.InitEnemies();
     for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
         maxArrowsOnScreen[i] = new Arrow_1.default(stage, assetManager, world, player);
     }
     world = new World_1.default(stage, assetManager, player, maxArrowsOnScreen, enemyManager.enemies);
     hud = new HUD_1.default(stage, assetManager, player);
-    map.LoadMain();
-    enemyManager.SpawmEnemies();
-    player.SpawnPlayer();
-    hud.ShowHUD();
+    levelManager = new LevelManager_1.default(stage, assetManager, player, map, enemyManager, hud);
+    screenManager = new ScreenManager_1.default(stage, assetManager, levelManager);
+    screenManager.ShowIntroScreen();
     document.onkeydown = OnKeyDown;
     document.onkeyup = OnKeyUp;
+    stage.on("gameStart", OnGameEvent);
+    stage.on("gameRestart", OnGameEvent);
+    stage.on("pKilled", OnGameEvent);
+    stage.on("gameWon", OnGameEvent);
     createjs.Ticker.framerate = Constants_1.FRAME_RATE;
     createjs.Ticker.on("tick", onTick);
     console.log(">> game ready");
 }
+function OnGameEvent(e) {
+    switch (e.type) {
+        case "gameStart":
+            player.lives = Constants_1.PLAYER_MAX_LIVES;
+            levelManager.LoadMainLevel();
+            break;
+        case "pKilled":
+            if (player.lives >= 0) {
+                levelManager.LoadMainLevel();
+            }
+            else if (player.lives < 0) {
+                screenManager.ShowGameOverScreen();
+            }
+            break;
+        case "gameWon":
+            screenManager.ShowGameWinScreen();
+            break;
+        case "gameRestart":
+            screenManager.ShowIntroScreen();
+            break;
+    }
+}
 function onTick(e) {
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
-    arrowCoolDown--;
-    if (arrowCoolDown <= 0) {
-        arrowCoolDown = 0;
+    if (levelManager.gameLoaded == true) {
+        arrowCoolDown--;
+        if (arrowCoolDown <= 0) {
+            arrowCoolDown = 0;
+        }
+        enemyManager.UpdateEnemies();
+        player.Update();
+        map.Update();
+        for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+            maxArrowsOnScreen[i].Update();
+        }
+        hud.Update();
+        camera.Update();
+        MonitorKeys();
+        MonitorCollisions();
     }
-    enemyManager.UpdateEnemies();
-    player.Update();
-    map.Update();
-    for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
-        maxArrowsOnScreen[i].Update();
+    else {
     }
-    hud.Update();
-    camera.Update();
-    MonitorKeys();
-    MonitorCollisions();
     stage.update();
 }
 function MonitorCollisions() {
-    if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall) == true) {
-        player.canWalk = false;
+    if (map.mainLoaded == true) {
+        if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall) == true) {
+            player.canWalk = false;
+        }
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.northWall) == true) {
+            player.canWalk = false;
+        }
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.westWall) == true) {
+            player.canWalk = false;
+        }
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall) == true) {
+            player.canWalk = false;
+        }
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallOne) == true) {
+            player.canWalk = false;
+        }
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallTwo) == true) {
+            player.canWalk = false;
+        }
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallThree) == true) {
+            player.canWalk = false;
+        }
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallFour) == true) {
+            player.canWalk = false;
+        }
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallFive) == true) {
+            player.canWalk = false;
+        }
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSix) == true) {
+            player.canWalk = false;
+        }
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSeven) == true) {
+            player.canWalk = false;
+        }
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallEight) == true) {
+            player.canWalk = false;
+        }
+        else {
+            player.canWalk = true;
+        }
     }
-    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.northWall) == true) {
-        player.canWalk = false;
+    if (map.bossLoaded == true) {
+        if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall) == true) {
+            player.canWalk = false;
+        }
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.northWall) == true) {
+            player.canWalk = false;
+        }
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.westWall) == true) {
+            player.canWalk = false;
+        }
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall) == true) {
+            player.canWalk = false;
+        }
+        else {
+            player.canWalk = true;
+        }
     }
-    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.westWall) == true) {
-        player.canWalk = false;
-    }
-    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall) == true) {
-        player.canWalk = false;
-    }
-    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallOne) == true) {
-        player.canWalk = false;
-    }
-    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallTwo) == true) {
-        player.canWalk = false;
-    }
-    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallThree) == true) {
-        player.canWalk = false;
-    }
-    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallFour) == true) {
-        player.canWalk = false;
-    }
-    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallFive) == true) {
-        player.canWalk = false;
-    }
-    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSix) == true) {
-        player.canWalk = false;
-    }
-    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSeven) == true) {
-        player.canWalk = false;
-    }
-    else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallEight) == true) {
-        player.canWalk = false;
+    else if (ToolBox_1.radiusHit(player.sprite, 1, map.mainEndDoor, 30) && interact == true) {
+        levelManager.LoadBossLevel();
     }
     else {
-        player.canWalk = true;
     }
     enemyManager.MonitorCollisions();
     for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
@@ -10755,8 +10831,6 @@ function MonitorCollisions() {
                 if (enemyManager.enemies[e].vitalStatus == GameCharacter_1.default.ALIVE && maxArrowsOnScreen[i].used == true) {
                     enemyManager.enemies[e].TakeDamage(player.attackDamage);
                     maxArrowsOnScreen[i].remove();
-                    console.log(enemyManager.enemies[e].health);
-                    return;
                 }
             }
         }
@@ -10798,6 +10872,9 @@ function OnKeyDown(e) {
     else if (e.key == " ") {
         shoot = true;
     }
+    else if (e.key == "e") {
+        interact = true;
+    }
 }
 function OnKeyUp(e) {
     if (e.key == "a") {
@@ -10814,6 +10891,9 @@ function OnKeyUp(e) {
     }
     else if (e.key == " ") {
         shoot = false;
+    }
+    else if (e.key == "e") {
+        interact = false;
     }
 }
 function MonitorKeys() {
@@ -10908,8 +10988,7 @@ class GameCharacter {
         if (this.health >= 1) {
             this.vitalStatus = GameCharacter.ALIVE;
         }
-        if (this.lives <= 0) {
-            this.lives = 0;
+        if (this.lives < 0) {
             this.health = 0;
             this.shield = 0;
         }
@@ -11022,6 +11101,52 @@ exports.default = Heavy;
 
 /***/ }),
 
+/***/ "./src/LevelManager.ts":
+/*!*****************************!*\
+  !*** ./src/LevelManager.ts ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
+class LevelManager {
+    constructor(stage, assetManager, player, map, enemyManager, hud) {
+        this.gameLoaded = false;
+        this.stage = stage;
+        this.player = player;
+        this.map = map;
+        this.enemyManager = enemyManager;
+        this.hud = hud;
+    }
+    LoadMainLevel() {
+        this.gameLoaded = true;
+        this.stage.removeAllChildren();
+        this.map.LoadMain();
+        this.player.health = Constants_1.PLAYER_MAX_HEALTH;
+        this.player.shield = Constants_1.PLAYER_MAX_SHIELD;
+        this.player.SpawnPlayer(20, 30);
+        this.enemyManager.InitMainEnemies();
+        this.enemyManager.SpawmEnemies();
+        this.hud.ShowHUD();
+    }
+    LoadBossLevel() {
+        this.gameLoaded = true;
+        this.stage.removeAllChildren();
+        this.map.LoadBoss();
+        this.player.SpawnPlayer(100, 100);
+        this.enemyManager.InitBossEnemies();
+        this.enemyManager.SpawmEnemies();
+        this.hud.ShowHUD();
+    }
+}
+exports.default = LevelManager;
+
+
+/***/ }),
+
 /***/ "./src/Light.ts":
 /*!**********************!*\
   !*** ./src/Light.ts ***!
@@ -11071,11 +11196,6 @@ class Map {
         this.stage = stage;
         this.camera = camera;
         this.assetManager = assetManager;
-        this.floor = this.assetManager.getSprite("assets", "Mainlevel/floor");
-        this.northWall = this.assetManager.getSprite("assets", "Mainlevel/NorthWall");
-        this.southWall = this.assetManager.getSprite("assets", "Mainlevel/SouthWall");
-        this.eastWall = this.assetManager.getSprite("assets", "Mainlevel/EastWall");
-        this.westWall = this.assetManager.getSprite("assets", "Mainlevel/WestWall");
         this.centerWallOne = this.assetManager.getSprite("assets", "Mainlevel/wallFive");
         this.centerWallTwo = this.assetManager.getSprite("assets", "Mainlevel/wallSix");
         this.centerWallThree = this.assetManager.getSprite("assets", "Mainlevel/wallEight");
@@ -11085,11 +11205,18 @@ class Map {
         this.centerWallSix = this.assetManager.getSprite("assets", "Mainlevel/wallEleven");
         this.centerWallSeven = this.assetManager.getSprite("assets", "Mainlevel/wallTen");
         this.centerWallEight = this.assetManager.getSprite("assets", "Mainlevel/wallNine");
+        this.mainStartDoor = this.assetManager.getSprite("assets", "other/door");
+        this.mainEndDoor = this.assetManager.getSprite("assets", "other/door");
+        this.bossStartDoor = this.assetManager.getSprite("assets", "other/door");
     }
     LoadMain() {
+        this.floor = this.assetManager.getSprite("assets", "Mainlevel/floor");
+        this.northWall = this.assetManager.getSprite("assets", "Mainlevel/NorthWall");
+        this.southWall = this.assetManager.getSprite("assets", "Mainlevel/SouthWall");
+        this.eastWall = this.assetManager.getSprite("assets", "Mainlevel/EastWall");
+        this.westWall = this.assetManager.getSprite("assets", "Mainlevel/WestWall");
         this.mainLoaded = true;
         this.bossLoaded = false;
-        this.stage.removeAllChildren();
         this.stage.addChild(this.floor);
         this.stage.addChild(this.northWall);
         this.stage.addChild(this.southWall);
@@ -11103,12 +11230,30 @@ class Map {
         this.stage.addChild(this.centerWallSix);
         this.stage.addChild(this.centerWallSeven);
         this.stage.addChild(this.centerWallEight);
+        this.stage.addChild(this.mainStartDoor);
+        this.stage.addChild(this.mainEndDoor);
         this.mapSize = Constants_1.GENERAL_MAP_SIZE;
     }
+    LoadBoss() {
+        this.floor = this.assetManager.getSprite("assets", "BossLevel/bossFloor");
+        this.northWall = this.assetManager.getSprite("assets", "BossLevel/bossWallTwo");
+        this.southWall = this.assetManager.getSprite("assets", "BossLevel/bossWallThree");
+        this.eastWall = this.assetManager.getSprite("assets", "BossLevel/bossWallFour");
+        this.westWall = this.assetManager.getSprite("assets", "BossLevel/bossWallOne");
+        this.mainLoaded = false;
+        this.bossLoaded = true;
+        this.stage.addChild(this.floor);
+        this.stage.addChild(this.northWall);
+        this.stage.addChild(this.southWall);
+        this.stage.addChild(this.eastWall);
+        this.stage.addChild(this.westWall);
+        this.stage.addChild(this.bossStartDoor);
+        this.mapSize = 639;
+    }
     Update() {
+        this.floor.x = this.camera.offsetX;
+        this.floor.y = this.camera.offsetY;
         if (this.mainLoaded == true) {
-            this.floor.x = this.camera.offsetX;
-            this.floor.y = this.camera.offsetY;
             this.northWall.x = this.camera.offsetX;
             this.northWall.y = this.camera.offsetY - (this.mapSize / 2 + 19.5);
             this.southWall.x = this.camera.offsetX;
@@ -11133,6 +11278,20 @@ class Map {
             this.centerWallSeven.y = this.camera.offsetY + 223.5;
             this.centerWallEight.x = this.camera.offsetX + 224;
             this.centerWallEight.y = this.camera.offsetY + 64;
+            this.mainStartDoor.x = this.camera.offsetX - 350;
+            this.mainStartDoor.y = this.camera.offsetY - 400;
+            this.mainEndDoor.x = this.camera.offsetX + 350;
+            this.mainEndDoor.y = this.camera.offsetY + 240;
+        }
+        if (this.bossLoaded == true) {
+            this.northWall.x = this.camera.offsetX;
+            this.northWall.y = this.camera.offsetY - (this.mapSize / 2 + 19.5);
+            this.southWall.x = this.camera.offsetX;
+            this.southWall.y = this.camera.offsetY + (this.mapSize / 2 + 20.5);
+            this.eastWall.x = this.camera.offsetX + (this.mapSize / 2 + 19.5);
+            this.eastWall.y = this.camera.offsetY + 0.5;
+            this.westWall.x = this.camera.offsetX - (this.mapSize / 2 + 19.5);
+            this.westWall.y = this.camera.offsetY + 0.5;
         }
     }
     IsCollidingWithWall(character, direction, wall) {
@@ -11205,25 +11364,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 class Player extends GameCharacter_1.default {
-    constructor(stage, assetmanager, xLoc, yLoc) {
+    constructor(stage, assetmanager) {
         super(stage, assetmanager, "Player/Idle_down");
         this.playerKilled = new createjs.Event("pKilled", true, false);
         this.isDying = false;
-        this.lives = 3;
+        this.canWalk = true;
+        this.lives = Constants_1.PLAYER_MAX_LIVES;
+        this.health = Constants_1.PLAYER_MAX_HEALTH;
+        this.shield = Constants_1.PLAYER_MAX_SHIELD;
         this.speed = Constants_1.PLAYER_SPEED;
         this.direction = 2;
         this.attackDamage = 10;
         this.sprite.x = Constants_1.STAGE_WIDTH / 2;
         this.sprite.y = Constants_1.STAGE_HEIGHT / 2;
         this.availableArrows = Constants_1.STARTING_ARROW_AMOUNT;
-        this.canWalk = true;
+    }
+    SpawnPlayer(xLoc, yLoc) {
         this.originPointX = -xLoc + Constants_1.GENERAL_MAP_SIZE / 2 + Constants_1.STAGE_WIDTH / 2;
         this.originPointY = -yLoc + Constants_1.GENERAL_MAP_SIZE / 2 + Constants_1.STAGE_WIDTH / 2;
-    }
-    SpawnPlayer() {
+        this.isDying = false;
+        this.canWalk = true;
         this.vitalStatus = GameCharacter_1.default.ALIVE;
-        this.health = 100;
-        this.shield = 50;
         this.availableArrows = Constants_1.STARTING_ARROW_AMOUNT;
         this.xLoc = this.originPointX;
         this.yLoc = this.originPointY;
@@ -11309,6 +11470,62 @@ class Player extends GameCharacter_1.default {
     }
 }
 exports.default = Player;
+
+
+/***/ }),
+
+/***/ "./src/ScreenManager.ts":
+/*!******************************!*\
+  !*** ./src/ScreenManager.ts ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
+class ScreenManager {
+    constructor(stage, assetManager, levelManager) {
+        this.stage = stage;
+        this.levelManager = levelManager;
+        this.introScreen = new createjs.Container();
+        this.introScreen.addChild(assetManager.getSprite("assets", "other/MainMenu", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2));
+        this.infoScreen = new createjs.Container();
+        this.infoScreen.addChild(assetManager.getSprite("assets", "other/InfoScreen", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2));
+        this.gameOverScreen = new createjs.Container();
+        this.gameOverScreen.addChild(assetManager.getSprite("assets", "other/GameOverScreen", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2));
+        this.gameWinScreen = new createjs.Container();
+        this.gameWinScreen.addChild(assetManager.getSprite("assets", "other/WinScreen", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2));
+        this.eventStartGame = new createjs.Event("gameStart", true, false);
+        this.eventRestartGame = new createjs.Event("gameRestart", true, false);
+    }
+    ShowIntroScreen() {
+        this.levelManager.gameLoaded = false;
+        this.stage.removeAllChildren();
+        this.stage.addChild(this.introScreen);
+        this.introScreen.on("click", this.ShowInfoScreen, this);
+    }
+    ShowInfoScreen() {
+        this.levelManager.gameLoaded = false;
+        this.stage.removeAllChildren();
+        this.stage.addChild(this.infoScreen);
+        this.infoScreen.on("click", (e) => { this.stage.dispatchEvent(this.eventStartGame); }, this, true);
+    }
+    ShowGameOverScreen() {
+        this.levelManager.gameLoaded = false;
+        this.stage.removeAllChildren();
+        this.stage.addChild(this.gameOverScreen);
+        this.gameOverScreen.on("click", (e) => { this.stage.dispatchEvent(this.eventRestartGame); }, this, true);
+    }
+    ShowGameWinScreen() {
+        this.levelManager.gameLoaded = false;
+        this.stage.removeAllChildren();
+        this.stage.addChild(this.gameWinScreen);
+        this.gameWinScreen.on("click", (e) => { this.stage.dispatchEvent(this.eventRestartGame); }, this, true);
+    }
+}
+exports.default = ScreenManager;
 
 
 /***/ }),
