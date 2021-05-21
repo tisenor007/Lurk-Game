@@ -88,9 +88,9 @@
         <key>maxTextureSize</key>
         <QSize>
             <key>width</key>
-            <int>2048</int>
+            <int>4096</int>
             <key>height</key>
-            <int>2048</int>
+            <int>4096</int>
         </QSize>
         <key>fixedTextureSize</key>
         <QSize>
@@ -535,6 +535,21 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">assets.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>462,544,923,1087</rect>
+                <key>scale9Paddings</key>
+                <rect>462,544,923,1087</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">other/GameOverScreen.png</key>
             <key type="filename">other/MainMenu.png</key>
             <struct type="IndividualSpriteSettings">
@@ -553,6 +568,51 @@
             </struct>
             <key type="filename">other/InfoScreen.png</key>
             <key type="filename">other/WinScreen.png</key>
+            <key type="filename">other/darkness.png</key>
+            <key type="filename">other/loading_1.png</key>
+            <key type="filename">other/loading_10.png</key>
+            <key type="filename">other/loading_11.png</key>
+            <key type="filename">other/loading_12.png</key>
+            <key type="filename">other/loading_2.png</key>
+            <key type="filename">other/loading_3.png</key>
+            <key type="filename">other/loading_4.png</key>
+            <key type="filename">other/loading_5.png</key>
+            <key type="filename">other/loading_6.png</key>
+            <key type="filename">other/loading_7.png</key>
+            <key type="filename">other/loading_8.png</key>
+            <key type="filename">other/loading_9.png</key>
+            <key type="filename">other/water_1.png</key>
+            <key type="filename">other/water_10.png</key>
+            <key type="filename">other/water_11.png</key>
+            <key type="filename">other/water_12.png</key>
+            <key type="filename">other/water_13.png</key>
+            <key type="filename">other/water_14.png</key>
+            <key type="filename">other/water_15.png</key>
+            <key type="filename">other/water_16.png</key>
+            <key type="filename">other/water_17.png</key>
+            <key type="filename">other/water_18.png</key>
+            <key type="filename">other/water_19.png</key>
+            <key type="filename">other/water_2.png</key>
+            <key type="filename">other/water_20.png</key>
+            <key type="filename">other/water_21.png</key>
+            <key type="filename">other/water_22.png</key>
+            <key type="filename">other/water_23.png</key>
+            <key type="filename">other/water_24.png</key>
+            <key type="filename">other/water_25.png</key>
+            <key type="filename">other/water_26.png</key>
+            <key type="filename">other/water_27.png</key>
+            <key type="filename">other/water_28.png</key>
+            <key type="filename">other/water_29.png</key>
+            <key type="filename">other/water_3.png</key>
+            <key type="filename">other/water_30.png</key>
+            <key type="filename">other/water_31.png</key>
+            <key type="filename">other/water_32.png</key>
+            <key type="filename">other/water_4.png</key>
+            <key type="filename">other/water_5.png</key>
+            <key type="filename">other/water_6.png</key>
+            <key type="filename">other/water_7.png</key>
+            <key type="filename">other/water_8.png</key>
+            <key type="filename">other/water_9.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -579,6 +639,21 @@
                 <rect>12,8,23,16</rect>
                 <key>scale9Paddings</key>
                 <rect>12,8,23,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">other/door2.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>16,8,32,16</rect>
+                <key>scale9Paddings</key>
+                <rect>16,8,32,16</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

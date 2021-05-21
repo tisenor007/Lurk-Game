@@ -30,6 +30,7 @@ export default class Map{
 
     public mapSize:number;
 
+    private water:createjs.Sprite;
     private stage:createjs.StageGL;
     private assetManager:AssetManager;
     private camera:Camera;
@@ -53,6 +54,7 @@ export default class Map{
         this.mainStartDoor = this.assetManager.getSprite("assets", "other/door");
         this.mainEndDoor = this.assetManager.getSprite("assets", "other/door");
         this.bossStartDoor = this.assetManager.getSprite("assets", "other/door");
+        this.water = this.assetManager.getSprite("assets", "other/water");
     }
 
     public LoadMain():void{
@@ -66,6 +68,8 @@ export default class Map{
         this.mainLoaded = true;
         this.bossLoaded = false;
         
+        this.stage.addChild(this.water);
+        this.water.play();
         this.stage.addChild(this.floor);
         this.stage.addChild(this.northWall);
         this.stage.addChild(this.southWall);
@@ -94,6 +98,8 @@ export default class Map{
         this.mainLoaded = false;
         this.bossLoaded = true;
 
+        this.stage.addChild(this.water);
+        this.water.play();
         this.stage.addChild(this.floor);
         this.stage.addChild(this.northWall);
         this.stage.addChild(this.southWall);
@@ -109,6 +115,8 @@ export default class Map{
         this.floor.y = this.camera.offsetY;
 
         if (this.mainLoaded == true){
+            this.water.x = STAGE_WIDTH/2;
+            this.water.y = STAGE_HEIGHT/2;
             this.northWall.x = this.camera.offsetX;
             this.northWall.y = this.camera.offsetY - (this.mapSize/2 + 19.5);
             this.southWall.x = this.camera.offsetX;
@@ -140,6 +148,8 @@ export default class Map{
             this.mainEndDoor.y = this.camera.offsetY +240;
         }
         if (this.bossLoaded == true){
+            this.water.x = STAGE_WIDTH/2;
+            this.water.y = STAGE_HEIGHT/2;
             this.northWall.x = this.camera.offsetX;
             this.northWall.y = this.camera.offsetY - (this.mapSize/2 + 19.5);
             this.southWall.x = this.camera.offsetX;
@@ -148,6 +158,8 @@ export default class Map{
             this.eastWall.y = this.camera.offsetY + 0.5;
             this.westWall.x = this.camera.offsetX - (this.mapSize/2 + 19.5);
             this.westWall.y = this.camera.offsetY + 0.5;
+            this.bossStartDoor.x = this.camera.offsetX - (this.mapSize/2 - 40);
+            this.bossStartDoor.y = this.camera.offsetY -(this.mapSize/2 + 16);
         }
         
     }

@@ -85,7 +85,7 @@ function onReady(e:createjs.Event):void {
 function OnGameEvent(e:createjs.Event):void{
     switch (e.type){
         case "gameStart":
-            player.lives = PLAYER_MAX_LIVES;
+            player.lives = 0;
             levelManager.LoadMainLevel();
             break;
         case "pKilled":
@@ -118,6 +118,9 @@ function onTick(e:createjs.Event):void {
     }
     else{//nothing
     }
+    if (levelManager.gameLoaded == false){
+        levelManager.UpdateLoadingScreen();
+    }
     // update the stage!
     stage.update();
     
@@ -138,6 +141,9 @@ function MonitorCollisions():void{
         else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSeven) == true){player.canWalk = false;}
         else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallEight) == true){player.canWalk = false;}
         else{ player.canWalk = true;}
+        if (radiusHit(player.sprite, 1, map.mainEndDoor, 30) && interact == true){
+            levelManager.LoadBossLevel();
+        }
     }
     if (map.bossLoaded == true){
         if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall) == true){player.canWalk = false;}
@@ -146,12 +152,8 @@ function MonitorCollisions():void{
         else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall) == true){player.canWalk = false;}
         else{ player.canWalk = true;}
     }
-    else if (radiusHit(player.sprite, 1, map.mainEndDoor, 30) && interact == true){
-        levelManager.LoadBossLevel();
-    }
     else{//nothing
     }
-
     enemyManager.MonitorCollisions();
 
     for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
@@ -160,16 +162,14 @@ function MonitorCollisions():void{
             }
             if (boxHit (maxArrowsOnScreen[i].sprite, enemyManager.enemies[e].sprite)){
                 if (enemyManager.enemies[e].vitalStatus == GameCharacter.ALIVE && maxArrowsOnScreen[i].used == true){
-                enemyManager.enemies[e].TakeDamage(player.attackDamage);
-                maxArrowsOnScreen[i].remove();
+                    enemyManager.enemies[e].TakeDamage(player.attackDamage);
+                    maxArrowsOnScreen[i].remove();
                 }
             }
         }
-    }
-
-   
-    
+    } 
 }
+
 function OnKeyDown(e:KeyboardEvent):void{
     if (e.key == "a"){if (player.movement == GameCharacter.IDLE){left = true;} else{return;}}
     else if (e.key == "w"){if (player.movement == GameCharacter.IDLE){up = true} else{return;}}
@@ -178,6 +178,7 @@ function OnKeyDown(e:KeyboardEvent):void{
     else if (e.key == " "){shoot = true;}
     else if (e.key == "e"){interact = true;}
 }
+
 function OnKeyUp(e:KeyboardEvent):void{
     if (e.key == "a"){left = false;}
     else if (e.key == "w"){up = false}
@@ -186,6 +187,7 @@ function OnKeyUp(e:KeyboardEvent):void{
     else if (e.key == " "){shoot = false}
     else if (e.key == "e"){interact = false;}
 }
+
 function MonitorKeys():void{
 
     if (left)

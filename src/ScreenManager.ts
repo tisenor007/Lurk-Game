@@ -60,7 +60,7 @@ export default class ScreenManager{
 
     public ShowGameWinScreen():void{
         this.levelManager.gameLoaded = false;
-        this.stage.removeAllChildren();
+        //this.stage.removeAllChildren();
         this.stage.addChild(this.gameWinScreen);
         this.gameWinScreen.on("click", (e) =>{ this.stage.dispatchEvent(this.eventRestartGame);}, this, true);
     }

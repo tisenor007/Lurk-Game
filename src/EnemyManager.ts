@@ -29,7 +29,7 @@ export default class EnemyManager{
         for (let i:number = 0; i <= MAX_ENEMIES; i++){
             this.enemies[i] = null;
         }
-        this.enemies[0] = new Default(this.stage, this.assetManager, 20, 30, this.player);
+        this.enemies[0] = new Default(this.stage, this.assetManager, 300, 30, this.player);
         this.enemies[1] = new Light(this.stage, this.assetManager, 600, 200, this.player);
         this.enemies[2] = new Heavy(this.stage, this.assetManager, 400, 400, this.player);
         this.enemies[3] = new Default(this.stage, this.assetManager, 600, 750, this.player);
