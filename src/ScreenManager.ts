@@ -53,14 +53,15 @@ export default class ScreenManager{
 
     public ShowGameOverScreen():void{
         this.levelManager.gameLoaded = false;
-        this.stage.removeAllChildren();
+        //this.stage.removeAllChildren();
+        this.stage.children.forEach(child => this.stage.removeChild(child));
         this.stage.addChild(this.gameOverScreen);
         this.gameOverScreen.on("click", (e) =>{ this.stage.dispatchEvent(this.eventRestartGame);}, this, true);
     }
 
     public ShowGameWinScreen():void{
         this.levelManager.gameLoaded = false;
-        //this.stage.removeAllChildren();
+        this.stage.removeAllChildren();
         this.stage.addChild(this.gameWinScreen);
         this.gameWinScreen.on("click", (e) =>{ this.stage.dispatchEvent(this.eventRestartGame);}, this, true);
     }

@@ -53,21 +53,6 @@ export default class Enemy extends GameCharacter{
         this.stage.removeChild(this.healthBar);
         this.stage.removeChild(this.healthBarBack);
     }
-    public TurnAround():void{
-        this.canWalk = false;
-        if (this.direction == 1){
-            this.state = GameCharacter.DOWN;
-        }
-        if (this.direction == 2){
-            this.state = GameCharacter.UP;
-        }
-        if (this.direction == 3){
-            this.state = GameCharacter.RIGHT;
-        }
-        if (this.direction == 4){
-            this.state = GameCharacter.LEFT;
-        }
-    }
 
     Update():void{
         super.Update();

@@ -53,7 +53,7 @@ export default class Map{
 
         this.mainStartDoor = this.assetManager.getSprite("assets", "other/door");
         this.mainEndDoor = this.assetManager.getSprite("assets", "other/door");
-        this.bossStartDoor = this.assetManager.getSprite("assets", "other/door");
+        this.bossStartDoor = this.assetManager.getSprite("assets", "other/door2");
         this.water = this.assetManager.getSprite("assets", "other/water");
     }
 
@@ -158,21 +158,21 @@ export default class Map{
             this.eastWall.y = this.camera.offsetY + 0.5;
             this.westWall.x = this.camera.offsetX - (this.mapSize/2 + 19.5);
             this.westWall.y = this.camera.offsetY + 0.5;
-            this.bossStartDoor.x = this.camera.offsetX - (this.mapSize/2 - 40);
-            this.bossStartDoor.y = this.camera.offsetY -(this.mapSize/2 + 16);
+            this.bossStartDoor.x = this.camera.offsetX;
+            this.bossStartDoor.y = this.camera.offsetY +(this.mapSize/2 + 16);
         }
         
     }
-    public IsCollidingWithWall(character:createjs.Sprite, direction:number, wall:createjs.Sprite):boolean {
+    public IsCollidingWithWall(character:createjs.Sprite, direction:number, wall:createjs.Sprite, speed:number):boolean {
        
         let width1:number = character.getBounds().width;
         let height1:number = character.getBounds().height;
         let width2:number = wall.getBounds().width;
         let height2:number = wall.getBounds().height;
         if (direction == 4) {
-            if ((character.x + width1/2 + PLAYER_SPEED > wall.x - width2/2) &&
+            if ((character.x + width1/2 + speed > wall.x - width2/2) &&
                 (character.y + height2/5 > wall.y - height2/2) &&
-                (character.x - width1/2 + PLAYER_SPEED < wall.x + width2 / 2) &&
+                (character.x - width1/2 + speed < wall.x + width2 / 2) &&
                 (character.y - height1/5 < wall.y + height2 /2)) {
                 return true;
             } 
@@ -181,9 +181,9 @@ export default class Map{
             }
         }
         if (direction == 3) {
-            if ((character.x + width1/2 - PLAYER_SPEED > wall.x - width2/2) &&
+            if ((character.x + width1/2 - speed > wall.x - width2/2) &&
                 (character.y + height2/5 > wall.y - height2/2) &&
-                (character.x - width1/2 - PLAYER_SPEED < wall.x + width2 / 2) &&
+                (character.x - width1/2 - speed < wall.x + width2 / 2) &&
                 (character.y - height1/5 < wall.y + height2 /2)) {
                 return true;
             } 
@@ -193,9 +193,9 @@ export default class Map{
         } 
         if (direction == 2) {
             if ((character.x + width1/2 > wall.x - width2/2) &&
-                (character.y + height2/5 + PLAYER_SPEED > wall.y - height2/2) &&
+                (character.y + height2/5 + speed > wall.y - height2/2) &&
                 (character.x - width1/2  < wall.x + width2 / 2) &&
-                (character.y - height1/5 + PLAYER_SPEED < wall.y + height2 /2)) {
+                (character.y - height1/5 + speed < wall.y + height2 /2)) {
                 return true;
             } 
             else {
@@ -204,9 +204,9 @@ export default class Map{
         } 
         if (direction == 1) {
             if ((character.x + width1/2 > wall.x - width2/2) &&
-                (character.y + height2/5 - PLAYER_SPEED > wall.y - height2/2) &&
+                (character.y + height2/5 - speed > wall.y - height2/2) &&
                 (character.x - width1/2  < wall.x + width2 / 2) &&
-                (character.y - height1/5 - PLAYER_SPEED < wall.y + height2 /2)) {
+                (character.y - height1/5 - speed < wall.y + height2 /2)) {
                 return true;
             } 
             else {

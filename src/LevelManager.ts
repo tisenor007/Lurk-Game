@@ -52,7 +52,7 @@ export default class LevelManager{
         this.gameLoaded = false;
         this.loadingDuration = randomNum(50, 100);
         this.map.LoadBoss();
-        this.player.SpawnPlayer(100, 100);
+        this.player.SpawnPlayer(380, 650);
         this.enemyManager.InitBossEnemies();
         this.enemyManager.SpawmEnemies();
         this.stage.addChild(this.darkOverlay);

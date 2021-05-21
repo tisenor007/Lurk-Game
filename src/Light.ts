@@ -10,7 +10,7 @@ export default class Light extends Enemy{
         this.sightRange = 50;
         this.attackSpeed = 5;
         this.form = "Enemy/Light";
-        this.speed = 2;
+        this.speed = 1.5;
         this.attackDamage = 2;
         this.health = 25;
     }

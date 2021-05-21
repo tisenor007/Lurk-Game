@@ -29,7 +29,7 @@ export default class EnemyManager{
         for (let i:number = 0; i <= MAX_ENEMIES; i++){
             this.enemies[i] = null;
         }
-        this.enemies[0] = new Default(this.stage, this.assetManager, 300, 30, this.player);
+        this.enemies[0] = new Default(this.stage, this.assetManager, 200, 50, this.player);
         this.enemies[1] = new Light(this.stage, this.assetManager, 600, 200, this.player);
         this.enemies[2] = new Heavy(this.stage, this.assetManager, 400, 400, this.player);
         this.enemies[3] = new Default(this.stage, this.assetManager, 600, 750, this.player);
@@ -85,7 +85,7 @@ export default class EnemyManager{
                     }
                 }
                 if(this.enemies[i].canWalk == true){
-                    if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.floor) == false){this.enemies[i].TurnAround();}
+                    if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.floor, this.enemies[i].speed) == false){this.enemies[i].state == Enemy.ROAMING;}
                     // else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.northWall) == true){this.enemies[i].TurnAround();}
                     // else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.westWall) == true){this.enemies[i].TurnAround();}
                     // else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.southWall) == true){this.enemies[i].TurnAround();}

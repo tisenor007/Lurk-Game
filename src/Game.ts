@@ -85,7 +85,7 @@ function onReady(e:createjs.Event):void {
 function OnGameEvent(e:createjs.Event):void{
     switch (e.type){
         case "gameStart":
-            player.lives = 0;
+            player.lives = PLAYER_MAX_LIVES;
             levelManager.LoadMainLevel();
             break;
         case "pKilled":
@@ -126,30 +126,30 @@ function onTick(e:createjs.Event):void {
     
 }
 function MonitorCollisions():void{
-   
+   console.log("YEET");
     if (map.mainLoaded == true){
-        if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.northWall) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.westWall) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallOne) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallTwo) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallThree) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallFour) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallFive) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSix) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSeven) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallEight) == true){player.canWalk = false;}
+        if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall, player.speed) == true){player.canWalk = false;}
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.northWall, player.speed) == true){player.canWalk = false;}
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.westWall, player.speed) == true){player.canWalk = false;}
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall, player.speed) == true){player.canWalk = false;}
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallOne, player.speed) == true){player.canWalk = false;}
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallTwo, player.speed) == true){player.canWalk = false;}
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallThree, player.speed) == true){player.canWalk = false;}
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallFour, player.speed) == true){player.canWalk = false;}
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallFive, player.speed) == true){player.canWalk = false;}
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSix, player.speed) == true){player.canWalk = false;}
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSeven, player.speed) == true){player.canWalk = false;}
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallEight, player.speed) == true){player.canWalk = false;}
         else{ player.canWalk = true;}
         if (radiusHit(player.sprite, 1, map.mainEndDoor, 30) && interact == true){
             levelManager.LoadBossLevel();
         }
     }
     if (map.bossLoaded == true){
-        if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.northWall) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.westWall) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall) == true){player.canWalk = false;}
+        if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall, player.speed) == true){player.canWalk = false;}
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.northWall, player.speed) == true){player.canWalk = false;}
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.westWall, player.speed) == true){player.canWalk = false;}
+        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall, player.speed) == true){player.canWalk = false;}
         else{ player.canWalk = true;}
     }
     else{//nothing
