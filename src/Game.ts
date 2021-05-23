@@ -23,6 +23,7 @@ import Camera from "./Camera";
 import LevelManager from "./LevelManager";
 import ScreenManager from "./ScreenManager";
 import PickupManager from "./PickupManager";
+import GameManager from "./GameManager";
 
 // game variables
 let stage:createjs.StageGL;
@@ -46,6 +47,7 @@ let levelManager:LevelManager;
 let enemyManager:EnemyManager;
 let screenManager:ScreenManager;
 let pickupManager:PickupManager;
+let gameManager:GameManager;
 
 let left:boolean = false;
 let right:boolean = false;
@@ -59,7 +61,6 @@ function onReady(e:createjs.Event):void {
 
     // construct game objects/sprites
     // ...
-    
     player = new Player(stage, assetManager);
     camera = new Camera(stage, assetManager, player);
     map = new Map(stage, assetManager, camera);
@@ -70,43 +71,23 @@ function onReady(e:createjs.Event):void {
     hud = new HUD(stage, assetManager, player);
     levelManager = new LevelManager(stage, assetManager, player, map, enemyManager, pickupManager, hud);
     screenManager = new ScreenManager(stage, assetManager, levelManager);
+    gameManager = new GameManager(stage, assetManager, levelManager, screenManager, player, enemyManager, pickupManager, maxArrowsOnScreen, map);
 
     screenManager.ShowIntroScreen();
 
     document.onkeydown = OnKeyDown;
     document.onkeyup = OnKeyUp;
 
-    stage.on("gameStart", OnGameEvent);
-    stage.on("gameRestart", OnGameEvent);
-    stage.on("pKilled", OnGameEvent);
-    stage.on("gameWon", OnGameEvent);
     // startup the ticker
     createjs.Ticker.framerate = FRAME_RATE;
     createjs.Ticker.on("tick", onTick);     
     console.log(">> game ready");
 }
-function OnGameEvent(e:createjs.Event):void{
-    switch (e.type){
-        case "gameStart":
-            player.lives = PLAYER_MAX_LIVES;
-            levelManager.LoadMainLevel();
-            break;
-        case "pKilled":
-            if (player.lives >= 0){levelManager.LoadMainLevel();}
-            else if (player.lives < 0){screenManager.ShowGameOverScreen();}
-            break;
-        case "gameWon":
-            screenManager.ShowGameWinScreen();
-            break;
-        case "gameRestart":
-            screenManager.ShowIntroScreen();
-            break;
-    }
-}
 
 function onTick(e:createjs.Event):void {
     // TESTING FPS
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
+    
     if (levelManager.gameLoaded == true){
         arrowCoolDown--;
         if (arrowCoolDown <=0){arrowCoolDown = 0;}
@@ -117,7 +98,7 @@ function onTick(e:createjs.Event):void {
         hud.Update();
         camera.Update();
         MonitorKeys();
-        MonitorCollisions();
+        gameManager.MonitorCollisions(interact);
     }
     else{//nothing
     }
@@ -127,52 +108,6 @@ function onTick(e:createjs.Event):void {
     // update the stage!
     stage.update();
     
-}
-function MonitorCollisions():void{
-    if (map.mainLoaded == true){
-        if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall, player.speed) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.northWall, player.speed) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.westWall, player.speed) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall, player.speed) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallOne, player.speed) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallTwo, player.speed) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallThree, player.speed) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallFour, player.speed) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallFive, player.speed) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSix, player.speed) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSeven, player.speed) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallEight, player.speed) == true){player.canWalk = false;}
-        else{ player.canWalk = true;}
-        if (radiusHit(player.sprite, 1, map.mainEndDoor, 30) && player.hasKey == true && interact == true){
-            levelManager.LoadBossLevel();
-        }
-    }
-    if (map.bossLoaded == true){
-        if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall, player.speed) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.northWall, player.speed) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.westWall, player.speed) == true){player.canWalk = false;}
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall, player.speed) == true){player.canWalk = false;}
-        else{ player.canWalk = true;}
-    }
-    else{//nothing
-    }
-
-    pickupManager.MonitorCollisions(interact);
-    enemyManager.MonitorCollisions();
-    
-    for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
-        for (let e:number = 0; e <= MAX_ENEMIES; e++){
-            if (enemyManager.enemies[e] == null){return;
-            }
-            if (boxHit (maxArrowsOnScreen[i].sprite, enemyManager.enemies[e].sprite)){
-                if (enemyManager.enemies[e].vitalStatus == GameCharacter.ALIVE && maxArrowsOnScreen[i].used == true){
-                    enemyManager.enemies[e].TakeDamage(player.attackDamage);
-                    maxArrowsOnScreen[i].remove();
-                }
-            }
-        }
-    } 
-
 }
 
 function OnKeyDown(e:KeyboardEvent):void{

@@ -10276,7 +10276,7 @@ class Boss extends Enemy_1.default {
     }
     Spawn() {
         super.Spawn();
-        this.health = 300;
+        this.health = 30;
     }
     KillMe() {
         super.KillMe();
@@ -10717,7 +10717,6 @@ class EnemyManager {
             else {
                 this.enemies[i].Update();
             }
-            console.log(this.enemies[0].direction);
         }
     }
     MonitorCollisions() {
@@ -10939,13 +10938,13 @@ const Map_1 = __webpack_require__(/*! ./Map */ "./src/Map.ts");
 const World_1 = __webpack_require__(/*! ./World */ "./src/World.ts");
 const Arrow_1 = __webpack_require__(/*! ./Arrow */ "./src/Arrow.ts");
 const HUD_1 = __webpack_require__(/*! ./HUD */ "./src/HUD.ts");
-const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
 const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
 const EnemyManager_1 = __webpack_require__(/*! ./EnemyManager */ "./src/EnemyManager.ts");
 const Camera_1 = __webpack_require__(/*! ./Camera */ "./src/Camera.ts");
 const LevelManager_1 = __webpack_require__(/*! ./LevelManager */ "./src/LevelManager.ts");
 const ScreenManager_1 = __webpack_require__(/*! ./ScreenManager */ "./src/ScreenManager.ts");
 const PickupManager_1 = __webpack_require__(/*! ./PickupManager */ "./src/PickupManager.ts");
+const GameManager_1 = __webpack_require__(/*! ./GameManager */ "./src/GameManager.ts");
 let stage;
 let canvas;
 let player;
@@ -10960,6 +10959,7 @@ let levelManager;
 let enemyManager;
 let screenManager;
 let pickupManager;
+let gameManager;
 let left = false;
 let right = false;
 let up = false;
@@ -10980,38 +10980,13 @@ function onReady(e) {
     hud = new HUD_1.default(stage, assetManager, player);
     levelManager = new LevelManager_1.default(stage, assetManager, player, map, enemyManager, pickupManager, hud);
     screenManager = new ScreenManager_1.default(stage, assetManager, levelManager);
+    gameManager = new GameManager_1.default(stage, assetManager, levelManager, screenManager, player, enemyManager, pickupManager, maxArrowsOnScreen, map);
     screenManager.ShowIntroScreen();
     document.onkeydown = OnKeyDown;
     document.onkeyup = OnKeyUp;
-    stage.on("gameStart", OnGameEvent);
-    stage.on("gameRestart", OnGameEvent);
-    stage.on("pKilled", OnGameEvent);
-    stage.on("gameWon", OnGameEvent);
     createjs.Ticker.framerate = Constants_1.FRAME_RATE;
     createjs.Ticker.on("tick", onTick);
     console.log(">> game ready");
-}
-function OnGameEvent(e) {
-    switch (e.type) {
-        case "gameStart":
-            player.lives = Constants_1.PLAYER_MAX_LIVES;
-            levelManager.LoadMainLevel();
-            break;
-        case "pKilled":
-            if (player.lives >= 0) {
-                levelManager.LoadMainLevel();
-            }
-            else if (player.lives < 0) {
-                screenManager.ShowGameOverScreen();
-            }
-            break;
-        case "gameWon":
-            screenManager.ShowGameWinScreen();
-            break;
-        case "gameRestart":
-            screenManager.ShowIntroScreen();
-            break;
-    }
 }
 function onTick(e) {
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
@@ -11029,7 +11004,7 @@ function onTick(e) {
         hud.Update();
         camera.Update();
         MonitorKeys();
-        MonitorCollisions();
+        gameManager.MonitorCollisions(interact);
     }
     else {
     }
@@ -11037,86 +11012,6 @@ function onTick(e) {
         levelManager.UpdateLoadingScreen();
     }
     stage.update();
-}
-function MonitorCollisions() {
-    if (map.mainLoaded == true) {
-        if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.northWall, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.westWall, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallOne, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallTwo, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallThree, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallFour, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallFive, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSix, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSeven, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallEight, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else {
-            player.canWalk = true;
-        }
-        if (ToolBox_1.radiusHit(player.sprite, 1, map.mainEndDoor, 30) && player.hasKey == true && interact == true) {
-            levelManager.LoadBossLevel();
-        }
-    }
-    if (map.bossLoaded == true) {
-        if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.northWall, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.westWall, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else if (map.IsCollidingWithWall(player.sprite, player.direction, map.southWall, player.speed) == true) {
-            player.canWalk = false;
-        }
-        else {
-            player.canWalk = true;
-        }
-    }
-    else {
-    }
-    pickupManager.MonitorCollisions(interact);
-    enemyManager.MonitorCollisions();
-    for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
-        for (let e = 0; e <= Constants_1.MAX_ENEMIES; e++) {
-            if (enemyManager.enemies[e] == null) {
-                return;
-            }
-            if (ToolBox_1.boxHit(maxArrowsOnScreen[i].sprite, enemyManager.enemies[e].sprite)) {
-                if (enemyManager.enemies[e].vitalStatus == GameCharacter_1.default.ALIVE && maxArrowsOnScreen[i].used == true) {
-                    enemyManager.enemies[e].TakeDamage(player.attackDamage);
-                    maxArrowsOnScreen[i].remove();
-                }
-            }
-        }
-    }
 }
 function OnKeyDown(e) {
     if (e.key == "a") {
@@ -11290,6 +11185,144 @@ GameCharacter.RIGHT = 4;
 GameCharacter.IDLE = 5;
 GameCharacter.DEAD = 6;
 GameCharacter.ALIVE = 7;
+
+
+/***/ }),
+
+/***/ "./src/GameManager.ts":
+/*!****************************!*\
+  !*** ./src/GameManager.ts ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
+const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
+const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
+class GameManager {
+    constructor(stage, assetManager, levelManager, screenManager, player, enemyManager, pickupManager, maxArrowsOnScreen, map) {
+        this.maxArrowsOnScreen = [];
+        this.stage = stage;
+        this.player = player;
+        this.map = map;
+        this.enemyManager = enemyManager;
+        this.levelManager = levelManager;
+        this.screenManager = screenManager;
+        this.pickupManager = pickupManager;
+        this.maxArrowsOnScreen = maxArrowsOnScreen;
+        this.stage.on("gameStart", this.OnGameEvent, this);
+        this.stage.on("gameRestart", this.OnGameEvent, this);
+        this.stage.on("pKilled", this.OnGameEvent, this);
+        this.stage.on("gameWon", this.OnGameEvent, this);
+    }
+    OnGameEvent(e) {
+        switch (e.type) {
+            case "gameStart":
+                this.player.lives = Constants_1.PLAYER_MAX_LIVES;
+                this.player.availableArrows = Constants_1.STARTING_ARROW_AMOUNT;
+                this.levelManager.LoadMainLevel();
+                break;
+            case "pKilled":
+                if (this.player.lives >= 0) {
+                    this.levelManager.LoadMainLevel();
+                }
+                else if (this.player.lives < 0) {
+                    this.screenManager.ShowGameOverScreen();
+                }
+                break;
+            case "gameWon":
+                this.screenManager.ShowGameWinScreen();
+                break;
+            case "gameRestart":
+                this.screenManager.ShowIntroScreen();
+                break;
+        }
+    }
+    MonitorCollisions(interact) {
+        if (this.map.mainLoaded == true) {
+            if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.eastWall, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.northWall, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.westWall, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.southWall, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.centerWallOne, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.centerWallTwo, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.centerWallThree, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.centerWallFour, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.centerWallFive, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.centerWallSix, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.centerWallSeven, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.centerWallEight, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else {
+                this.player.canWalk = true;
+            }
+            if (ToolBox_1.radiusHit(this.player.sprite, 1, this.map.mainEndDoor, 30) && this.player.hasKey == true && interact == true) {
+                this.levelManager.LoadBossLevel();
+            }
+        }
+        if (this.map.bossLoaded == true) {
+            if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.eastWall, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.northWall, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.westWall, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.southWall, this.player.speed) == true) {
+                this.player.canWalk = false;
+            }
+            else {
+                this.player.canWalk = true;
+            }
+        }
+        else {
+        }
+        this.pickupManager.MonitorCollisions(interact);
+        this.enemyManager.MonitorCollisions();
+        for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+            for (let e = 0; e <= Constants_1.MAX_ENEMIES; e++) {
+                if (this.enemyManager.enemies[e] == null) {
+                    return;
+                }
+                if (ToolBox_1.boxHit(this.maxArrowsOnScreen[i].sprite, this.enemyManager.enemies[e].sprite)) {
+                    if (this.enemyManager.enemies[e].vitalStatus == GameCharacter_1.default.ALIVE && this.maxArrowsOnScreen[i].used == true) {
+                        this.enemyManager.enemies[e].TakeDamage(this.player.attackDamage);
+                        this.maxArrowsOnScreen[i].remove();
+                    }
+                }
+            }
+        }
+    }
+}
+exports.default = GameManager;
 
 
 /***/ }),
@@ -12002,7 +12035,7 @@ class ScreenManager {
     }
     ShowGameWinScreen() {
         this.levelManager.gameLoaded = false;
-        this.stage.removeAllChildren();
+        this.stage.children.forEach(child => this.stage.removeChild(child));
         this.stage.addChild(this.gameWinScreen);
         this.gameWinScreen.on("click", (e) => { this.stage.dispatchEvent(this.eventRestartGame); }, this, true);
     }

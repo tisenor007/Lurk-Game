@@ -57,7 +57,6 @@ export default class EnemyManager{
             else{
                 this.enemies[i].Update();
             }
-            console.log(this.enemies[0].direction);
         }
     }
 
