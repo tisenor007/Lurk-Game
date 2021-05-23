@@ -4,7 +4,7 @@
 // importing createjs framework
 import "createjs";
 // importing game constants
-import { STAGE_WIDTH, STAGE_HEIGHT, FRAME_RATE, ASSET_MANIFEST, MAX_ARROWS_ON_SCREEN, PLAYER_SPEED, ARROW_RELOAD, MAX_ENEMIES, PLAYER_MAX_LIVES} from "./Constants";
+import { STAGE_WIDTH, STAGE_HEIGHT, FRAME_RATE, ASSET_MANIFEST, MAX_ARROWS_ON_SCREEN, PLAYER_SPEED, ARROW_RELOAD, MAX_ENEMIES, PLAYER_MAX_LIVES, MAX_PICKUPS} from "./Constants";
 import AssetManager from "./AssetManager";
 import Player from "./Player";
 import Map from "./Map";
@@ -22,6 +22,7 @@ import EnemyManager from "./EnemyManager";
 import Camera from "./Camera";
 import LevelManager from "./LevelManager";
 import ScreenManager from "./ScreenManager";
+import PickupManager from "./PickupManager";
 
 // game variables
 let stage:createjs.StageGL;
@@ -44,6 +45,7 @@ let assetManager:AssetManager;
 let levelManager:LevelManager;
 let enemyManager:EnemyManager;
 let screenManager:ScreenManager;
+let pickupManager:PickupManager;
 
 let left:boolean = false;
 let right:boolean = false;
@@ -62,10 +64,11 @@ function onReady(e:createjs.Event):void {
     camera = new Camera(stage, assetManager, player);
     map = new Map(stage, assetManager, camera);
     enemyManager = new EnemyManager(stage, assetManager, player, map);
+    pickupManager = new PickupManager(stage, assetManager, player, map);
     for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){maxArrowsOnScreen[i] = new Arrow(stage, assetManager, world, player);}
-    world = new World(stage, assetManager, player, maxArrowsOnScreen, enemyManager.enemies);
+    world = new World(stage, assetManager, player, maxArrowsOnScreen, enemyManager.enemies, pickupManager.pickups);
     hud = new HUD(stage, assetManager, player);
-    levelManager = new LevelManager(stage, assetManager, player, map, enemyManager, hud);
+    levelManager = new LevelManager(stage, assetManager, player, map, enemyManager, pickupManager, hud);
     screenManager = new ScreenManager(stage, assetManager, levelManager);
 
     screenManager.ShowIntroScreen();
@@ -126,7 +129,6 @@ function onTick(e:createjs.Event):void {
     
 }
 function MonitorCollisions():void{
-   console.log("YEET");
     if (map.mainLoaded == true){
         if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall, player.speed) == true){player.canWalk = false;}
         else if (map.IsCollidingWithWall(player.sprite, player.direction, map.northWall, player.speed) == true){player.canWalk = false;}
@@ -141,7 +143,7 @@ function MonitorCollisions():void{
         else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallSeven, player.speed) == true){player.canWalk = false;}
         else if (map.IsCollidingWithWall(player.sprite, player.direction, map.centerWallEight, player.speed) == true){player.canWalk = false;}
         else{ player.canWalk = true;}
-        if (radiusHit(player.sprite, 1, map.mainEndDoor, 30) && interact == true){
+        if (radiusHit(player.sprite, 1, map.mainEndDoor, 30) && player.hasKey == true && interact == true){
             levelManager.LoadBossLevel();
         }
     }
@@ -154,8 +156,10 @@ function MonitorCollisions():void{
     }
     else{//nothing
     }
-    enemyManager.MonitorCollisions();
 
+    pickupManager.MonitorCollisions(interact);
+    enemyManager.MonitorCollisions();
+    
     for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
         for (let e:number = 0; e <= MAX_ENEMIES; e++){
             if (enemyManager.enemies[e] == null){return;
@@ -168,6 +172,7 @@ function MonitorCollisions():void{
             }
         }
     } 
+
 }
 
 function OnKeyDown(e:KeyboardEvent):void{

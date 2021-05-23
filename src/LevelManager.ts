@@ -4,6 +4,7 @@ import { PLAYER_MAX_HEALTH, PLAYER_MAX_SHIELD, STAGE_HEIGHT, STAGE_WIDTH } from 
 import EnemyManager from "./EnemyManager";
 import HUD from "./HUD";
 import Map from "./Map";
+import PickupManager from "./PickupManager";
 import Player from "./Player";
 import { randomNum } from "./ToolBox";
 import World from "./World";
@@ -15,17 +16,19 @@ export default class LevelManager{
     private player:Player;
     private map:Map;
     private enemyManager:EnemyManager;
+    private pickupManager:PickupManager;
     private hud:HUD;
 
     private loadingScreen:createjs.Sprite;
     private darkOverlay:createjs.Sprite;
     private loadingDuration:number;
     
-    constructor(stage:createjs.StageGL, assetManager:AssetManager, player:Player, map:Map, enemyManager:EnemyManager, hud:HUD){
+    constructor(stage:createjs.StageGL, assetManager:AssetManager, player:Player, map:Map, enemyManager:EnemyManager, pickupManager:PickupManager, hud:HUD){
         this.stage = stage;
         this.player = player;
         this.map = map;
-        this.enemyManager = enemyManager
+        this.enemyManager = enemyManager;
+        this.pickupManager = pickupManager;
         this.hud = hud;
         this.darkOverlay = assetManager.getSprite("assets", "other/darkness",STAGE_WIDTH/2, STAGE_HEIGHT/2)
         this.loadingScreen = assetManager.getSprite("assets", "other/loading", STAGE_WIDTH/2, STAGE_HEIGHT/2);
@@ -41,6 +44,8 @@ export default class LevelManager{
         this.player.SpawnPlayer(20, 30);
         this.enemyManager.InitMainEnemies();
         this.enemyManager.SpawmEnemies();
+        this.pickupManager.InitMainPickups();
+        this.pickupManager.SpawmPickups();
         this.stage.addChild(this.darkOverlay);
         this.hud.ShowHUD();
         this.stage.addChild(this.loadingScreen);

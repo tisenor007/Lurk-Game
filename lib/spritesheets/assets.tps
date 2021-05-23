@@ -199,6 +199,23 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">Boss/Boss.png</key>
+            <key type="filename">Mainlevel/wallEight.png</key>
+            <key type="filename">Mainlevel/wallSix.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>32,32,64,64</rect>
+                <key>scale9Paddings</key>
+                <rect>32,32,64,64</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">BossLevel/bossFloor.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
@@ -246,24 +263,67 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">Enemy/Boss.png</key>
-            <key type="filename">Mainlevel/wallEight.png</key>
-            <key type="filename">Mainlevel/wallSix.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>32,32,64,64</rect>
-                <key>scale9Paddings</key>
-                <rect>32,32,64,64</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">Enemy/Default.png</key>
+            <key type="filename">Default/Default.png</key>
+            <key type="filename">Light/attack_1.png</key>
+            <key type="filename">Light/attack_10.png</key>
+            <key type="filename">Light/attack_11.png</key>
+            <key type="filename">Light/attack_12.png</key>
+            <key type="filename">Light/attack_13.png</key>
+            <key type="filename">Light/attack_14.png</key>
+            <key type="filename">Light/attack_15.png</key>
+            <key type="filename">Light/attack_16.png</key>
+            <key type="filename">Light/attack_2.png</key>
+            <key type="filename">Light/attack_3.png</key>
+            <key type="filename">Light/attack_4.png</key>
+            <key type="filename">Light/attack_5.png</key>
+            <key type="filename">Light/attack_6.png</key>
+            <key type="filename">Light/attack_7.png</key>
+            <key type="filename">Light/attack_8.png</key>
+            <key type="filename">Light/attack_9.png</key>
+            <key type="filename">Light/death_1.png</key>
+            <key type="filename">Light/death_2.png</key>
+            <key type="filename">Light/death_3.png</key>
+            <key type="filename">Light/death_4.png</key>
+            <key type="filename">Light/death_5.png</key>
+            <key type="filename">Light/death_6.png</key>
+            <key type="filename">Light/death_7.png</key>
+            <key type="filename">Light/death_8.png</key>
+            <key type="filename">Light/floaRight_1.png</key>
+            <key type="filename">Light/floatDown_1.png</key>
+            <key type="filename">Light/floatDown_2.png</key>
+            <key type="filename">Light/floatDown_3.png</key>
+            <key type="filename">Light/floatDown_4.png</key>
+            <key type="filename">Light/floatDown_5.png</key>
+            <key type="filename">Light/floatDown_6.png</key>
+            <key type="filename">Light/floatDown_7.png</key>
+            <key type="filename">Light/floatDown_8.png</key>
+            <key type="filename">Light/floatLeft_1.png</key>
+            <key type="filename">Light/floatLeft_2.png</key>
+            <key type="filename">Light/floatLeft_3.png</key>
+            <key type="filename">Light/floatLeft_4.png</key>
+            <key type="filename">Light/floatLeft_5.png</key>
+            <key type="filename">Light/floatLeft_6.png</key>
+            <key type="filename">Light/floatLeft_7.png</key>
+            <key type="filename">Light/floatLeft_8.png</key>
+            <key type="filename">Light/floatRight_2.png</key>
+            <key type="filename">Light/floatRight_3.png</key>
+            <key type="filename">Light/floatRight_4.png</key>
+            <key type="filename">Light/floatRight_5.png</key>
+            <key type="filename">Light/floatRight_6.png</key>
+            <key type="filename">Light/floatRight_7.png</key>
+            <key type="filename">Light/floatRight_8.png</key>
+            <key type="filename">Light/floatUp_1.png</key>
+            <key type="filename">Light/floatUp_2.png</key>
+            <key type="filename">Light/floatUp_3.png</key>
+            <key type="filename">Light/floatUp_4.png</key>
+            <key type="filename">Light/floatUp_5.png</key>
+            <key type="filename">Light/floatUp_6.png</key>
+            <key type="filename">Light/floatUp_7.png</key>
+            <key type="filename">Light/floatUp_8.png</key>
+            <key type="filename">Light/idleDown.png</key>
+            <key type="filename">Light/idleLeft.png</key>
+            <key type="filename">Light/idleRight.png</key>
+            <key type="filename">Light/idleUp.png</key>
             <key type="filename">Player/Idle_down.png</key>
             <key type="filename">Player/Idle_left.png</key>
             <key type="filename">Player/Idle_right.png</key>
@@ -323,7 +383,7 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">Enemy/Heavy.png</key>
+            <key type="filename">Heavy/Heavy.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -338,38 +398,46 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">Enemy/Light.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>12,12,24,24</rect>
-                <key>scale9Paddings</key>
-                <rect>12,12,24,24</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">Enemy/health_green.png</key>
-            <key type="filename">Enemy/health_red.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>16,3,32,5</rect>
-                <key>scale9Paddings</key>
-                <rect>16,3,32,5</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
+            <key type="filename">Item/armor_1.png</key>
+            <key type="filename">Item/armor_10.png</key>
+            <key type="filename">Item/armor_11.png</key>
+            <key type="filename">Item/armor_12.png</key>
+            <key type="filename">Item/armor_13.png</key>
+            <key type="filename">Item/armor_14.png</key>
+            <key type="filename">Item/armor_15.png</key>
+            <key type="filename">Item/armor_16.png</key>
+            <key type="filename">Item/armor_2.png</key>
+            <key type="filename">Item/armor_3.png</key>
+            <key type="filename">Item/armor_4.png</key>
+            <key type="filename">Item/armor_5.png</key>
+            <key type="filename">Item/armor_6.png</key>
+            <key type="filename">Item/armor_7.png</key>
+            <key type="filename">Item/armor_8.png</key>
+            <key type="filename">Item/armor_9.png</key>
+            <key type="filename">Item/arrows_1.png</key>
+            <key type="filename">Item/arrows_10.png</key>
+            <key type="filename">Item/arrows_11.png</key>
+            <key type="filename">Item/arrows_12.png</key>
+            <key type="filename">Item/arrows_13.png</key>
+            <key type="filename">Item/arrows_14.png</key>
+            <key type="filename">Item/arrows_15.png</key>
+            <key type="filename">Item/arrows_16.png</key>
+            <key type="filename">Item/arrows_2.png</key>
+            <key type="filename">Item/arrows_3.png</key>
+            <key type="filename">Item/arrows_4.png</key>
+            <key type="filename">Item/arrows_5.png</key>
+            <key type="filename">Item/arrows_6.png</key>
+            <key type="filename">Item/arrows_7.png</key>
+            <key type="filename">Item/arrows_8.png</key>
+            <key type="filename">Item/arrows_9.png</key>
             <key type="filename">Item/key_1.png</key>
+            <key type="filename">Item/key_10.png</key>
+            <key type="filename">Item/key_11.png</key>
+            <key type="filename">Item/key_12.png</key>
+            <key type="filename">Item/key_13.png</key>
+            <key type="filename">Item/key_14.png</key>
+            <key type="filename">Item/key_15.png</key>
+            <key type="filename">Item/key_16.png</key>
             <key type="filename">Item/key_2.png</key>
             <key type="filename">Item/key_3.png</key>
             <key type="filename">Item/key_4.png</key>
@@ -377,7 +445,15 @@
             <key type="filename">Item/key_6.png</key>
             <key type="filename">Item/key_7.png</key>
             <key type="filename">Item/key_8.png</key>
+            <key type="filename">Item/key_9.png</key>
             <key type="filename">Item/potion_1.png</key>
+            <key type="filename">Item/potion_10.png</key>
+            <key type="filename">Item/potion_11.png</key>
+            <key type="filename">Item/potion_12.png</key>
+            <key type="filename">Item/potion_13.png</key>
+            <key type="filename">Item/potion_14.png</key>
+            <key type="filename">Item/potion_15.png</key>
+            <key type="filename">Item/potion_16.png</key>
             <key type="filename">Item/potion_2.png</key>
             <key type="filename">Item/potion_3.png</key>
             <key type="filename">Item/potion_4.png</key>
@@ -385,6 +461,7 @@
             <key type="filename">Item/potion_6.png</key>
             <key type="filename">Item/potion_7.png</key>
             <key type="filename">Item/potion_8.png</key>
+            <key type="filename">Item/potion_9.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -535,21 +612,6 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">assets.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>462,544,923,1087</rect>
-                <key>scale9Paddings</key>
-                <rect>462,544,923,1087</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
             <key type="filename">other/GameOverScreen.png</key>
             <key type="filename">other/MainMenu.png</key>
             <struct type="IndividualSpriteSettings">
@@ -654,6 +716,22 @@
                 <rect>16,8,32,16</rect>
                 <key>scale9Paddings</key>
                 <rect>16,8,32,16</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">other/health_green.png</key>
+            <key type="filename">other/health_red.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>16,3,32,5</rect>
+                <key>scale9Paddings</key>
+                <rect>16,3,32,5</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

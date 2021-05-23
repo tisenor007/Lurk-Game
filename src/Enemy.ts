@@ -16,19 +16,41 @@ export default class Enemy extends GameCharacter{
     public stateDuration:number;
     public player:Player;
     public isIdle:boolean = true;
+    public wallHitUp:boolean = false;
+    public wallHitDown:boolean = false;
+    public wallHitLeft:boolean = false;
+    public wallHitRight:boolean = false;
+    public isAttacking:boolean = false;
     
     public healthBar:createjs.Sprite;
     public healthBarBack:createjs.Sprite;
-    public form:string;
     public attackSpeed:number;
     public attackCoolDown:number;
     public sightRange:number;
 
+    //idle animations
+    public formIdleDown:string;
+    public formIdleUp:string;
+    public formIdleLeft:string;
+    public formIdleRight:string;
+
+    //walk animations
+    public formWalkUp:string;
+    public formWalkDown:string;
+    public formWalkLeft:string;
+    public formWalkRight:string;
+
+    //attack animations
+    public formAttackUp:string;
+    public formAttackDown:string;
+    public formAttackLeft:string;
+    public formAttackRight:string;
+
     constructor(stage:createjs.StageGL, assetManager:AssetManager, xLoc:number, yLoc:number, player:Player){
-        super(stage, assetManager, "Enemy/Default")
+        super(stage, assetManager, "Default/Default")
         this.player = player;
-        this.healthBar = assetManager.getSprite("assets", "Enemy/health_green");
-        this.healthBarBack = assetManager.getSprite("assets", "Enemy/health_red");
+        this.healthBar = assetManager.getSprite("assets", "other/health_green");
+        this.healthBarBack = assetManager.getSprite("assets", "other/health_red");
         this.originPointX = +(player.originPointX - GENERAL_MAP_SIZE/2) + xLoc;
         this.originPointY = +(player.originPointY - GENERAL_MAP_SIZE/2) + yLoc;
         this.attackCoolDown = 0;
@@ -39,7 +61,7 @@ export default class Enemy extends GameCharacter{
     public Spawn():void{
         this.vitalStatus = GameCharacter.ALIVE;
         this.isDying = false;
-        this.sprite.gotoAndStop(this.form);
+        this.sprite.gotoAndStop(this.formIdleDown);
         this.sprite.x = this.originPointX;
         this.sprite.y = this.originPointY;
         this.healthBarBack.scaleX = this.health * 0.02;
@@ -48,10 +70,9 @@ export default class Enemy extends GameCharacter{
         this.stage.addChild(this.healthBar);
         this.state = Enemy.ROAMING;
     }
+
     public KillMe():void{
-        this.stage.removeChild(this.sprite);
-        this.stage.removeChild(this.healthBar);
-        this.stage.removeChild(this.healthBarBack);
+        this.vitalStatus = GameCharacter.DEAD;
     }
 
     Update():void{
@@ -70,8 +91,8 @@ export default class Enemy extends GameCharacter{
             }
         }
         if (this.vitalStatus == GameCharacter.ALIVE){
+        
             if (this.state == Enemy.ROAMING){
-                this.canWalk = true;
                 if (this.isIdle == true){
                     let movementToBeDetermined:number = randomNum(1, 4);
                     if (movementToBeDetermined <= 1){
@@ -87,47 +108,103 @@ export default class Enemy extends GameCharacter{
                         this.state = GameCharacter.RIGHT;
                     }
                     this.stateDuration = randomNum(50, 100);
+                    this.wallHitUp = false;
+                    this.wallHitDown = false;
+                    this.wallHitRight = false;
+                    this.wallHitLeft = false;
+                    this.isWalking = false;
+                    this.isAttacking = false;
                 }
             }
             else if (this.state == GameCharacter.UP){
-                this.sprite.y = this.sprite.y + this.speed;
                 this.direction = 1;
+                if (this.direction == 1 && this.wallHitUp == true){this.sprite.gotoAndStop(this.formIdleUp);}
+                else{
+                    this.sprite.y = this.sprite.y + this.speed;
+                    if (this.isWalking == false){
+                        this.sprite.gotoAndPlay(this.formWalkUp);
+                        this.isWalking = true;
+                    }
+                }
             }
             else if (this.state == GameCharacter.DOWN){
-                this.sprite.y = this.sprite.y - this.speed;
                 this.direction = 2;
+                if (this.direction == 2 && this.wallHitDown == true){this.sprite.gotoAndStop(this.formIdleDown);}
+                else{
+                    this.sprite.y = this.sprite.y - this.speed;
+                    if (this.isWalking == false){
+                        this.sprite.gotoAndPlay(this.formWalkDown);
+                        this.isWalking = true;
+                    }
+                }
             }
             else if (this.state == GameCharacter.LEFT){
-                this.sprite.x = this.sprite.x + this.speed;
                 this.direction = 3;
+                if (this.direction == 3 && this.wallHitLeft == true){this.sprite.gotoAndStop(this.formIdleLeft);}
+                else{
+                    this.sprite.x = this.sprite.x + this.speed;
+                    if (this.isWalking == false){
+                        this.sprite.gotoAndPlay(this.formWalkLeft);
+                        this.isWalking = true;
+                    }
+                }
             }
             if (this.state == GameCharacter.RIGHT){
-                this.sprite.x = this.sprite.x - this.speed;
                 this.direction = 4;
+                if (this.direction == 4 && this.wallHitRight == true){this.sprite.gotoAndStop(this.formIdleRight);
+                }
+                else{
+                    this.sprite.x = this.sprite.x - this.speed;
+                    if (this.isWalking == false){
+                        this.sprite.gotoAndPlay(this.formWalkRight);
+                        this.isWalking = true;
+                    }
+                }
             }
             else if (this.state == Enemy.RETREATING){
                 this.isIdle = true;
                 this.state = Enemy.ROAMING;
+                this.isWalking = false;
+                this.isAttacking = false;
             }
-            else if (this.state == Enemy.CHASING){
+            
+            if (this.state == Enemy.CHASING){
+                this.isAttacking = false;
                 if (this.sprite.y > this.player.sprite.y){
                     this.sprite.y = this.sprite.y - this.speed;
                     this.direction = 1;
+                    if (this.isWalking == false){
+                       this.sprite.gotoAndPlay(this.formWalkUp);
+                       this.isWalking = true;
+                    }
                 }
                 if (this.sprite.y < this.player.sprite.y){
                     this.sprite.y = this.sprite.y + this.speed;
                     this.direction = 2;
+                    if (this.isWalking == false){
+                        this.sprite.gotoAndPlay(this.formWalkDown);
+                        this.isWalking = true;
+                    }
                 }
                 if (this.sprite.x < this.player.sprite.x){
                     this.sprite.x = this.sprite.x + this.speed;
                     this.direction = 4;
+                    if (this.isWalking == false){
+                        this.sprite.gotoAndPlay(this.formWalkRight);
+                        this.isWalking = true;
+                    }
                 }
                 if (this.sprite.x > this.player.sprite.x){
                     this.sprite.x = this.sprite.x - this.speed;
                     this.direction = 3;
+                    if (this.isWalking == false){
+                        this.sprite.gotoAndPlay(this.formWalkLeft);
+                        this.isWalking = true;
+                    }
                 }
             }
             else if (this.state == Enemy.ATTACKING){
+                this.isWalking = false;
                 if (this.attackCoolDown >= 1){
                     this.attackCoolDown--;
                 }
@@ -135,7 +212,10 @@ export default class Enemy extends GameCharacter{
                     this.attackCoolDown = this.attackSpeed;
                     this.player.TakeDamage(this.attackDamage);
                 }
-                
+                if (this.direction == 1){if(this.isAttacking == false){this.sprite.gotoAndPlay(this.formAttackUp);this.isAttacking = true;}}
+                if (this.direction == 2){if(this.isAttacking == false){this.sprite.gotoAndPlay(this.formAttackDown);this.isAttacking = true;}}
+                if (this.direction == 3){if(this.isAttacking == false){this.sprite.gotoAndPlay(this.formAttackRight);this.isAttacking = true;}}
+                if (this.direction == 4){if(this.isAttacking == false){this.sprite.gotoAndPlay(this.formAttackLeft);this.isAttacking = true;}}
             }
             if (this.stateDuration <= 0){
                 this.state = Enemy.ROAMING;

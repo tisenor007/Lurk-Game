@@ -12,8 +12,8 @@ export default class GameCharacter{
     //vital statuses
     public static DEAD:number = 6;
     public static ALIVE:number = 7;
-
-    public canWalk:boolean;
+    
+    public isWalking:boolean;
 
     public health:number;
     public shield:number;
@@ -45,6 +45,12 @@ export default class GameCharacter{
         if (this.health <= 0){
             this.health = 0;
         }
+    }
+    public RegenHealth(hp:number):void{
+        this.health = this.health + hp;
+    }
+    public RestoreSheild():void{
+        this.shield = 50;
     }
 
     public Update():void{

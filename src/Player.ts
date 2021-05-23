@@ -6,7 +6,8 @@ import Arrow from "./Arrow";
 export default class Player extends GameCharacter{
 
     public playerKilled:createjs.Event;
-    public isWalking:boolean;
+    public hasKey:boolean;
+    public canWalk:boolean;
     public movement:number;
     public xLoc:number;
     public yLoc:number;
@@ -46,6 +47,10 @@ export default class Player extends GameCharacter{
             this.stage.dispatchEvent(this.playerKilled);
         }, this, true)
         this.sprite.gotoAndPlay("Player/death");
+    }
+
+    public IncreaseArrows(arrowAmount:number):void{
+        this.availableArrows = this.availableArrows + arrowAmount;
     }
 
     public Update():void{

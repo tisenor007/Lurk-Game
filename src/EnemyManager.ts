@@ -11,12 +11,12 @@ import { boxHit, radiusHit } from "./ToolBox";
 
 export default class EnemyManager{
 
+    public enemies:Enemy[] = [];
+    
     private assetManager:AssetManager;
     private stage:createjs.StageGL;
     private player:Player;
     private map:Map;
-
-    public enemies:Enemy[] = [];
 
     constructor(stage:createjs.StageGL, assetManager:AssetManager, player:Player, map:Map){
         this.stage = stage;
@@ -57,6 +57,7 @@ export default class EnemyManager{
             else{
                 this.enemies[i].Update();
             }
+            console.log(this.enemies[0].direction);
         }
     }
 
@@ -84,19 +85,79 @@ export default class EnemyManager{
                         this.enemies[i].state = Enemy.CHASING;
                     }
                 }
-                if(this.enemies[i].canWalk == true){
-                    if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.floor, this.enemies[i].speed) == false){this.enemies[i].state == Enemy.ROAMING;}
-                    // else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.northWall) == true){this.enemies[i].TurnAround();}
-                    // else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.westWall) == true){this.enemies[i].TurnAround();}
-                    // else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.southWall) == true){this.enemies[i].TurnAround();}
-                    // else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallOne) == true){this.enemies[i].TurnAround();}
-                    // else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallTwo) == true){this.enemies[i].TurnAround();}
-                    // else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallThree) == true){this.enemies[i].TurnAround();}
-                    // else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallFour) == true){this.enemies[i].TurnAround();}
-                    // else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallFive) == true){this.enemies[i].TurnAround();}
-                    // else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallSix) == true){this.enemies[i].TurnAround();}
-                    // else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallSeven) == true){this.enemies[i].TurnAround();}
-                    // else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallEight) == true){this.enemies[i].TurnAround();}
+                
+                //SUHHUUPER Messy but very accurate
+                if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.westWall,  this.enemies[i].speed) == true){
+                    if (this.enemies[i].direction == 1){this.enemies[i].wallHitUp = true;}
+                    if (this.enemies[i].direction == 2){this.enemies[i].wallHitDown = true;}
+                    if (this.enemies[i].direction == 3){this.enemies[i].wallHitLeft = true;}
+                    if (this.enemies[i].direction == 4){this.enemies[i].wallHitRight = true;}
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.northWall,  this.enemies[i].speed) == true){
+                    if (this.enemies[i].direction == 1){this.enemies[i].wallHitUp = true;}
+                    if (this.enemies[i].direction == 2){this.enemies[i].wallHitDown = true;}
+                    if (this.enemies[i].direction == 3){this.enemies[i].wallHitLeft = true;}
+                    if (this.enemies[i].direction == 4){this.enemies[i].wallHitRight = true;}
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.eastWall,  this.enemies[i].speed) == true){
+                    if (this.enemies[i].direction == 1){this.enemies[i].wallHitUp = true;}
+                    if (this.enemies[i].direction == 2){this.enemies[i].wallHitDown = true;}
+                    if (this.enemies[i].direction == 3){this.enemies[i].wallHitLeft = true;}
+                    if (this.enemies[i].direction == 4){this.enemies[i].wallHitRight = true;}
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.southWall,  this.enemies[i].speed) == true){
+                    if (this.enemies[i].direction == 1){this.enemies[i].wallHitUp = true;}
+                    if (this.enemies[i].direction == 2){this.enemies[i].wallHitDown = true;}
+                    if (this.enemies[i].direction == 3){this.enemies[i].wallHitLeft = true;}
+                    if (this.enemies[i].direction == 4){this.enemies[i].wallHitRight = true;}
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallOne,  this.enemies[i].speed) == true){
+                    if (this.enemies[i].direction == 1){this.enemies[i].wallHitUp = true;}
+                    if (this.enemies[i].direction == 2){this.enemies[i].wallHitDown = true;}
+                    if (this.enemies[i].direction == 3){this.enemies[i].wallHitLeft = true;}
+                    if (this.enemies[i].direction == 4){this.enemies[i].wallHitRight = true;}
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallTwo,  this.enemies[i].speed) == true){
+                    if (this.enemies[i].direction == 1){this.enemies[i].wallHitUp = true;}
+                    if (this.enemies[i].direction == 2){this.enemies[i].wallHitDown = true;}
+                    if (this.enemies[i].direction == 3){this.enemies[i].wallHitLeft = true;}
+                    if (this.enemies[i].direction == 4){this.enemies[i].wallHitRight = true;}
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallThree,  this.enemies[i].speed) == true){
+                    if (this.enemies[i].direction == 1){this.enemies[i].wallHitUp = true;}
+                    if (this.enemies[i].direction == 2){this.enemies[i].wallHitDown = true;}
+                    if (this.enemies[i].direction == 3){this.enemies[i].wallHitLeft = true;}
+                    if (this.enemies[i].direction == 4){this.enemies[i].wallHitRight = true;}
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallFour,  this.enemies[i].speed) == true){
+                    if (this.enemies[i].direction == 1){this.enemies[i].wallHitUp = true;}
+                    if (this.enemies[i].direction == 2){this.enemies[i].wallHitDown = true;}
+                    if (this.enemies[i].direction == 3){this.enemies[i].wallHitLeft = true;}
+                    if (this.enemies[i].direction == 4){this.enemies[i].wallHitRight = true;}
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallFive,  this.enemies[i].speed) == true){
+                    if (this.enemies[i].direction == 1){this.enemies[i].wallHitUp = true;}
+                    if (this.enemies[i].direction == 2){this.enemies[i].wallHitDown = true;}
+                    if (this.enemies[i].direction == 3){this.enemies[i].wallHitLeft = true;}
+                    if (this.enemies[i].direction == 4){this.enemies[i].wallHitRight = true;}
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallSix,  this.enemies[i].speed) == true){
+                    if (this.enemies[i].direction == 1){this.enemies[i].wallHitUp = true;}
+                    if (this.enemies[i].direction == 2){this.enemies[i].wallHitDown = true;}
+                    if (this.enemies[i].direction == 3){this.enemies[i].wallHitLeft = true;}
+                    if (this.enemies[i].direction == 4){this.enemies[i].wallHitRight = true;}
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallSeven,  this.enemies[i].speed) == true){
+                    if (this.enemies[i].direction == 1){this.enemies[i].wallHitUp = true;}
+                    if (this.enemies[i].direction == 2){this.enemies[i].wallHitDown = true;}
+                    if (this.enemies[i].direction == 3){this.enemies[i].wallHitLeft = true;}
+                    if (this.enemies[i].direction == 4){this.enemies[i].wallHitRight = true;}
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallEight,  this.enemies[i].speed) == true){
+                    if (this.enemies[i].direction == 1){this.enemies[i].wallHitUp = true;}
+                    if (this.enemies[i].direction == 2){this.enemies[i].wallHitDown = true;}
+                    if (this.enemies[i].direction == 3){this.enemies[i].wallHitLeft = true;}
+                    if (this.enemies[i].direction == 4){this.enemies[i].wallHitRight = true;}
                 }
             }
         }

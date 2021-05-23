@@ -10258,18 +10258,35 @@ class Boss extends Enemy_1.default {
         this.eventBossKilled = new createjs.Event("gameWon", true, false);
         this.sightRange = 12000;
         this.attackSpeed = 50;
-        this.form = "Enemy/Boss";
         this.speed = 1;
         this.attackDamage = 30;
         this.health = 300;
+        this.formIdleDown = "Boss/Boss";
+        this.formIdleUp = "Boss/Boss";
+        this.formIdleLeft = "Boss/Boss";
+        this.formIdleRight = "Boss/Boss";
+        this.formWalkUp = "Boss/Boss";
+        this.formWalkDown = "Boss/Boss";
+        this.formWalkLeft = "Boss/Boss";
+        this.formWalkRight = "Boss/Boss";
+        this.formAttackUp = "Boss/Boss";
+        this.formAttackDown = "Boss/Boss";
+        this.formAttackLeft = "Boss/Boss";
+        this.formAttackRight = "Boss/Boss";
     }
     Spawn() {
         super.Spawn();
-        this.health = 300;
+        this.health = 30;
     }
     KillMe() {
         super.KillMe();
-        this.stage.dispatchEvent(this.eventBossKilled);
+        this.sprite.on("animationend", (e) => {
+            this.stage.removeChild(this.sprite);
+            this.stage.removeChild(this.healthBar);
+            this.stage.removeChild(this.healthBarBack);
+            this.stage.dispatchEvent(this.eventBossKilled);
+        }, this, true);
+        this.sprite.gotoAndPlay("Boss/Boss");
     }
     Update() {
         super.Update();
@@ -10315,11 +10332,11 @@ exports.default = Camera;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ASSET_MANIFEST = exports.GENERAL_MAP_SIZE = exports.MAX_ENEMIES = exports.ARROW_RELOAD = exports.ARROW_SPEED = exports.MAX_ARROWS_ON_SCREEN = exports.STARTING_ARROW_AMOUNT = exports.PLAYER_MAX_SHIELD = exports.PLAYER_MAX_HEALTH = exports.PLAYER_MAX_LIVES = exports.PLAYER_SPEED = exports.FRAME_RATE = exports.STAGE_HEIGHT = exports.STAGE_WIDTH = void 0;
+exports.ASSET_MANIFEST = exports.GENERAL_MAP_SIZE = exports.MAX_PICKUPS = exports.MAX_ENEMIES = exports.ARROW_RELOAD = exports.ARROW_SPEED = exports.MAX_ARROWS_ON_SCREEN = exports.STARTING_ARROW_AMOUNT = exports.PLAYER_MAX_SHIELD = exports.PLAYER_MAX_HEALTH = exports.PLAYER_MAX_LIVES = exports.PLAYER_SPEED = exports.FRAME_RATE = exports.STAGE_HEIGHT = exports.STAGE_WIDTH = void 0;
 exports.STAGE_WIDTH = 400;
 exports.STAGE_HEIGHT = 400;
 exports.FRAME_RATE = 30;
-exports.PLAYER_SPEED = 15;
+exports.PLAYER_SPEED = 2.5;
 exports.PLAYER_MAX_LIVES = 3;
 exports.PLAYER_MAX_HEALTH = 100;
 exports.PLAYER_MAX_SHIELD = 50;
@@ -10328,6 +10345,7 @@ exports.MAX_ARROWS_ON_SCREEN = 8;
 exports.ARROW_SPEED = 6;
 exports.ARROW_RELOAD = 20;
 exports.MAX_ENEMIES = 100;
+exports.MAX_PICKUPS = 100;
 exports.GENERAL_MAP_SIZE = 768;
 exports.ASSET_MANIFEST = [
     {
@@ -10381,13 +10399,33 @@ class Default extends Enemy_1.default {
         super(stage, assetManager, xLoc, yLoc, player);
         this.sightRange = 60;
         this.attackSpeed = 15;
-        this.form = "Enemy/Default";
         this.speed = 1;
         this.attackDamage = 5;
         this.health = 50;
+        this.formIdleDown = "Default/Default";
+        this.formIdleUp = "Default/Default";
+        this.formIdleLeft = "Default/Default";
+        this.formIdleRight = "Default/Default";
+        this.formWalkUp = "Default/Default";
+        this.formWalkDown = "Default/Default";
+        this.formWalkLeft = "Default/Default";
+        this.formWalkRight = "Default/Default";
+        this.formAttackUp = "Default/Default";
+        this.formAttackDown = "Default/Default";
+        this.formAttackLeft = "Default/Default";
+        this.formAttackRight = "Default/Default";
     }
     Spawn() {
         super.Spawn();
+    }
+    KillMe() {
+        super.KillMe();
+        this.sprite.on("animationend", (e) => {
+            this.stage.removeChild(this.sprite);
+            this.stage.removeChild(this.healthBar);
+            this.stage.removeChild(this.healthBarBack);
+        }, this, true);
+        this.sprite.gotoAndPlay("Default/Default");
     }
     Update() {
         super.Update();
@@ -10413,11 +10451,16 @@ const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCh
 const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
 class Enemy extends GameCharacter_1.default {
     constructor(stage, assetManager, xLoc, yLoc, player) {
-        super(stage, assetManager, "Enemy/Default");
+        super(stage, assetManager, "Default/Default");
         this.isIdle = true;
+        this.wallHitUp = false;
+        this.wallHitDown = false;
+        this.wallHitLeft = false;
+        this.wallHitRight = false;
+        this.isAttacking = false;
         this.player = player;
-        this.healthBar = assetManager.getSprite("assets", "Enemy/health_green");
-        this.healthBarBack = assetManager.getSprite("assets", "Enemy/health_red");
+        this.healthBar = assetManager.getSprite("assets", "other/health_green");
+        this.healthBarBack = assetManager.getSprite("assets", "other/health_red");
         this.originPointX = +(player.originPointX - Constants_1.GENERAL_MAP_SIZE / 2) + xLoc;
         this.originPointY = +(player.originPointY - Constants_1.GENERAL_MAP_SIZE / 2) + yLoc;
         this.attackCoolDown = 0;
@@ -10427,7 +10470,7 @@ class Enemy extends GameCharacter_1.default {
     Spawn() {
         this.vitalStatus = GameCharacter_1.default.ALIVE;
         this.isDying = false;
-        this.sprite.gotoAndStop(this.form);
+        this.sprite.gotoAndStop(this.formIdleDown);
         this.sprite.x = this.originPointX;
         this.sprite.y = this.originPointY;
         this.healthBarBack.scaleX = this.health * 0.02;
@@ -10437,9 +10480,7 @@ class Enemy extends GameCharacter_1.default {
         this.state = Enemy.ROAMING;
     }
     KillMe() {
-        this.stage.removeChild(this.sprite);
-        this.stage.removeChild(this.healthBar);
-        this.stage.removeChild(this.healthBarBack);
+        this.vitalStatus = GameCharacter_1.default.DEAD;
     }
     Update() {
         super.Update();
@@ -10456,7 +10497,6 @@ class Enemy extends GameCharacter_1.default {
         }
         if (this.vitalStatus == GameCharacter_1.default.ALIVE) {
             if (this.state == Enemy.ROAMING) {
-                this.canWalk = true;
                 if (this.isIdle == true) {
                     let movementToBeDetermined = ToolBox_1.randomNum(1, 4);
                     if (movementToBeDetermined <= 1) {
@@ -10472,53 +10512,139 @@ class Enemy extends GameCharacter_1.default {
                         this.state = GameCharacter_1.default.RIGHT;
                     }
                     this.stateDuration = ToolBox_1.randomNum(50, 100);
+                    this.wallHitUp = false;
+                    this.wallHitDown = false;
+                    this.wallHitRight = false;
+                    this.wallHitLeft = false;
+                    this.isWalking = false;
+                    this.isAttacking = false;
                 }
             }
             else if (this.state == GameCharacter_1.default.UP) {
-                this.sprite.y = this.sprite.y + this.speed;
                 this.direction = 1;
+                if (this.direction == 1 && this.wallHitUp == true) {
+                    this.sprite.gotoAndStop(this.formIdleUp);
+                }
+                else {
+                    this.sprite.y = this.sprite.y + this.speed;
+                    if (this.isWalking == false) {
+                        this.sprite.gotoAndPlay(this.formWalkUp);
+                        this.isWalking = true;
+                    }
+                }
             }
             else if (this.state == GameCharacter_1.default.DOWN) {
-                this.sprite.y = this.sprite.y - this.speed;
                 this.direction = 2;
+                if (this.direction == 2 && this.wallHitDown == true) {
+                    this.sprite.gotoAndStop(this.formIdleDown);
+                }
+                else {
+                    this.sprite.y = this.sprite.y - this.speed;
+                    if (this.isWalking == false) {
+                        this.sprite.gotoAndPlay(this.formWalkDown);
+                        this.isWalking = true;
+                    }
+                }
             }
             else if (this.state == GameCharacter_1.default.LEFT) {
-                this.sprite.x = this.sprite.x + this.speed;
                 this.direction = 3;
+                if (this.direction == 3 && this.wallHitLeft == true) {
+                    this.sprite.gotoAndStop(this.formIdleLeft);
+                }
+                else {
+                    this.sprite.x = this.sprite.x + this.speed;
+                    if (this.isWalking == false) {
+                        this.sprite.gotoAndPlay(this.formWalkLeft);
+                        this.isWalking = true;
+                    }
+                }
             }
             if (this.state == GameCharacter_1.default.RIGHT) {
-                this.sprite.x = this.sprite.x - this.speed;
                 this.direction = 4;
+                if (this.direction == 4 && this.wallHitRight == true) {
+                    this.sprite.gotoAndStop(this.formIdleRight);
+                }
+                else {
+                    this.sprite.x = this.sprite.x - this.speed;
+                    if (this.isWalking == false) {
+                        this.sprite.gotoAndPlay(this.formWalkRight);
+                        this.isWalking = true;
+                    }
+                }
             }
             else if (this.state == Enemy.RETREATING) {
                 this.isIdle = true;
                 this.state = Enemy.ROAMING;
+                this.isWalking = false;
+                this.isAttacking = false;
             }
-            else if (this.state == Enemy.CHASING) {
+            if (this.state == Enemy.CHASING) {
+                this.isAttacking = false;
                 if (this.sprite.y > this.player.sprite.y) {
                     this.sprite.y = this.sprite.y - this.speed;
                     this.direction = 1;
+                    if (this.isWalking == false) {
+                        this.sprite.gotoAndPlay(this.formWalkUp);
+                        this.isWalking = true;
+                    }
                 }
                 if (this.sprite.y < this.player.sprite.y) {
                     this.sprite.y = this.sprite.y + this.speed;
                     this.direction = 2;
+                    if (this.isWalking == false) {
+                        this.sprite.gotoAndPlay(this.formWalkDown);
+                        this.isWalking = true;
+                    }
                 }
                 if (this.sprite.x < this.player.sprite.x) {
                     this.sprite.x = this.sprite.x + this.speed;
                     this.direction = 4;
+                    if (this.isWalking == false) {
+                        this.sprite.gotoAndPlay(this.formWalkRight);
+                        this.isWalking = true;
+                    }
                 }
                 if (this.sprite.x > this.player.sprite.x) {
                     this.sprite.x = this.sprite.x - this.speed;
                     this.direction = 3;
+                    if (this.isWalking == false) {
+                        this.sprite.gotoAndPlay(this.formWalkLeft);
+                        this.isWalking = true;
+                    }
                 }
             }
             else if (this.state == Enemy.ATTACKING) {
+                this.isWalking = false;
                 if (this.attackCoolDown >= 1) {
                     this.attackCoolDown--;
                 }
                 else if (this.attackCoolDown <= 0) {
                     this.attackCoolDown = this.attackSpeed;
                     this.player.TakeDamage(this.attackDamage);
+                }
+                if (this.direction == 1) {
+                    if (this.isAttacking == false) {
+                        this.sprite.gotoAndPlay(this.formAttackUp);
+                        this.isAttacking = true;
+                    }
+                }
+                if (this.direction == 2) {
+                    if (this.isAttacking == false) {
+                        this.sprite.gotoAndPlay(this.formAttackDown);
+                        this.isAttacking = true;
+                    }
+                }
+                if (this.direction == 3) {
+                    if (this.isAttacking == false) {
+                        this.sprite.gotoAndPlay(this.formAttackRight);
+                        this.isAttacking = true;
+                    }
+                }
+                if (this.direction == 4) {
+                    if (this.isAttacking == false) {
+                        this.sprite.gotoAndPlay(this.formAttackLeft);
+                        this.isAttacking = true;
+                    }
                 }
             }
             if (this.stateDuration <= 0) {
@@ -10591,6 +10717,7 @@ class EnemyManager {
             else {
                 this.enemies[i].Update();
             }
+            console.log(this.enemies[0].direction);
         }
     }
     MonitorCollisions() {
@@ -10617,9 +10744,172 @@ class EnemyManager {
                         this.enemies[i].state = Enemy_1.default.CHASING;
                     }
                 }
-                if (this.enemies[i].canWalk == true) {
-                    if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.floor, this.enemies[i].speed) == false) {
-                        this.enemies[i].state == Enemy_1.default.ROAMING;
+                if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.westWall, this.enemies[i].speed) == true) {
+                    if (this.enemies[i].direction == 1) {
+                        this.enemies[i].wallHitUp = true;
+                    }
+                    if (this.enemies[i].direction == 2) {
+                        this.enemies[i].wallHitDown = true;
+                    }
+                    if (this.enemies[i].direction == 3) {
+                        this.enemies[i].wallHitLeft = true;
+                    }
+                    if (this.enemies[i].direction == 4) {
+                        this.enemies[i].wallHitRight = true;
+                    }
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.northWall, this.enemies[i].speed) == true) {
+                    if (this.enemies[i].direction == 1) {
+                        this.enemies[i].wallHitUp = true;
+                    }
+                    if (this.enemies[i].direction == 2) {
+                        this.enemies[i].wallHitDown = true;
+                    }
+                    if (this.enemies[i].direction == 3) {
+                        this.enemies[i].wallHitLeft = true;
+                    }
+                    if (this.enemies[i].direction == 4) {
+                        this.enemies[i].wallHitRight = true;
+                    }
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.eastWall, this.enemies[i].speed) == true) {
+                    if (this.enemies[i].direction == 1) {
+                        this.enemies[i].wallHitUp = true;
+                    }
+                    if (this.enemies[i].direction == 2) {
+                        this.enemies[i].wallHitDown = true;
+                    }
+                    if (this.enemies[i].direction == 3) {
+                        this.enemies[i].wallHitLeft = true;
+                    }
+                    if (this.enemies[i].direction == 4) {
+                        this.enemies[i].wallHitRight = true;
+                    }
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.southWall, this.enemies[i].speed) == true) {
+                    if (this.enemies[i].direction == 1) {
+                        this.enemies[i].wallHitUp = true;
+                    }
+                    if (this.enemies[i].direction == 2) {
+                        this.enemies[i].wallHitDown = true;
+                    }
+                    if (this.enemies[i].direction == 3) {
+                        this.enemies[i].wallHitLeft = true;
+                    }
+                    if (this.enemies[i].direction == 4) {
+                        this.enemies[i].wallHitRight = true;
+                    }
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallOne, this.enemies[i].speed) == true) {
+                    if (this.enemies[i].direction == 1) {
+                        this.enemies[i].wallHitUp = true;
+                    }
+                    if (this.enemies[i].direction == 2) {
+                        this.enemies[i].wallHitDown = true;
+                    }
+                    if (this.enemies[i].direction == 3) {
+                        this.enemies[i].wallHitLeft = true;
+                    }
+                    if (this.enemies[i].direction == 4) {
+                        this.enemies[i].wallHitRight = true;
+                    }
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallTwo, this.enemies[i].speed) == true) {
+                    if (this.enemies[i].direction == 1) {
+                        this.enemies[i].wallHitUp = true;
+                    }
+                    if (this.enemies[i].direction == 2) {
+                        this.enemies[i].wallHitDown = true;
+                    }
+                    if (this.enemies[i].direction == 3) {
+                        this.enemies[i].wallHitLeft = true;
+                    }
+                    if (this.enemies[i].direction == 4) {
+                        this.enemies[i].wallHitRight = true;
+                    }
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallThree, this.enemies[i].speed) == true) {
+                    if (this.enemies[i].direction == 1) {
+                        this.enemies[i].wallHitUp = true;
+                    }
+                    if (this.enemies[i].direction == 2) {
+                        this.enemies[i].wallHitDown = true;
+                    }
+                    if (this.enemies[i].direction == 3) {
+                        this.enemies[i].wallHitLeft = true;
+                    }
+                    if (this.enemies[i].direction == 4) {
+                        this.enemies[i].wallHitRight = true;
+                    }
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallFour, this.enemies[i].speed) == true) {
+                    if (this.enemies[i].direction == 1) {
+                        this.enemies[i].wallHitUp = true;
+                    }
+                    if (this.enemies[i].direction == 2) {
+                        this.enemies[i].wallHitDown = true;
+                    }
+                    if (this.enemies[i].direction == 3) {
+                        this.enemies[i].wallHitLeft = true;
+                    }
+                    if (this.enemies[i].direction == 4) {
+                        this.enemies[i].wallHitRight = true;
+                    }
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallFive, this.enemies[i].speed) == true) {
+                    if (this.enemies[i].direction == 1) {
+                        this.enemies[i].wallHitUp = true;
+                    }
+                    if (this.enemies[i].direction == 2) {
+                        this.enemies[i].wallHitDown = true;
+                    }
+                    if (this.enemies[i].direction == 3) {
+                        this.enemies[i].wallHitLeft = true;
+                    }
+                    if (this.enemies[i].direction == 4) {
+                        this.enemies[i].wallHitRight = true;
+                    }
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallSix, this.enemies[i].speed) == true) {
+                    if (this.enemies[i].direction == 1) {
+                        this.enemies[i].wallHitUp = true;
+                    }
+                    if (this.enemies[i].direction == 2) {
+                        this.enemies[i].wallHitDown = true;
+                    }
+                    if (this.enemies[i].direction == 3) {
+                        this.enemies[i].wallHitLeft = true;
+                    }
+                    if (this.enemies[i].direction == 4) {
+                        this.enemies[i].wallHitRight = true;
+                    }
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallSeven, this.enemies[i].speed) == true) {
+                    if (this.enemies[i].direction == 1) {
+                        this.enemies[i].wallHitUp = true;
+                    }
+                    if (this.enemies[i].direction == 2) {
+                        this.enemies[i].wallHitDown = true;
+                    }
+                    if (this.enemies[i].direction == 3) {
+                        this.enemies[i].wallHitLeft = true;
+                    }
+                    if (this.enemies[i].direction == 4) {
+                        this.enemies[i].wallHitRight = true;
+                    }
+                }
+                else if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.centerWallEight, this.enemies[i].speed) == true) {
+                    if (this.enemies[i].direction == 1) {
+                        this.enemies[i].wallHitUp = true;
+                    }
+                    if (this.enemies[i].direction == 2) {
+                        this.enemies[i].wallHitDown = true;
+                    }
+                    if (this.enemies[i].direction == 3) {
+                        this.enemies[i].wallHitLeft = true;
+                    }
+                    if (this.enemies[i].direction == 4) {
+                        this.enemies[i].wallHitRight = true;
                     }
                 }
             }
@@ -10655,6 +10945,7 @@ const EnemyManager_1 = __webpack_require__(/*! ./EnemyManager */ "./src/EnemyMan
 const Camera_1 = __webpack_require__(/*! ./Camera */ "./src/Camera.ts");
 const LevelManager_1 = __webpack_require__(/*! ./LevelManager */ "./src/LevelManager.ts");
 const ScreenManager_1 = __webpack_require__(/*! ./ScreenManager */ "./src/ScreenManager.ts");
+const PickupManager_1 = __webpack_require__(/*! ./PickupManager */ "./src/PickupManager.ts");
 let stage;
 let canvas;
 let player;
@@ -10668,6 +10959,7 @@ let assetManager;
 let levelManager;
 let enemyManager;
 let screenManager;
+let pickupManager;
 let left = false;
 let right = false;
 let up = false;
@@ -10680,12 +10972,13 @@ function onReady(e) {
     camera = new Camera_1.default(stage, assetManager, player);
     map = new Map_1.default(stage, assetManager, camera);
     enemyManager = new EnemyManager_1.default(stage, assetManager, player, map);
+    pickupManager = new PickupManager_1.default(stage, assetManager, player, map);
     for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
         maxArrowsOnScreen[i] = new Arrow_1.default(stage, assetManager, world, player);
     }
-    world = new World_1.default(stage, assetManager, player, maxArrowsOnScreen, enemyManager.enemies);
+    world = new World_1.default(stage, assetManager, player, maxArrowsOnScreen, enemyManager.enemies, pickupManager.pickups);
     hud = new HUD_1.default(stage, assetManager, player);
-    levelManager = new LevelManager_1.default(stage, assetManager, player, map, enemyManager, hud);
+    levelManager = new LevelManager_1.default(stage, assetManager, player, map, enemyManager, pickupManager, hud);
     screenManager = new ScreenManager_1.default(stage, assetManager, levelManager);
     screenManager.ShowIntroScreen();
     document.onkeydown = OnKeyDown;
@@ -10746,7 +11039,6 @@ function onTick(e) {
     stage.update();
 }
 function MonitorCollisions() {
-    console.log("YEET");
     if (map.mainLoaded == true) {
         if (map.IsCollidingWithWall(player.sprite, player.direction, map.eastWall, player.speed) == true) {
             player.canWalk = false;
@@ -10787,7 +11079,7 @@ function MonitorCollisions() {
         else {
             player.canWalk = true;
         }
-        if (ToolBox_1.radiusHit(player.sprite, 1, map.mainEndDoor, 30) && interact == true) {
+        if (ToolBox_1.radiusHit(player.sprite, 1, map.mainEndDoor, 30) && player.hasKey == true && interact == true) {
             levelManager.LoadBossLevel();
         }
     }
@@ -10810,6 +11102,7 @@ function MonitorCollisions() {
     }
     else {
     }
+    pickupManager.MonitorCollisions(interact);
     enemyManager.MonitorCollisions();
     for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
         for (let e = 0; e <= Constants_1.MAX_ENEMIES; e++) {
@@ -10970,6 +11263,12 @@ class GameCharacter {
             this.health = 0;
         }
     }
+    RegenHealth(hp) {
+        this.health = this.health + hp;
+    }
+    RestoreSheild() {
+        this.shield = 50;
+    }
     Update() {
         if (this.health <= 0) {
             this.vitalStatus = GameCharacter.DEAD;
@@ -11073,19 +11372,68 @@ class Heavy extends Enemy_1.default {
         super(stage, assetManager, xLoc, yLoc, player);
         this.sightRange = 90;
         this.attackSpeed = 40;
-        this.form = "Enemy/Heavy";
         this.speed = 0.5;
         this.attackDamage = 10;
         this.health = 75;
+        this.formIdleDown = "Heavy/Heavy";
+        this.formIdleUp = "Heavy/Heavy";
+        this.formIdleLeft = "Heavy/Heavy";
+        this.formIdleRight = "Heavy/Heavy";
+        this.formWalkUp = "Heavy/Heavy";
+        this.formWalkDown = "Heavy/Heavy";
+        this.formWalkLeft = "Heavy/Heavy";
+        this.formWalkRight = "Heavy/Heavy";
+        this.formAttackUp = "Heavy/Heavy";
+        this.formAttackDown = "Heavy/Heavy";
+        this.formAttackLeft = "Heavy/Heavy";
+        this.formAttackRight = "Heavy/Heavy";
     }
     Spawn() {
         super.Spawn();
+    }
+    KillMe() {
+        super.KillMe();
+        this.sprite.on("animationend", (e) => {
+            this.stage.removeChild(this.sprite);
+            this.stage.removeChild(this.healthBar);
+            this.stage.removeChild(this.healthBarBack);
+        }, this, true);
+        this.sprite.gotoAndPlay("Heavy/Heavy");
     }
     Update() {
         super.Update();
     }
 }
 exports.default = Heavy;
+
+
+/***/ }),
+
+/***/ "./src/Key.ts":
+/*!********************!*\
+  !*** ./src/Key.ts ***!
+  \********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Pickup_1 = __webpack_require__(/*! ./Pickup */ "./src/Pickup.ts");
+class Key extends Pickup_1.default {
+    constructor(stage, assetManager, xLoc, yLoc, player) {
+        super(stage, assetManager, xLoc, yLoc, player);
+        this.form = "Item/key";
+    }
+    UsePickup() {
+        super.UsePickup();
+        if (this.used == false) {
+            this.player.hasKey = true;
+            this.used = true;
+        }
+    }
+}
+exports.default = Key;
 
 
 /***/ }),
@@ -11103,12 +11451,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
 class LevelManager {
-    constructor(stage, assetManager, player, map, enemyManager, hud) {
+    constructor(stage, assetManager, player, map, enemyManager, pickupManager, hud) {
         this.gameLoaded = false;
         this.stage = stage;
         this.player = player;
         this.map = map;
         this.enemyManager = enemyManager;
+        this.pickupManager = pickupManager;
         this.hud = hud;
         this.darkOverlay = assetManager.getSprite("assets", "other/darkness", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2);
         this.loadingScreen = assetManager.getSprite("assets", "other/loading", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2);
@@ -11123,6 +11472,8 @@ class LevelManager {
         this.player.SpawnPlayer(20, 30);
         this.enemyManager.InitMainEnemies();
         this.enemyManager.SpawmEnemies();
+        this.pickupManager.InitMainPickups();
+        this.pickupManager.SpawmPickups();
         this.stage.addChild(this.darkOverlay);
         this.hud.ShowHUD();
         this.stage.addChild(this.loadingScreen);
@@ -11172,13 +11523,33 @@ class Light extends Enemy_1.default {
         super(stage, assetManager, xLoc, yLoc, player);
         this.sightRange = 50;
         this.attackSpeed = 5;
-        this.form = "Enemy/Light";
         this.speed = 1.5;
         this.attackDamage = 2;
         this.health = 25;
+        this.formIdleDown = "Light/idleDown";
+        this.formIdleUp = "Light/idleUp";
+        this.formIdleLeft = "Light/idleLeft";
+        this.formIdleRight = "Light/idleRight";
+        this.formWalkUp = "Light/floatUp";
+        this.formWalkDown = "Light/floatDown";
+        this.formWalkLeft = "Light/floatLeft";
+        this.formWalkRight = "Light/floatRight";
+        this.formAttackUp = "Light/attack";
+        this.formAttackDown = "Light/attack";
+        this.formAttackLeft = "Light/attack";
+        this.formAttackRight = "Light/attack";
     }
     Spawn() {
         super.Spawn();
+    }
+    KillMe() {
+        super.KillMe();
+        this.sprite.on("animationend", (e) => {
+            this.stage.removeChild(this.sprite);
+            this.stage.removeChild(this.healthBar);
+            this.stage.removeChild(this.healthBarBack);
+        }, this, true);
+        this.sprite.gotoAndPlay("Light/death");
     }
     Update() {
         super.Update();
@@ -11371,6 +11742,95 @@ exports.default = Map;
 
 /***/ }),
 
+/***/ "./src/Pickup.ts":
+/*!***********************!*\
+  !*** ./src/Pickup.ts ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
+class Pickup {
+    constructor(stage, assetManager, xLoc, yLoc, player) {
+        this.used = false;
+        this.stage = stage;
+        this.player = player;
+        this.sprite = assetManager.getSprite("assets", this.form);
+        this.originPointX = +(player.originPointX - Constants_1.GENERAL_MAP_SIZE / 2) + xLoc;
+        this.originPointY = +(player.originPointY - Constants_1.GENERAL_MAP_SIZE / 2) + yLoc;
+    }
+    Spawn() {
+        this.used = false;
+        this.sprite.gotoAndPlay(this.form);
+        this.sprite.x = this.originPointX;
+        this.sprite.y = this.originPointY;
+        this.stage.addChild(this.sprite);
+    }
+    UsePickup() {
+        this.stage.removeChild(this.sprite);
+    }
+}
+exports.default = Pickup;
+
+
+/***/ }),
+
+/***/ "./src/PickupManager.ts":
+/*!******************************!*\
+  !*** ./src/PickupManager.ts ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
+const Key_1 = __webpack_require__(/*! ./Key */ "./src/Key.ts");
+const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
+class PickupManager {
+    constructor(stage, assetManager, player, map) {
+        this.pickups = [];
+        this.stage = stage;
+        this.player = player;
+        this.map = map;
+        this.assetManager = assetManager;
+    }
+    InitMainPickups() {
+        for (let i = 0; i <= Constants_1.MAX_PICKUPS; i++) {
+            this.pickups[i] = null;
+        }
+        this.pickups[0] = new Key_1.default(this.stage, this.assetManager, 20, 30, this.player);
+    }
+    SpawmPickups() {
+        for (let i = 0; i <= Constants_1.MAX_PICKUPS; i++) {
+            if (this.pickups[i] == null) { }
+            else {
+                this.pickups[i].Spawn();
+            }
+        }
+    }
+    MonitorCollisions(interact) {
+        for (let p = 0; p <= Constants_1.MAX_PICKUPS; p++) {
+            if (this.pickups[p] == null) {
+                return;
+            }
+            if (ToolBox_1.boxHit(this.player.sprite, this.pickups[p].sprite)) {
+                if (this.pickups[p].used == false && interact == true) {
+                    this.pickups[p].UsePickup();
+                }
+            }
+        }
+    }
+}
+exports.default = PickupManager;
+
+
+/***/ }),
+
 /***/ "./src/Player.ts":
 /*!***********************!*\
   !*** ./src/Player.ts ***!
@@ -11417,6 +11877,9 @@ class Player extends GameCharacter_1.default {
             this.stage.dispatchEvent(this.playerKilled);
         }, this, true);
         this.sprite.gotoAndPlay("Player/death");
+    }
+    IncreaseArrows(arrowAmount) {
+        this.availableArrows = this.availableArrows + arrowAmount;
     }
     Update() {
         super.Update();
@@ -11634,52 +12097,90 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
 class World {
-    constructor(stage, assetManager, player, maxArrowsOnScreen, enemies) {
+    constructor(stage, assetManager, player, maxArrowsOnScreen, enemies, pickups) {
         this.maxArrowsOnScreen = [];
         this.enemies = [];
+        this.pickups = [];
         this.stage = stage;
         this.player = player;
         this.maxArrowsOnScreen = maxArrowsOnScreen;
         this.enemies = enemies;
+        this.pickups = pickups;
     }
     OffSetWorld() {
-        for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+        if (this.player.movement == GameCharacter_1.default.LEFT && this.player.vitalStatus == GameCharacter_1.default.ALIVE) {
+            for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+                if (this.maxArrowsOnScreen[i].used == true) {
+                    this.maxArrowsOnScreen[i].sprite.x = this.maxArrowsOnScreen[i].sprite.x + Constants_1.PLAYER_SPEED;
+                }
+            }
             for (let e = 0; e <= Constants_1.MAX_ENEMIES; e++) {
-                if (this.player.movement == GameCharacter_1.default.LEFT && this.player.vitalStatus == GameCharacter_1.default.ALIVE) {
-                    if (this.maxArrowsOnScreen[i].used == true) {
-                        this.maxArrowsOnScreen[i].sprite.x = this.maxArrowsOnScreen[i].sprite.x + Constants_1.PLAYER_SPEED / 90;
-                    }
-                    if (this.enemies[e] == null) { }
-                    else {
-                        this.enemies[e].sprite.x = this.enemies[e].sprite.x + Constants_1.PLAYER_SPEED / 9;
-                    }
+                if (this.enemies[e] == null) { }
+                else {
+                    this.enemies[e].sprite.x = this.enemies[e].sprite.x + Constants_1.PLAYER_SPEED;
                 }
-                if (this.player.movement == GameCharacter_1.default.RIGHT && this.player.vitalStatus == GameCharacter_1.default.ALIVE) {
-                    if (this.maxArrowsOnScreen[i].used == true) {
-                        this.maxArrowsOnScreen[i].sprite.x = this.maxArrowsOnScreen[i].sprite.x - Constants_1.PLAYER_SPEED / 90;
-                    }
-                    if (this.enemies[e] == null) { }
-                    else {
-                        this.enemies[e].sprite.x = this.enemies[e].sprite.x - Constants_1.PLAYER_SPEED / 9;
-                    }
+            }
+            for (let p = 0; p <= Constants_1.MAX_PICKUPS; p++) {
+                if (this.pickups[p] == null) { }
+                else {
+                    this.pickups[p].sprite.x = this.pickups[p].sprite.x + Constants_1.PLAYER_SPEED;
                 }
-                if (this.player.movement == GameCharacter_1.default.UP && this.player.vitalStatus == GameCharacter_1.default.ALIVE) {
-                    if (this.maxArrowsOnScreen[i].used == true) {
-                        this.maxArrowsOnScreen[i].sprite.y = this.maxArrowsOnScreen[i].sprite.y + Constants_1.PLAYER_SPEED / 90;
-                    }
-                    if (this.enemies[e] == null) { }
-                    else {
-                        this.enemies[e].sprite.y = this.enemies[e].sprite.y + Constants_1.PLAYER_SPEED / 9;
-                    }
+            }
+        }
+        if (this.player.movement == GameCharacter_1.default.RIGHT && this.player.vitalStatus == GameCharacter_1.default.ALIVE) {
+            for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+                if (this.maxArrowsOnScreen[i].used == true) {
+                    this.maxArrowsOnScreen[i].sprite.x = this.maxArrowsOnScreen[i].sprite.x - Constants_1.PLAYER_SPEED;
                 }
-                if (this.player.movement == GameCharacter_1.default.DOWN && this.player.vitalStatus == GameCharacter_1.default.ALIVE) {
-                    if (this.maxArrowsOnScreen[i].used == true) {
-                        this.maxArrowsOnScreen[i].sprite.y = this.maxArrowsOnScreen[i].sprite.y - Constants_1.PLAYER_SPEED / 90;
-                    }
-                    if (this.enemies[e] == null) { }
-                    else {
-                        this.enemies[e].sprite.y = this.enemies[e].sprite.y - Constants_1.PLAYER_SPEED / 9;
-                    }
+            }
+            for (let e = 0; e <= Constants_1.MAX_ENEMIES; e++) {
+                if (this.enemies[e] == null) { }
+                else {
+                    this.enemies[e].sprite.x = this.enemies[e].sprite.x - Constants_1.PLAYER_SPEED;
+                }
+            }
+            for (let p = 0; p <= Constants_1.MAX_PICKUPS; p++) {
+                if (this.pickups[p] == null) { }
+                else {
+                    this.pickups[p].sprite.x = this.pickups[p].sprite.x - Constants_1.PLAYER_SPEED;
+                }
+            }
+        }
+        if (this.player.movement == GameCharacter_1.default.UP && this.player.vitalStatus == GameCharacter_1.default.ALIVE) {
+            for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+                if (this.maxArrowsOnScreen[i].used == true) {
+                    this.maxArrowsOnScreen[i].sprite.y = this.maxArrowsOnScreen[i].sprite.y + Constants_1.PLAYER_SPEED;
+                }
+            }
+            for (let e = 0; e <= Constants_1.MAX_ENEMIES; e++) {
+                if (this.enemies[e] == null) { }
+                else {
+                    this.enemies[e].sprite.y = this.enemies[e].sprite.y + Constants_1.PLAYER_SPEED;
+                }
+            }
+            for (let p = 0; p <= Constants_1.MAX_PICKUPS; p++) {
+                if (this.pickups[p] == null) { }
+                else {
+                    this.pickups[p].sprite.y = this.pickups[p].sprite.y + Constants_1.PLAYER_SPEED;
+                }
+            }
+        }
+        if (this.player.movement == GameCharacter_1.default.DOWN && this.player.vitalStatus == GameCharacter_1.default.ALIVE) {
+            for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+                if (this.maxArrowsOnScreen[i].used == true) {
+                    this.maxArrowsOnScreen[i].sprite.y = this.maxArrowsOnScreen[i].sprite.y - Constants_1.PLAYER_SPEED;
+                }
+            }
+            for (let e = 0; e <= Constants_1.MAX_ENEMIES; e++) {
+                if (this.enemies[e] == null) { }
+                else {
+                    this.enemies[e].sprite.y = this.enemies[e].sprite.y - Constants_1.PLAYER_SPEED;
+                }
+            }
+            for (let p = 0; p <= Constants_1.MAX_PICKUPS; p++) {
+                if (this.pickups[p] == null) { }
+                else {
+                    this.pickups[p].sprite.y = this.pickups[p].sprite.y - Constants_1.PLAYER_SPEED;
                 }
             }
         }
