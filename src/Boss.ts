@@ -36,7 +36,7 @@ export default class Boss extends Enemy{
 
     public Spawn():void{
         super.Spawn();
-        this.health = 30;
+        this.health = 300;
     }
 
     public KillMe():void{

@@ -10276,7 +10276,7 @@ class Boss extends Enemy_1.default {
     }
     Spawn() {
         super.Spawn();
-        this.health = 30;
+        this.health = 300;
     }
     KillMe() {
         super.KillMe();
