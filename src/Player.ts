@@ -35,7 +35,6 @@ export default class Player extends GameCharacter{
         this.isDying = false;
         this.canWalk = true;
         this.vitalStatus = GameCharacter.ALIVE;
-        this.availableArrows = STARTING_ARROW_AMOUNT;
         this.xLoc = this.originPointX;
         this.yLoc = this.originPointY;
         this.stage.addChild(this.sprite);

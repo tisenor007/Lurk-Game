@@ -11865,7 +11865,6 @@ class Player extends GameCharacter_1.default {
         this.isDying = false;
         this.canWalk = true;
         this.vitalStatus = GameCharacter_1.default.ALIVE;
-        this.availableArrows = Constants_1.STARTING_ARROW_AMOUNT;
         this.xLoc = this.originPointX;
         this.yLoc = this.originPointY;
         this.stage.addChild(this.sprite);
