@@ -1,4 +1,5 @@
 import AssetManager from "./AssetManager";
+import SoundManager from "./SoundManager";
 
 export default class GameCharacter{
 
@@ -28,9 +29,11 @@ export default class GameCharacter{
 
     public stage:createjs.StageGL;
     public sprite:createjs.Sprite;
+    protected soundManager:SoundManager;
 
-    constructor(stage:createjs.StageGL, assetManager:AssetManager, animation:string){
+    constructor(stage:createjs.StageGL, assetManager:AssetManager, animation:string, soundManager:SoundManager){
         this.stage = stage;
+        this.soundManager = soundManager;
         this.vitalStatus = GameCharacter.ALIVE;
         this.sprite = assetManager.getSprite("assets", animation);
     }

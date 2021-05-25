@@ -24,6 +24,7 @@ import LevelManager from "./LevelManager";
 import ScreenManager from "./ScreenManager";
 import PickupManager from "./PickupManager";
 import GameManager from "./GameManager";
+import SoundManager from "./SoundManager";
 
 // game variables
 let stage:createjs.StageGL;
@@ -48,6 +49,7 @@ let enemyManager:EnemyManager;
 let screenManager:ScreenManager;
 let pickupManager:PickupManager;
 let gameManager:GameManager;
+let soundManager:SoundManager;
 
 let left:boolean = false;
 let right:boolean = false;
@@ -61,16 +63,17 @@ function onReady(e:createjs.Event):void {
 
     // construct game objects/sprites
     // ...
-    player = new Player(stage, assetManager);
+    soundManager = new SoundManager(stage, assetManager);
+    player = new Player(stage, assetManager, soundManager);
     camera = new Camera(stage, assetManager, player);
     map = new Map(stage, assetManager, camera);
-    enemyManager = new EnemyManager(stage, assetManager, player, map);
-    pickupManager = new PickupManager(stage, assetManager, player, map);
-    for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){maxArrowsOnScreen[i] = new Arrow(stage, assetManager, world, player);}
+    enemyManager = new EnemyManager(stage, assetManager, player, map, soundManager);
+    pickupManager = new PickupManager(stage, assetManager, player, map, soundManager);
+    for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){maxArrowsOnScreen[i] = new Arrow(stage, assetManager, world, player, soundManager);}
     world = new World(stage, assetManager, player, maxArrowsOnScreen, enemyManager.enemies, pickupManager.pickups);
     hud = new HUD(stage, assetManager, player);
-    levelManager = new LevelManager(stage, assetManager, player, map, enemyManager, pickupManager, hud);
-    screenManager = new ScreenManager(stage, assetManager, levelManager);
+    levelManager = new LevelManager(stage, assetManager, player, map, enemyManager, pickupManager, hud, soundManager);
+    screenManager = new ScreenManager(stage, assetManager, levelManager, soundManager);
     gameManager = new GameManager(stage, assetManager, levelManager, screenManager, player, enemyManager, pickupManager, maxArrowsOnScreen, map);
 
     screenManager.ShowIntroScreen();

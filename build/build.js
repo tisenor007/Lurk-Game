@@ -10083,10 +10083,11 @@ module.exports.formatError = function(err) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 class Arrow {
-    constructor(stage, assetManager, world, player) {
+    constructor(stage, assetManager, world, player, soundManager) {
         this.used = false;
         this.stage = stage;
         this.player = player;
+        this.soundManager = soundManager;
         this.sprite = assetManager.getSprite("assets", "Arrow/arrow_up");
         this.sprite.x = Constants_1.STAGE_WIDTH / 2;
         this.sprite.y = Constants_1.STAGE_HEIGHT / 2;
@@ -10096,6 +10097,7 @@ class Arrow {
         if (this.player.availableArrows <= 0) {
         }
         else {
+            this.soundManager.PlayArrowShoot();
             if (this.player.direction == 1) {
                 this.sprite.x = Constants_1.STAGE_WIDTH / 2;
                 this.sprite.y = Constants_1.STAGE_HEIGHT / 2 - 25;
@@ -10253,43 +10255,51 @@ exports.default = AssetManager;
 Object.defineProperty(exports, "__esModule", { value: true });
 const Enemy_1 = __webpack_require__(/*! ./Enemy */ "./src/Enemy.ts");
 class Boss extends Enemy_1.default {
-    constructor(stage, assetManager, xLoc, yLoc, player) {
-        super(stage, assetManager, xLoc, yLoc, player);
+    constructor(stage, assetManager, xLoc, yLoc, player, soundManager) {
+        super(stage, assetManager, xLoc, yLoc, player, soundManager);
         this.eventBossKilled = new createjs.Event("gameWon", true, false);
         this.sightRange = 12000;
         this.attackSpeed = 50;
         this.speed = 1;
         this.attackDamage = 30;
         this.health = 300;
-        this.formIdleDown = "Boss/Boss";
-        this.formIdleUp = "Boss/Boss";
-        this.formIdleLeft = "Boss/Boss";
-        this.formIdleRight = "Boss/Boss";
-        this.formWalkUp = "Boss/Boss";
-        this.formWalkDown = "Boss/Boss";
-        this.formWalkLeft = "Boss/Boss";
-        this.formWalkRight = "Boss/Boss";
-        this.formAttackUp = "Boss/Boss";
-        this.formAttackDown = "Boss/Boss";
-        this.formAttackLeft = "Boss/Boss";
-        this.formAttackRight = "Boss/Boss";
+        this.formIdleDown = "Boss/idleDown";
+        this.formIdleUp = "Boss/idleUp";
+        this.formIdleLeft = "Boss/idleLeft";
+        this.formIdleRight = "Boss/idleRight";
+        this.formWalkUp = "Boss/floatUp";
+        this.formWalkDown = "Boss/floatDown";
+        this.formWalkLeft = "Boss/floatLeft";
+        this.formWalkRight = "Boss/floatRight";
+        this.formAttackUp = "Boss/attack";
+        this.formAttackDown = "Boss/attack";
+        this.formAttackLeft = "Boss/attack";
+        this.formAttackRight = "Boss/attack";
     }
     Spawn() {
         super.Spawn();
-        this.health = 30;
+        this.health = 300;
     }
     KillMe() {
         super.KillMe();
+        this.soundManager.PlayBossDeath();
         this.sprite.on("animationend", (e) => {
             this.stage.removeChild(this.sprite);
             this.stage.removeChild(this.healthBar);
             this.stage.removeChild(this.healthBarBack);
             this.stage.dispatchEvent(this.eventBossKilled);
         }, this, true);
-        this.sprite.gotoAndPlay("Boss/Boss");
+        this.sprite.gotoAndPlay("Boss/death");
+    }
+    TakeDamage(damage) {
+        super.TakeDamage(damage);
+        this.soundManager.PlayBossHurt();
     }
     Update() {
         super.Update();
+        if (this.attackCoolDown == this.attackSpeed) {
+            this.soundManager.PlayBossAttack();
+        }
     }
 }
 exports.default = Boss;
@@ -10362,8 +10372,92 @@ exports.ASSET_MANIFEST = [
     },
     {
         type: "sound",
-        src: "./lib/sounds/beep.ogg",
-        id: "beep",
+        src: "./lib/sounds/arrowFire.wav",
+        id: "arrowFire",
+        data: 4
+    },
+    {
+        type: "sound",
+        src: "./lib/sounds/itemPickup.wav",
+        id: "itemPickup",
+        data: 4
+    },
+    {
+        type: "sound",
+        src: "./lib/sounds/playerhurt.wav",
+        id: "playerHurt",
+        data: 4
+    },
+    {
+        type: "sound",
+        src: "./lib/sounds/playerdeath.wav",
+        id: "playerDeath",
+        data: 4
+    },
+    {
+        type: "sound",
+        src: "./lib/sounds/enemyhurt.wav",
+        id: "enemyHurt",
+        data: 4
+    },
+    {
+        type: "sound",
+        src: "./lib/sounds/enemydeath.wav",
+        id: "enemyDeath",
+        data: 4
+    },
+    {
+        type: "sound",
+        src: "./lib/sounds/enemyattack.wav",
+        id: "enemyAttack",
+        data: 4
+    },
+    {
+        type: "sound",
+        src: "./lib/sounds/bosshurt.wav",
+        id: "bossHurt",
+        data: 4
+    },
+    {
+        type: "sound",
+        src: "./lib/sounds/bossdeath.wav",
+        id: "bossDeath",
+        data: 4
+    },
+    {
+        type: "sound",
+        src: "./lib/sounds/bossattack.wav",
+        id: "bossAttack",
+        data: 4
+    },
+    {
+        type: "sound",
+        src: "./lib/sounds/bossmusic.wav",
+        id: "bossMusic",
+        data: 4
+    },
+    {
+        type: "sound",
+        src: "./lib/sounds/deathmusic.wav",
+        id: "gameLoss",
+        data: 4
+    },
+    {
+        type: "sound",
+        src: "./lib/sounds/winmusic.wav",
+        id: "gameWin",
+        data: 4
+    },
+    {
+        type: "sound",
+        src: "./lib/sounds/titlemusic.wav",
+        id: "titleMusic",
+        data: 4
+    },
+    {
+        type: "sound",
+        src: "./lib/sounds/levelmusic.wav",
+        id: "mainLevelMusic",
         data: 4
     },
     {
@@ -10395,8 +10489,8 @@ exports.ASSET_MANIFEST = [
 Object.defineProperty(exports, "__esModule", { value: true });
 const Enemy_1 = __webpack_require__(/*! ./Enemy */ "./src/Enemy.ts");
 class Default extends Enemy_1.default {
-    constructor(stage, assetManager, xLoc, yLoc, player) {
-        super(stage, assetManager, xLoc, yLoc, player);
+    constructor(stage, assetManager, xLoc, yLoc, player, soundManager) {
+        super(stage, assetManager, xLoc, yLoc, player, soundManager);
         this.sightRange = 60;
         this.attackSpeed = 15;
         this.speed = 1;
@@ -10420,6 +10514,7 @@ class Default extends Enemy_1.default {
     }
     KillMe() {
         super.KillMe();
+        this.soundManager.PlayEnemyDeath();
         this.sprite.on("animationend", (e) => {
             this.stage.removeChild(this.sprite);
             this.stage.removeChild(this.healthBar);
@@ -10427,8 +10522,15 @@ class Default extends Enemy_1.default {
         }, this, true);
         this.sprite.gotoAndPlay("Default/Default");
     }
+    TakeDamage(damage) {
+        super.TakeDamage(damage);
+        this.soundManager.PlayEnemyHurt();
+    }
     Update() {
         super.Update();
+        if (this.attackCoolDown == this.attackSpeed) {
+            this.soundManager.PlayEnemyAttack();
+        }
     }
 }
 exports.default = Default;
@@ -10450,8 +10552,8 @@ const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts")
 const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
 const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
 class Enemy extends GameCharacter_1.default {
-    constructor(stage, assetManager, xLoc, yLoc, player) {
-        super(stage, assetManager, "Default/Default");
+    constructor(stage, assetManager, xLoc, yLoc, player, soundManager) {
+        super(stage, assetManager, "Default/Default", soundManager);
         this.isIdle = true;
         this.wallHitUp = false;
         this.wallHitDown = false;
@@ -10481,6 +10583,9 @@ class Enemy extends GameCharacter_1.default {
     }
     KillMe() {
         this.vitalStatus = GameCharacter_1.default.DEAD;
+    }
+    TakeDamage(damage) {
+        super.TakeDamage(damage);
     }
     Update() {
         super.Update();
@@ -10520,7 +10625,7 @@ class Enemy extends GameCharacter_1.default {
                     this.isAttacking = false;
                 }
             }
-            else if (this.state == GameCharacter_1.default.UP) {
+            else if (this.state == GameCharacter_1.default.DOWN) {
                 this.direction = 1;
                 if (this.direction == 1 && this.wallHitUp == true) {
                     this.sprite.gotoAndStop(this.formIdleUp);
@@ -10528,12 +10633,12 @@ class Enemy extends GameCharacter_1.default {
                 else {
                     this.sprite.y = this.sprite.y + this.speed;
                     if (this.isWalking == false) {
-                        this.sprite.gotoAndPlay(this.formWalkUp);
+                        this.sprite.gotoAndPlay(this.formWalkDown);
                         this.isWalking = true;
                     }
                 }
             }
-            else if (this.state == GameCharacter_1.default.DOWN) {
+            else if (this.state == GameCharacter_1.default.UP) {
                 this.direction = 2;
                 if (this.direction == 2 && this.wallHitDown == true) {
                     this.sprite.gotoAndStop(this.formIdleDown);
@@ -10541,12 +10646,12 @@ class Enemy extends GameCharacter_1.default {
                 else {
                     this.sprite.y = this.sprite.y - this.speed;
                     if (this.isWalking == false) {
-                        this.sprite.gotoAndPlay(this.formWalkDown);
+                        this.sprite.gotoAndPlay(this.formWalkUp);
                         this.isWalking = true;
                     }
                 }
             }
-            else if (this.state == GameCharacter_1.default.LEFT) {
+            else if (this.state == GameCharacter_1.default.RIGHT) {
                 this.direction = 3;
                 if (this.direction == 3 && this.wallHitLeft == true) {
                     this.sprite.gotoAndStop(this.formIdleLeft);
@@ -10554,12 +10659,12 @@ class Enemy extends GameCharacter_1.default {
                 else {
                     this.sprite.x = this.sprite.x + this.speed;
                     if (this.isWalking == false) {
-                        this.sprite.gotoAndPlay(this.formWalkLeft);
+                        this.sprite.gotoAndPlay(this.formWalkRight);
                         this.isWalking = true;
                     }
                 }
             }
-            if (this.state == GameCharacter_1.default.RIGHT) {
+            if (this.state == GameCharacter_1.default.LEFT) {
                 this.direction = 4;
                 if (this.direction == 4 && this.wallHitRight == true) {
                     this.sprite.gotoAndStop(this.formIdleRight);
@@ -10567,12 +10672,13 @@ class Enemy extends GameCharacter_1.default {
                 else {
                     this.sprite.x = this.sprite.x - this.speed;
                     if (this.isWalking == false) {
-                        this.sprite.gotoAndPlay(this.formWalkRight);
+                        this.sprite.gotoAndPlay(this.formWalkLeft);
                         this.isWalking = true;
                     }
                 }
             }
             else if (this.state == Enemy.RETREATING) {
+                this.attackCoolDown = 0;
                 this.isIdle = true;
                 this.state = Enemy.ROAMING;
                 this.isWalking = false;
@@ -10580,37 +10686,34 @@ class Enemy extends GameCharacter_1.default {
             }
             if (this.state == Enemy.CHASING) {
                 this.isAttacking = false;
+                this.attackCoolDown = this.attackSpeed - 1;
                 if (this.sprite.y > this.player.sprite.y) {
                     this.sprite.y = this.sprite.y - this.speed;
-                    this.direction = 1;
-                    if (this.isWalking == false) {
+                    if (this.direction == 2 || this.direction == 3 || this.direction == 4) {
                         this.sprite.gotoAndPlay(this.formWalkUp);
-                        this.isWalking = true;
                     }
+                    this.direction = 1;
                 }
                 if (this.sprite.y < this.player.sprite.y) {
                     this.sprite.y = this.sprite.y + this.speed;
-                    this.direction = 2;
-                    if (this.isWalking == false) {
+                    if (this.direction == 1 || this.direction == 3 || this.direction == 4) {
                         this.sprite.gotoAndPlay(this.formWalkDown);
-                        this.isWalking = true;
                     }
+                    this.direction = 2;
                 }
                 if (this.sprite.x < this.player.sprite.x) {
                     this.sprite.x = this.sprite.x + this.speed;
-                    this.direction = 4;
-                    if (this.isWalking == false) {
+                    if (this.direction == 1 || this.direction == 3 || this.direction == 2) {
                         this.sprite.gotoAndPlay(this.formWalkRight);
-                        this.isWalking = true;
                     }
+                    this.direction = 4;
                 }
                 if (this.sprite.x > this.player.sprite.x) {
                     this.sprite.x = this.sprite.x - this.speed;
-                    this.direction = 3;
-                    if (this.isWalking == false) {
+                    if (this.direction == 1 || this.direction == 2 || this.direction == 4) {
                         this.sprite.gotoAndPlay(this.formWalkLeft);
-                        this.isWalking = true;
                     }
+                    this.direction = 3;
                 }
             }
             else if (this.state == Enemy.ATTACKING) {
@@ -10618,7 +10721,7 @@ class Enemy extends GameCharacter_1.default {
                 if (this.attackCoolDown >= 1) {
                     this.attackCoolDown--;
                 }
-                else if (this.attackCoolDown <= 0) {
+                else if (this.attackCoolDown == 0) {
                     this.attackCoolDown = this.attackSpeed;
                     this.player.TakeDamage(this.attackDamage);
                 }
@@ -10681,9 +10784,10 @@ const Heavy_1 = __webpack_require__(/*! ./Heavy */ "./src/Heavy.ts");
 const Light_1 = __webpack_require__(/*! ./Light */ "./src/Light.ts");
 const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
 class EnemyManager {
-    constructor(stage, assetManager, player, map) {
+    constructor(stage, assetManager, player, map, soundManager) {
         this.enemies = [];
         this.stage = stage;
+        this.soundManager = soundManager;
         this.player = player;
         this.map = map;
         this.assetManager = assetManager;
@@ -10692,16 +10796,23 @@ class EnemyManager {
         for (let i = 0; i <= Constants_1.MAX_ENEMIES; i++) {
             this.enemies[i] = null;
         }
-        this.enemies[0] = new Default_1.default(this.stage, this.assetManager, 200, 50, this.player);
-        this.enemies[1] = new Light_1.default(this.stage, this.assetManager, 600, 200, this.player);
-        this.enemies[2] = new Heavy_1.default(this.stage, this.assetManager, 400, 400, this.player);
-        this.enemies[3] = new Default_1.default(this.stage, this.assetManager, 600, 750, this.player);
+        this.enemies[0] = new Default_1.default(this.stage, this.assetManager, 200, 50, this.player, this.soundManager);
+        this.enemies[1] = new Light_1.default(this.stage, this.assetManager, 550, 200, this.player, this.soundManager);
+        this.enemies[2] = new Heavy_1.default(this.stage, this.assetManager, 400, 400, this.player, this.soundManager);
+        this.enemies[3] = new Default_1.default(this.stage, this.assetManager, 600, 680, this.player, this.soundManager);
+        this.enemies[4] = new Light_1.default(this.stage, this.assetManager, 10, 650, this.player, this.soundManager);
+        this.enemies[5] = new Default_1.default(this.stage, this.assetManager, 10, 350, this.player, this.soundManager);
+        this.enemies[6] = new Light_1.default(this.stage, this.assetManager, 600, 350, this.player, this.soundManager);
+        this.enemies[7] = new Light_1.default(this.stage, this.assetManager, 350, 650, this.player, this.soundManager);
+        this.enemies[8] = new Default_1.default(this.stage, this.assetManager, 400, 50, this.player, this.soundManager);
+        this.enemies[9] = new Heavy_1.default(this.stage, this.assetManager, 10, 450, this.player, this.soundManager);
+        this.enemies[10] = new Default_1.default(this.stage, this.assetManager, 250, 650, this.player, this.soundManager);
     }
     InitBossEnemies() {
         for (let i = 0; i <= Constants_1.MAX_ENEMIES; i++) {
             this.enemies[i] = null;
         }
-        this.enemies[0] = new Boss_1.default(this.stage, this.assetManager, 300, 300, this.player);
+        this.enemies[0] = new Boss_1.default(this.stage, this.assetManager, 300, 300, this.player, this.soundManager);
     }
     SpawmEnemies() {
         for (let i = 0; i <= Constants_1.MAX_ENEMIES; i++) {
@@ -10945,6 +11056,7 @@ const LevelManager_1 = __webpack_require__(/*! ./LevelManager */ "./src/LevelMan
 const ScreenManager_1 = __webpack_require__(/*! ./ScreenManager */ "./src/ScreenManager.ts");
 const PickupManager_1 = __webpack_require__(/*! ./PickupManager */ "./src/PickupManager.ts");
 const GameManager_1 = __webpack_require__(/*! ./GameManager */ "./src/GameManager.ts");
+const SoundManager_1 = __webpack_require__(/*! ./SoundManager */ "./src/SoundManager.ts");
 let stage;
 let canvas;
 let player;
@@ -10960,6 +11072,7 @@ let enemyManager;
 let screenManager;
 let pickupManager;
 let gameManager;
+let soundManager;
 let left = false;
 let right = false;
 let up = false;
@@ -10968,18 +11081,19 @@ let shoot = false;
 let interact = false;
 function onReady(e) {
     console.log(">> adding sprites to game");
-    player = new Player_1.default(stage, assetManager);
+    soundManager = new SoundManager_1.default(stage, assetManager);
+    player = new Player_1.default(stage, assetManager, soundManager);
     camera = new Camera_1.default(stage, assetManager, player);
     map = new Map_1.default(stage, assetManager, camera);
-    enemyManager = new EnemyManager_1.default(stage, assetManager, player, map);
-    pickupManager = new PickupManager_1.default(stage, assetManager, player, map);
+    enemyManager = new EnemyManager_1.default(stage, assetManager, player, map, soundManager);
+    pickupManager = new PickupManager_1.default(stage, assetManager, player, map, soundManager);
     for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
-        maxArrowsOnScreen[i] = new Arrow_1.default(stage, assetManager, world, player);
+        maxArrowsOnScreen[i] = new Arrow_1.default(stage, assetManager, world, player, soundManager);
     }
     world = new World_1.default(stage, assetManager, player, maxArrowsOnScreen, enemyManager.enemies, pickupManager.pickups);
     hud = new HUD_1.default(stage, assetManager, player);
-    levelManager = new LevelManager_1.default(stage, assetManager, player, map, enemyManager, pickupManager, hud);
-    screenManager = new ScreenManager_1.default(stage, assetManager, levelManager);
+    levelManager = new LevelManager_1.default(stage, assetManager, player, map, enemyManager, pickupManager, hud, soundManager);
+    screenManager = new ScreenManager_1.default(stage, assetManager, levelManager, soundManager);
     gameManager = new GameManager_1.default(stage, assetManager, levelManager, screenManager, player, enemyManager, pickupManager, maxArrowsOnScreen, map);
     screenManager.ShowIntroScreen();
     document.onkeydown = OnKeyDown;
@@ -11142,8 +11256,9 @@ main();
 
 Object.defineProperty(exports, "__esModule", { value: true });
 class GameCharacter {
-    constructor(stage, assetManager, animation) {
+    constructor(stage, assetManager, animation, soundManager) {
         this.stage = stage;
+        this.soundManager = soundManager;
         this.vitalStatus = GameCharacter.ALIVE;
         this.sprite = assetManager.getSprite("assets", animation);
     }
@@ -11389,6 +11504,35 @@ exports.default = HUD;
 
 /***/ }),
 
+/***/ "./src/HealthPotion.ts":
+/*!*****************************!*\
+  !*** ./src/HealthPotion.ts ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Pickup_1 = __webpack_require__(/*! ./Pickup */ "./src/Pickup.ts");
+class HealthPotion extends Pickup_1.default {
+    constructor(stage, assetManager, xLoc, yLoc, player, soundManager) {
+        super(stage, assetManager, xLoc, yLoc, player, soundManager);
+        this.form = "Item/potion";
+    }
+    UsePickup() {
+        super.UsePickup();
+        if (this.used == false) {
+            this.player.RegenHealth(20);
+            this.used = true;
+        }
+    }
+}
+exports.default = HealthPotion;
+
+
+/***/ }),
+
 /***/ "./src/Heavy.ts":
 /*!**********************!*\
   !*** ./src/Heavy.ts ***!
@@ -11401,8 +11545,8 @@ exports.default = HUD;
 Object.defineProperty(exports, "__esModule", { value: true });
 const Enemy_1 = __webpack_require__(/*! ./Enemy */ "./src/Enemy.ts");
 class Heavy extends Enemy_1.default {
-    constructor(stage, assetManager, xLoc, yLoc, player) {
-        super(stage, assetManager, xLoc, yLoc, player);
+    constructor(stage, assetManager, xLoc, yLoc, player, soundManager) {
+        super(stage, assetManager, xLoc, yLoc, player, soundManager);
         this.sightRange = 90;
         this.attackSpeed = 40;
         this.speed = 0.5;
@@ -11426,6 +11570,7 @@ class Heavy extends Enemy_1.default {
     }
     KillMe() {
         super.KillMe();
+        this.soundManager.PlayEnemyDeath();
         this.sprite.on("animationend", (e) => {
             this.stage.removeChild(this.sprite);
             this.stage.removeChild(this.healthBar);
@@ -11433,8 +11578,15 @@ class Heavy extends Enemy_1.default {
         }, this, true);
         this.sprite.gotoAndPlay("Heavy/Heavy");
     }
+    TakeDamage(damage) {
+        super.TakeDamage(damage);
+        this.soundManager.PlayEnemyHurt();
+    }
     Update() {
         super.Update();
+        if (this.attackCoolDown == this.attackSpeed) {
+            this.soundManager.PlayEnemyAttack();
+        }
     }
 }
 exports.default = Heavy;
@@ -11454,8 +11606,8 @@ exports.default = Heavy;
 Object.defineProperty(exports, "__esModule", { value: true });
 const Pickup_1 = __webpack_require__(/*! ./Pickup */ "./src/Pickup.ts");
 class Key extends Pickup_1.default {
-    constructor(stage, assetManager, xLoc, yLoc, player) {
-        super(stage, assetManager, xLoc, yLoc, player);
+    constructor(stage, assetManager, xLoc, yLoc, player, soundManager) {
+        super(stage, assetManager, xLoc, yLoc, player, soundManager);
         this.form = "Item/key";
     }
     UsePickup() {
@@ -11484,7 +11636,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
 class LevelManager {
-    constructor(stage, assetManager, player, map, enemyManager, pickupManager, hud) {
+    constructor(stage, assetManager, player, map, enemyManager, pickupManager, hud, soundManager) {
         this.gameLoaded = false;
         this.stage = stage;
         this.player = player;
@@ -11492,10 +11644,12 @@ class LevelManager {
         this.enemyManager = enemyManager;
         this.pickupManager = pickupManager;
         this.hud = hud;
+        this.soundManager = soundManager;
         this.darkOverlay = assetManager.getSprite("assets", "other/darkness", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2);
         this.loadingScreen = assetManager.getSprite("assets", "other/loading", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2);
     }
     LoadMainLevel() {
+        this.soundManager.StopMusic();
         this.stage.removeAllChildren();
         this.gameLoaded = false;
         this.loadingDuration = ToolBox_1.randomNum(50, 100);
@@ -11513,6 +11667,7 @@ class LevelManager {
         this.loadingScreen.play();
     }
     LoadBossLevel() {
+        this.soundManager.StopMusic();
         this.stage.removeAllChildren();
         this.gameLoaded = false;
         this.loadingDuration = ToolBox_1.randomNum(50, 100);
@@ -11520,6 +11675,8 @@ class LevelManager {
         this.player.SpawnPlayer(380, 650);
         this.enemyManager.InitBossEnemies();
         this.enemyManager.SpawmEnemies();
+        this.pickupManager.InitBossPickups();
+        this.pickupManager.SpawmPickups();
         this.stage.addChild(this.darkOverlay);
         this.hud.ShowHUD();
         this.stage.addChild(this.loadingScreen);
@@ -11529,6 +11686,12 @@ class LevelManager {
         this.loadingDuration--;
         if (this.loadingDuration == 0) {
             this.gameLoaded = true;
+            if (this.map.mainLoaded == true) {
+                this.soundManager.PlayGameMusic();
+            }
+            if (this.map.bossLoaded == true) {
+                this.soundManager.PlayBossMusic();
+            }
             this.loadingScreen.on("animationend", (e) => {
                 this.stage.removeChild(this.loadingScreen);
             }, this, true);
@@ -11552,8 +11715,8 @@ exports.default = LevelManager;
 Object.defineProperty(exports, "__esModule", { value: true });
 const Enemy_1 = __webpack_require__(/*! ./Enemy */ "./src/Enemy.ts");
 class Light extends Enemy_1.default {
-    constructor(stage, assetManager, xLoc, yLoc, player) {
-        super(stage, assetManager, xLoc, yLoc, player);
+    constructor(stage, assetManager, xLoc, yLoc, player, soundManager) {
+        super(stage, assetManager, xLoc, yLoc, player, soundManager);
         this.sightRange = 50;
         this.attackSpeed = 5;
         this.speed = 1.5;
@@ -11577,6 +11740,7 @@ class Light extends Enemy_1.default {
     }
     KillMe() {
         super.KillMe();
+        this.soundManager.PlayEnemyDeath();
         this.sprite.on("animationend", (e) => {
             this.stage.removeChild(this.sprite);
             this.stage.removeChild(this.healthBar);
@@ -11584,8 +11748,15 @@ class Light extends Enemy_1.default {
         }, this, true);
         this.sprite.gotoAndPlay("Light/death");
     }
+    TakeDamage(damage) {
+        super.TakeDamage(damage);
+        this.soundManager.PlayEnemyHurt();
+    }
     Update() {
         super.Update();
+        if (this.attackCoolDown == this.attackSpeed) {
+            this.soundManager.PlayEnemyAttack();
+        }
     }
 }
 exports.default = Light;
@@ -11787,10 +11958,11 @@ exports.default = Map;
 Object.defineProperty(exports, "__esModule", { value: true });
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 class Pickup {
-    constructor(stage, assetManager, xLoc, yLoc, player) {
+    constructor(stage, assetManager, xLoc, yLoc, player, soundManager) {
         this.used = false;
         this.stage = stage;
         this.player = player;
+        this.soundManager = soundManager;
         this.sprite = assetManager.getSprite("assets", this.form);
         this.originPointX = +(player.originPointX - Constants_1.GENERAL_MAP_SIZE / 2) + xLoc;
         this.originPointY = +(player.originPointY - Constants_1.GENERAL_MAP_SIZE / 2) + yLoc;
@@ -11803,6 +11975,7 @@ class Pickup {
         this.stage.addChild(this.sprite);
     }
     UsePickup() {
+        this.soundManager.PlayItemPickup();
         this.stage.removeChild(this.sprite);
     }
 }
@@ -11822,21 +11995,43 @@ exports.default = Pickup;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
+const HealthPotion_1 = __webpack_require__(/*! ./HealthPotion */ "./src/HealthPotion.ts");
 const Key_1 = __webpack_require__(/*! ./Key */ "./src/Key.ts");
+const Quiver_1 = __webpack_require__(/*! ./Quiver */ "./src/Quiver.ts");
+const Sheild_1 = __webpack_require__(/*! ./Sheild */ "./src/Sheild.ts");
 const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
 class PickupManager {
-    constructor(stage, assetManager, player, map) {
+    constructor(stage, assetManager, player, map, soundManager) {
         this.pickups = [];
         this.stage = stage;
         this.player = player;
         this.map = map;
         this.assetManager = assetManager;
+        this.soundManager = soundManager;
     }
     InitMainPickups() {
         for (let i = 0; i <= Constants_1.MAX_PICKUPS; i++) {
             this.pickups[i] = null;
         }
-        this.pickups[0] = new Key_1.default(this.stage, this.assetManager, 20, 30, this.player);
+        this.pickups[0] = new Key_1.default(this.stage, this.assetManager, 30, 680, this.player, this.soundManager);
+        this.pickups[1] = new HealthPotion_1.default(this.stage, this.assetManager, 100, 30, this.player, this.soundManager);
+        this.pickups[2] = new Quiver_1.default(this.stage, this.assetManager, 550, 250, this.player, this.soundManager);
+        this.pickups[3] = new Sheild_1.default(this.stage, this.assetManager, 20, 300, this.player, this.soundManager);
+        this.pickups[4] = new Quiver_1.default(this.stage, this.assetManager, 50, 500, this.player, this.soundManager);
+        this.pickups[5] = new HealthPotion_1.default(this.stage, this.assetManager, 350, 350, this.player, this.soundManager);
+        this.pickups[6] = new Quiver_1.default(this.stage, this.assetManager, 750, 450, this.player, this.soundManager);
+        this.pickups[7] = new Sheild_1.default(this.stage, this.assetManager, 500, 30, this.player, this.soundManager);
+        this.pickups[8] = new Quiver_1.default(this.stage, this.assetManager, 750, 750, this.player, this.soundManager);
+        this.pickups[9] = new HealthPotion_1.default(this.stage, this.assetManager, 20, 450, this.player, this.soundManager);
+    }
+    InitBossPickups() {
+        for (let i = 0; i <= Constants_1.MAX_PICKUPS; i++) {
+            this.pickups[i] = null;
+        }
+        this.pickups[0] = new Quiver_1.default(this.stage, this.assetManager, 100, 100, this.player, this.soundManager);
+        this.pickups[1] = new Quiver_1.default(this.stage, this.assetManager, 600, 600, this.player, this.soundManager);
+        this.pickups[2] = new Sheild_1.default(this.stage, this.assetManager, 100, 600, this.player, this.soundManager);
+        this.pickups[3] = new HealthPotion_1.default(this.stage, this.assetManager, 600, 100, this.player, this.soundManager);
     }
     SpawmPickups() {
         for (let i = 0; i <= Constants_1.MAX_PICKUPS; i++) {
@@ -11877,8 +12072,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 class Player extends GameCharacter_1.default {
-    constructor(stage, assetmanager) {
-        super(stage, assetmanager, "Player/Idle_down");
+    constructor(stage, assetmanager, soundManager) {
+        super(stage, assetmanager, "Player/Idle_down", soundManager);
         this.playerKilled = new createjs.Event("pKilled", true, false);
         this.isDying = false;
         this.canWalk = true;
@@ -11903,12 +12098,17 @@ class Player extends GameCharacter_1.default {
         this.stage.addChild(this.sprite);
     }
     KillMe() {
+        this.soundManager.PlayPlayerDeath();
         this.lives = this.lives - 1;
         this.sprite.on("animationend", (e) => {
             this.stage.removeChild(this.sprite);
             this.stage.dispatchEvent(this.playerKilled);
         }, this, true);
         this.sprite.gotoAndPlay("Player/death");
+    }
+    TakeDamage(damage) {
+        super.TakeDamage(damage);
+        this.soundManager.PlayPlayerHurt();
     }
     IncreaseArrows(arrowAmount) {
         this.availableArrows = this.availableArrows + arrowAmount;
@@ -11989,6 +12189,35 @@ exports.default = Player;
 
 /***/ }),
 
+/***/ "./src/Quiver.ts":
+/*!***********************!*\
+  !*** ./src/Quiver.ts ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Pickup_1 = __webpack_require__(/*! ./Pickup */ "./src/Pickup.ts");
+class Quiver extends Pickup_1.default {
+    constructor(stage, assetManager, xLoc, yLoc, player, soundManager) {
+        super(stage, assetManager, xLoc, yLoc, player, soundManager);
+        this.form = "Item/arrows";
+    }
+    UsePickup() {
+        super.UsePickup();
+        if (this.used == false) {
+            this.player.IncreaseArrows(10);
+            this.used = true;
+        }
+    }
+}
+exports.default = Quiver;
+
+
+/***/ }),
+
 /***/ "./src/ScreenManager.ts":
 /*!******************************!*\
   !*** ./src/ScreenManager.ts ***!
@@ -12001,9 +12230,10 @@ exports.default = Player;
 Object.defineProperty(exports, "__esModule", { value: true });
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 class ScreenManager {
-    constructor(stage, assetManager, levelManager) {
+    constructor(stage, assetManager, levelManager, soundManager) {
         this.stage = stage;
         this.levelManager = levelManager;
+        this.soundManager = soundManager;
         this.introScreen = new createjs.Container();
         this.introScreen.addChild(assetManager.getSprite("assets", "other/MainMenu", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2));
         this.infoScreen = new createjs.Container();
@@ -12017,30 +12247,139 @@ class ScreenManager {
     }
     ShowIntroScreen() {
         this.levelManager.gameLoaded = false;
+        this.soundManager.PlayTitleMusic();
         this.stage.removeAllChildren();
         this.stage.addChild(this.introScreen);
         this.introScreen.on("click", this.ShowInfoScreen, this);
     }
     ShowInfoScreen() {
         this.levelManager.gameLoaded = false;
+        this.soundManager.PlayTitleMusic();
         this.stage.removeAllChildren();
         this.stage.addChild(this.infoScreen);
         this.infoScreen.on("click", (e) => { this.stage.dispatchEvent(this.eventStartGame); }, this, true);
     }
     ShowGameOverScreen() {
         this.levelManager.gameLoaded = false;
+        this.soundManager.PlayLossMusic();
         this.stage.children.forEach(child => this.stage.removeChild(child));
         this.stage.addChild(this.gameOverScreen);
         this.gameOverScreen.on("click", (e) => { this.stage.dispatchEvent(this.eventRestartGame); }, this, true);
     }
     ShowGameWinScreen() {
         this.levelManager.gameLoaded = false;
+        this.soundManager.PlayWinMusic();
         this.stage.children.forEach(child => this.stage.removeChild(child));
         this.stage.addChild(this.gameWinScreen);
         this.gameWinScreen.on("click", (e) => { this.stage.dispatchEvent(this.eventRestartGame); }, this, true);
     }
 }
 exports.default = ScreenManager;
+
+
+/***/ }),
+
+/***/ "./src/Sheild.ts":
+/*!***********************!*\
+  !*** ./src/Sheild.ts ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Pickup_1 = __webpack_require__(/*! ./Pickup */ "./src/Pickup.ts");
+class Sheild extends Pickup_1.default {
+    constructor(stage, assetManager, xLoc, yLoc, player, soundManager) {
+        super(stage, assetManager, xLoc, yLoc, player, soundManager);
+        this.form = "Item/armor";
+    }
+    UsePickup() {
+        super.UsePickup();
+        if (this.used == false) {
+            this.player.RestoreSheild();
+            this.used = true;
+        }
+    }
+}
+exports.default = Sheild;
+
+
+/***/ }),
+
+/***/ "./src/SoundManager.ts":
+/*!*****************************!*\
+  !*** ./src/SoundManager.ts ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class SoundManager {
+    constructor(stage, assetManager) {
+        this.titlePlaying = false;
+        this.audio = new Audio("./lib/sounds/titlemusic.wav");
+        this.stage = stage;
+        createjs.Sound.setVolume(0.20);
+    }
+    PlayArrowShoot() {
+        createjs.Sound.play("arrowFire");
+    }
+    PlayItemPickup() {
+        createjs.Sound.play("itemPickup");
+    }
+    PlayPlayerHurt() {
+        createjs.Sound.play("playerHurt");
+    }
+    PlayPlayerDeath() {
+        createjs.Sound.play("playerDeath");
+    }
+    PlayEnemyHurt() {
+        createjs.Sound.play("enemyHurt");
+    }
+    PlayEnemyDeath() {
+        createjs.Sound.play("enemyDeath");
+    }
+    PlayEnemyAttack() {
+        createjs.Sound.play("enemyAttack");
+    }
+    PlayBossHurt() {
+        createjs.Sound.play("bossHurt");
+    }
+    PlayBossDeath() {
+        createjs.Sound.play("bossDeath");
+    }
+    PlayBossAttack() {
+        createjs.Sound.play("bossAttack");
+    }
+    PlayTitleMusic() {
+        createjs.Sound.stop();
+        createjs.Sound.play("titleMusic").loop = Infinity;
+    }
+    PlayGameMusic() {
+        createjs.Sound.stop();
+        createjs.Sound.play("mainLevelMusic").loop = Infinity;
+    }
+    PlayBossMusic() {
+        createjs.Sound.stop();
+        createjs.Sound.play("bossMusic").loop = Infinity;
+    }
+    PlayWinMusic() {
+        createjs.Sound.stop();
+        createjs.Sound.play("gameWin").loop = Infinity;
+    }
+    PlayLossMusic() {
+        createjs.Sound.stop();
+        createjs.Sound.play("gameLoss").loop = Infinity;
+    }
+    StopMusic() {
+        createjs.Sound.stop();
+    }
+}
+exports.default = SoundManager;
 
 
 /***/ }),

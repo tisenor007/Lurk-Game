@@ -3,6 +3,7 @@ import { GENERAL_MAP_SIZE } from "./Constants";
 import GameCharacter from "./GameCharacter";
 import Map from "./Map";
 import Player from "./Player";
+import SoundManager from "./SoundManager";
 import { radiusHit, randomNum } from "./ToolBox";
 
 export default class Enemy extends GameCharacter{
@@ -46,8 +47,8 @@ export default class Enemy extends GameCharacter{
     public formAttackLeft:string;
     public formAttackRight:string;
 
-    constructor(stage:createjs.StageGL, assetManager:AssetManager, xLoc:number, yLoc:number, player:Player){
-        super(stage, assetManager, "Default/Default")
+    constructor(stage:createjs.StageGL, assetManager:AssetManager, xLoc:number, yLoc:number, player:Player, soundManager:SoundManager){
+        super(stage, assetManager, "Default/Default", soundManager)
         this.player = player;
         this.healthBar = assetManager.getSprite("assets", "other/health_green");
         this.healthBarBack = assetManager.getSprite("assets", "other/health_red");
@@ -73,6 +74,9 @@ export default class Enemy extends GameCharacter{
 
     public KillMe():void{
         this.vitalStatus = GameCharacter.DEAD;
+    }
+    public TakeDamage(damage:number):void{
+        super.TakeDamage(damage);
     }
 
     Update():void{
@@ -116,52 +120,54 @@ export default class Enemy extends GameCharacter{
                     this.isAttacking = false;
                 }
             }
-            else if (this.state == GameCharacter.UP){
+            else if (this.state == GameCharacter.DOWN){
                 this.direction = 1;
                 if (this.direction == 1 && this.wallHitUp == true){this.sprite.gotoAndStop(this.formIdleUp);}
                 else{
                     this.sprite.y = this.sprite.y + this.speed;
-                    if (this.isWalking == false){
-                        this.sprite.gotoAndPlay(this.formWalkUp);
-                        this.isWalking = true;
-                    }
-                }
-            }
-            else if (this.state == GameCharacter.DOWN){
-                this.direction = 2;
-                if (this.direction == 2 && this.wallHitDown == true){this.sprite.gotoAndStop(this.formIdleDown);}
-                else{
-                    this.sprite.y = this.sprite.y - this.speed;
                     if (this.isWalking == false){
                         this.sprite.gotoAndPlay(this.formWalkDown);
                         this.isWalking = true;
                     }
                 }
             }
-            else if (this.state == GameCharacter.LEFT){
-                this.direction = 3;
-                if (this.direction == 3 && this.wallHitLeft == true){this.sprite.gotoAndStop(this.formIdleLeft);}
+            else if (this.state == GameCharacter.UP){
+                this.direction = 2;
+                if (this.direction == 2 && this.wallHitDown == true){this.sprite.gotoAndStop(this.formIdleDown);}
                 else{
-                    this.sprite.x = this.sprite.x + this.speed;
+                    this.sprite.y = this.sprite.y - this.speed;
                     if (this.isWalking == false){
-                        this.sprite.gotoAndPlay(this.formWalkLeft);
+                        this.sprite.gotoAndPlay(this.formWalkUp);
                         this.isWalking = true;
                     }
                 }
             }
-            if (this.state == GameCharacter.RIGHT){
-                this.direction = 4;
-                if (this.direction == 4 && this.wallHitRight == true){this.sprite.gotoAndStop(this.formIdleRight);
-                }
+            else if (this.state == GameCharacter.RIGHT){
+                this.direction = 3;
+                if (this.direction == 3 && this.wallHitLeft == true){this.sprite.gotoAndStop(this.formIdleLeft);}
                 else{
-                    this.sprite.x = this.sprite.x - this.speed;
+                    this.sprite.x = this.sprite.x + this.speed;
                     if (this.isWalking == false){
                         this.sprite.gotoAndPlay(this.formWalkRight);
                         this.isWalking = true;
                     }
                 }
             }
-            else if (this.state == Enemy.RETREATING){
+            if (this.state == GameCharacter.LEFT){
+                this.direction = 4;
+                if (this.direction == 4 && this.wallHitRight == true){this.sprite.gotoAndStop(this.formIdleRight);
+                }
+                else{
+                    this.sprite.x = this.sprite.x - this.speed;
+                    if (this.isWalking == false){
+                        this.sprite.gotoAndPlay(this.formWalkLeft);
+                        this.isWalking = true;
+                    }
+                }
+            }
+            else if (this.state == Enemy.RETREATING)
+            {
+                this.attackCoolDown = 0;
                 this.isIdle = true;
                 this.state = Enemy.ROAMING;
                 this.isWalking = false;
@@ -170,37 +176,34 @@ export default class Enemy extends GameCharacter{
             
             if (this.state == Enemy.CHASING){
                 this.isAttacking = false;
+                this.attackCoolDown = this.attackSpeed - 1;
                 if (this.sprite.y > this.player.sprite.y){
                     this.sprite.y = this.sprite.y - this.speed;
-                    this.direction = 1;
-                    if (this.isWalking == false){
+                    if (this.direction == 2 || this.direction == 3 || this.direction == 4){
                        this.sprite.gotoAndPlay(this.formWalkUp);
-                       this.isWalking = true;
                     }
+                    this.direction = 1;
                 }
                 if (this.sprite.y < this.player.sprite.y){
                     this.sprite.y = this.sprite.y + this.speed;
-                    this.direction = 2;
-                    if (this.isWalking == false){
+                    if (this.direction == 1 || this.direction == 3 || this.direction == 4){
                         this.sprite.gotoAndPlay(this.formWalkDown);
-                        this.isWalking = true;
                     }
+                    this.direction = 2;
                 }
                 if (this.sprite.x < this.player.sprite.x){
                     this.sprite.x = this.sprite.x + this.speed;
-                    this.direction = 4;
-                    if (this.isWalking == false){
+                    if (this.direction == 1 || this.direction == 3 || this.direction == 2){
                         this.sprite.gotoAndPlay(this.formWalkRight);
-                        this.isWalking = true;
                     }
+                    this.direction = 4;
                 }
                 if (this.sprite.x > this.player.sprite.x){
                     this.sprite.x = this.sprite.x - this.speed;
-                    this.direction = 3;
-                    if (this.isWalking == false){
+                    if (this.direction == 1 || this.direction == 2 || this.direction == 4){
                         this.sprite.gotoAndPlay(this.formWalkLeft);
-                        this.isWalking = true;
                     }
+                    this.direction = 3;
                 }
             }
             else if (this.state == Enemy.ATTACKING){
@@ -208,7 +211,7 @@ export default class Enemy extends GameCharacter{
                 if (this.attackCoolDown >= 1){
                     this.attackCoolDown--;
                 }
-                else if (this.attackCoolDown <= 0){
+                else if (this.attackCoolDown == 0){
                     this.attackCoolDown = this.attackSpeed;
                     this.player.TakeDamage(this.attackDamage);
                 }
@@ -220,6 +223,7 @@ export default class Enemy extends GameCharacter{
             if (this.stateDuration <= 0){
                 this.state = Enemy.ROAMING;
             }
+            
             this.stateDuration--;
         }
     }

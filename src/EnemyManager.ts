@@ -7,6 +7,7 @@ import Heavy from "./Heavy";
 import Light from "./Light";
 import Map from "./Map";
 import Player from "./Player";
+import SoundManager from "./SoundManager";
 import { boxHit, radiusHit } from "./ToolBox";
 
 export default class EnemyManager{
@@ -17,9 +18,11 @@ export default class EnemyManager{
     private stage:createjs.StageGL;
     private player:Player;
     private map:Map;
+    private soundManager:SoundManager;
 
-    constructor(stage:createjs.StageGL, assetManager:AssetManager, player:Player, map:Map){
+    constructor(stage:createjs.StageGL, assetManager:AssetManager, player:Player, map:Map, soundManager:SoundManager){
         this.stage = stage;
+        this.soundManager = soundManager;
         this.player = player;
         this.map = map;
         this.assetManager = assetManager;
@@ -29,16 +32,25 @@ export default class EnemyManager{
         for (let i:number = 0; i <= MAX_ENEMIES; i++){
             this.enemies[i] = null;
         }
-        this.enemies[0] = new Default(this.stage, this.assetManager, 200, 50, this.player);
-        this.enemies[1] = new Light(this.stage, this.assetManager, 600, 200, this.player);
-        this.enemies[2] = new Heavy(this.stage, this.assetManager, 400, 400, this.player);
-        this.enemies[3] = new Default(this.stage, this.assetManager, 600, 750, this.player);
+        this.enemies[0] = new Default(this.stage, this.assetManager, 200, 50, this.player, this.soundManager);
+        this.enemies[1] = new Light(this.stage, this.assetManager, 550, 200, this.player, this.soundManager);
+        this.enemies[2] = new Heavy(this.stage, this.assetManager, 400, 400, this.player, this.soundManager);
+        this.enemies[3] = new Default(this.stage, this.assetManager, 600, 680, this.player, this.soundManager);
+        this.enemies[4] = new Light(this.stage, this.assetManager, 10, 650, this.player, this.soundManager);
+        this.enemies[5] = new Default(this.stage, this.assetManager, 10, 350, this.player, this.soundManager);
+        this.enemies[6] = new Light(this.stage, this.assetManager, 600, 350, this.player, this.soundManager);
+        this.enemies[7] = new Light(this.stage, this.assetManager, 350, 650, this.player, this.soundManager);
+        this.enemies[8] = new Default(this.stage, this.assetManager, 400, 50, this.player, this.soundManager);
+        this.enemies[9] = new Heavy(this.stage, this.assetManager, 10, 450, this.player, this.soundManager);
+        this.enemies[10] = new Default(this.stage, this.assetManager, 250, 650, this.player, this.soundManager);
     }
     public InitBossEnemies():void{
         for (let i:number = 0; i <= MAX_ENEMIES; i++){
             this.enemies[i] = null;
         }
-        this.enemies[0] = new Boss(this.stage, this.assetManager, 300, 300, this.player);
+        this.enemies[0] = new Boss(this.stage, this.assetManager, 300, 300, this.player, this.soundManager);
+        this.enemies[1] = new Light(this.stage, this.assetManager, 100, 100, this.player, this.soundManager);
+        this.enemies[2] = new Light(this.stage, this.assetManager, 600, 600, this.player, this.soundManager);
     }
     
 

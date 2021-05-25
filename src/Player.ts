@@ -2,6 +2,7 @@ import AssetManager from "./AssetManager";
 import GameCharacter from "./GameCharacter";
 import { GENERAL_MAP_SIZE, MAX_ARROWS_ON_SCREEN, PLAYER_MAX_HEALTH, PLAYER_MAX_LIVES, PLAYER_MAX_SHIELD, PLAYER_SPEED, STAGE_HEIGHT, STAGE_WIDTH, STARTING_ARROW_AMOUNT } from "./Constants";
 import Arrow from "./Arrow";
+import SoundManager from "./SoundManager";
 
 export default class Player extends GameCharacter{
 
@@ -13,8 +14,8 @@ export default class Player extends GameCharacter{
     public yLoc:number;
     public availableArrows:number;
 
-    constructor(stage:createjs.StageGL, assetmanager:AssetManager){
-        super(stage, assetmanager, "Player/Idle_down");
+    constructor(stage:createjs.StageGL, assetmanager:AssetManager, soundManager:SoundManager){
+        super(stage, assetmanager, "Player/Idle_down", soundManager);
         this.playerKilled = new createjs.Event("pKilled", true, false);
         this.isDying = false;
         this.canWalk = true;
@@ -40,12 +41,17 @@ export default class Player extends GameCharacter{
         this.stage.addChild(this.sprite);
     }
     public KillMe():void{
+        this.soundManager.PlayPlayerDeath();
         this.lives = this.lives - 1;
         this.sprite.on("animationend", (e:createjs.Event) => {
             this.stage.removeChild(this.sprite);
             this.stage.dispatchEvent(this.playerKilled);
         }, this, true)
         this.sprite.gotoAndPlay("Player/death");
+    }
+    public TakeDamage(damage:number):void{
+        super.TakeDamage(damage);
+        this.soundManager.PlayPlayerHurt();
     }
 
     public IncreaseArrows(arrowAmount:number):void{

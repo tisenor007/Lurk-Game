@@ -19,6 +19,7 @@ export const MAX_PICKUPS:Number = 100;
 export const GENERAL_MAP_SIZE:number = 768;
 
 export const ASSET_MANIFEST:Object[] = [
+    //assets
     {
         type:"json",
         src:"./lib/spritesheets/assets.json",
@@ -31,12 +32,98 @@ export const ASSET_MANIFEST:Object[] = [
         id:"assets",
         data:0
     },
+    //sounds
     {
         type:"sound",
-        src:"./lib/sounds/beep.ogg",
-        id:"beep",
+        src:"./lib/sounds/arrowFire.wav",
+        id:"arrowFire",
         data:4
     },
+    {
+        type:"sound",
+        src:"./lib/sounds/itemPickup.wav",
+        id:"itemPickup",
+        data:4
+    },
+    {
+        type:"sound",
+        src:"./lib/sounds/playerhurt.wav",
+        id:"playerHurt",
+        data:4
+    },
+    {
+        type:"sound",
+        src:"./lib/sounds/playerdeath.wav",
+        id:"playerDeath",
+        data:4
+    },
+    {
+        type:"sound",
+        src:"./lib/sounds/enemyhurt.wav",
+        id:"enemyHurt",
+        data:4
+    },
+    {
+        type:"sound",
+        src:"./lib/sounds/enemydeath.wav",
+        id:"enemyDeath",
+        data:4
+    },
+    {
+        type:"sound",
+        src:"./lib/sounds/enemyattack.wav",
+        id:"enemyAttack",
+        data:4
+    },
+    {
+        type:"sound",
+        src:"./lib/sounds/bosshurt.wav",
+        id:"bossHurt",
+        data:4
+    },
+    {
+        type:"sound",
+        src:"./lib/sounds/bossdeath.wav",
+        id:"bossDeath",
+        data:4
+    },
+    {
+        type:"sound",
+        src:"./lib/sounds/bossattack.wav",
+        id:"bossAttack",
+        data:4
+    },
+    {
+        type:"sound",
+        src:"./lib/sounds/bossmusic.wav",
+        id:"bossMusic",
+        data:4
+    },
+    {
+        type:"sound",
+        src:"./lib/sounds/deathmusic.wav",
+        id:"gameLoss",
+        data:4
+    },
+    {
+        type:"sound",
+        src:"./lib/sounds/winmusic.wav",
+        id:"gameWin",
+        data:4
+    },
+    {
+        type:"sound",
+        src:"./lib/sounds/titlemusic.wav",
+        id:"titleMusic",
+        data:4
+    },
+    {
+        type:"sound",
+        src:"./lib/sounds/levelmusic.wav",
+        id:"mainLevelMusic",
+        data:4
+    },
+    //glyphs
     {
         type:"json",
         src:"./lib/spritesheets/glyphs.json",

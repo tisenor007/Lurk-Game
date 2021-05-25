@@ -2,24 +2,30 @@ import AssetManager from "./AssetManager";
 import { STAGE_HEIGHT, STAGE_WIDTH } from "./Constants";
 import LevelManager from "./LevelManager";
 import Light from "./Light";
+import SoundManager from "./SoundManager";
 
 export default class ScreenManager{
     
-    private stage:createjs.StageGL;
+    
     public levelManager:LevelManager;
+    public eventStartGame:createjs.Event;
+    public eventRestartGame:createjs.Event;
+
+    private stage:createjs.StageGL;
 
     private introScreen:createjs.Container;
     private infoScreen:createjs.Container;
     private gameOverScreen:createjs.Container;
     private gameWinScreen:createjs.Container;
+    private soundManager:SoundManager;
 
-    public eventStartGame:createjs.Event;
-    public eventRestartGame:createjs.Event;
     
-    constructor(stage:createjs.StageGL, assetManager:AssetManager, levelManager:LevelManager){
+    
+    constructor(stage:createjs.StageGL, assetManager:AssetManager, levelManager:LevelManager, soundManager:SoundManager){
 
         this.stage = stage;
         this.levelManager = levelManager;
+        this.soundManager = soundManager;
 
         this.introScreen = new createjs.Container();
         this.introScreen.addChild(assetManager.getSprite("assets", "other/MainMenu", STAGE_WIDTH/2, STAGE_HEIGHT/2));
@@ -39,6 +45,7 @@ export default class ScreenManager{
 
     public ShowIntroScreen():void{
         this.levelManager.gameLoaded = false;
+        this.soundManager.PlayTitleMusic();
         this.stage.removeAllChildren();
         this.stage.addChild(this.introScreen);
         this.introScreen.on("click", this.ShowInfoScreen, this);
@@ -46,6 +53,7 @@ export default class ScreenManager{
 
     public ShowInfoScreen():void{
         this.levelManager.gameLoaded = false;
+        this.soundManager.PlayTitleMusic();
         this.stage.removeAllChildren();
         this.stage.addChild(this.infoScreen);
         this.infoScreen.on("click", (e) =>{ this.stage.dispatchEvent(this.eventStartGame);}, this, true);
@@ -53,6 +61,7 @@ export default class ScreenManager{
 
     public ShowGameOverScreen():void{
         this.levelManager.gameLoaded = false;
+        this.soundManager.PlayLossMusic();
         //this.stage.removeAllChildren();
         this.stage.children.forEach(child => this.stage.removeChild(child));
         this.stage.addChild(this.gameOverScreen);
@@ -61,6 +70,7 @@ export default class ScreenManager{
 
     public ShowGameWinScreen():void{
         this.levelManager.gameLoaded = false;
+        this.soundManager.PlayWinMusic();
         //this.stage.removeAllChildren();
         this.stage.children.forEach(child => this.stage.removeChild(child));
         this.stage.addChild(this.gameWinScreen);

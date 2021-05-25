@@ -1,6 +1,7 @@
 import AssetManager from "./AssetManager";
 import { ARROW_SPEED, STAGE_HEIGHT, STAGE_WIDTH, } from "./Constants";
 import Player from "./Player";
+import SoundManager from "./SoundManager";
 import World from "./World";
 
 export default class Arrow{
@@ -10,11 +11,13 @@ export default class Arrow{
     public used:boolean = false;
     private stage:createjs.StageGL;
     private player:Player;
+    private soundManager:SoundManager
     
     
-    constructor(stage:createjs.StageGL, assetManager:AssetManager, world:World, player:Player){
+    constructor(stage:createjs.StageGL, assetManager:AssetManager, world:World, player:Player, soundManager:SoundManager){
         this.stage = stage;
         this.player = player;
+        this.soundManager = soundManager
         this.sprite = assetManager.getSprite("assets", "Arrow/arrow_up");
         this.sprite.x = STAGE_WIDTH / 2;
         this.sprite.y = STAGE_HEIGHT / 2;
@@ -26,6 +29,7 @@ export default class Arrow{
             //no arrows available.....
         }
         else{
+            this.soundManager.PlayArrowShoot();
             if (this.player.direction == 1){
                 this.sprite.x = STAGE_WIDTH / 2;
                 this.sprite.y = STAGE_HEIGHT / 2 - 25;

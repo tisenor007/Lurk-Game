@@ -3,11 +3,12 @@ import { GENERAL_MAP_SIZE } from "./Constants";
 import Enemy from "./Enemy";
 import Map from "./Map";
 import Player from "./Player";
+import SoundManager from "./SoundManager";
 
 export default class Default extends Enemy{
 
-    constructor(stage:createjs.StageGL, assetManager:AssetManager, xLoc:number, yLoc:number, player:Player){
-        super(stage, assetManager, xLoc, yLoc, player)
+    constructor(stage:createjs.StageGL, assetManager:AssetManager, xLoc:number, yLoc:number, player:Player, soundManager:SoundManager){
+        super(stage, assetManager, xLoc, yLoc, player, soundManager)
         this.sightRange = 60;
         this.attackSpeed = 15;
         this.speed = 1;
@@ -39,6 +40,7 @@ export default class Default extends Enemy{
 
     public KillMe():void{
         super.KillMe();
+        this.soundManager.PlayEnemyDeath();
         this.sprite.on("animationend", (e:createjs.Event) => {
             this.stage.removeChild(this.sprite);
             this.stage.removeChild(this.healthBar);
@@ -46,8 +48,16 @@ export default class Default extends Enemy{
         }, this, true)
         this.sprite.gotoAndPlay("Default/Default");
     }
+    public TakeDamage(damage:number):void{
+        super.TakeDamage(damage);
+        this.soundManager.PlayEnemyHurt();
+    }
 
     public Update():void{
         super.Update();
+        
+        if (this.attackCoolDown == this.attackSpeed){
+            this.soundManager.PlayEnemyAttack();
+        }
     }
 }

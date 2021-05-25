@@ -6,6 +6,7 @@ import HUD from "./HUD";
 import Map from "./Map";
 import PickupManager from "./PickupManager";
 import Player from "./Player";
+import SoundManager from "./SoundManager";
 import { randomNum } from "./ToolBox";
 import World from "./World";
 
@@ -22,19 +23,22 @@ export default class LevelManager{
     private loadingScreen:createjs.Sprite;
     private darkOverlay:createjs.Sprite;
     private loadingDuration:number;
+    private soundManager:SoundManager;
     
-    constructor(stage:createjs.StageGL, assetManager:AssetManager, player:Player, map:Map, enemyManager:EnemyManager, pickupManager:PickupManager, hud:HUD){
+    constructor(stage:createjs.StageGL, assetManager:AssetManager, player:Player, map:Map, enemyManager:EnemyManager, pickupManager:PickupManager, hud:HUD, soundManager:SoundManager){
         this.stage = stage;
         this.player = player;
         this.map = map;
         this.enemyManager = enemyManager;
         this.pickupManager = pickupManager;
         this.hud = hud;
+        this.soundManager = soundManager;
         this.darkOverlay = assetManager.getSprite("assets", "other/darkness",STAGE_WIDTH/2, STAGE_HEIGHT/2)
         this.loadingScreen = assetManager.getSprite("assets", "other/loading", STAGE_WIDTH/2, STAGE_HEIGHT/2);
     }
 
     public LoadMainLevel():void{
+        this.soundManager.StopMusic();
         this.stage.removeAllChildren();
         this.gameLoaded = false;
         this.loadingDuration = randomNum(50, 100);
@@ -53,6 +57,7 @@ export default class LevelManager{
     }
 
     public LoadBossLevel():void{
+        this.soundManager.StopMusic();
         this.stage.removeAllChildren();
         this.gameLoaded = false;
         this.loadingDuration = randomNum(50, 100);
@@ -60,6 +65,8 @@ export default class LevelManager{
         this.player.SpawnPlayer(380, 650);
         this.enemyManager.InitBossEnemies();
         this.enemyManager.SpawmEnemies();
+        this.pickupManager.InitBossPickups();
+        this.pickupManager.SpawmPickups();
         this.stage.addChild(this.darkOverlay);
         this.hud.ShowHUD();
         this.stage.addChild(this.loadingScreen);
@@ -70,6 +77,12 @@ export default class LevelManager{
         this.loadingDuration--;
         if (this.loadingDuration == 0){
             this.gameLoaded = true;
+            if (this.map.mainLoaded == true){
+                this.soundManager.PlayGameMusic();
+            }
+            if (this.map.bossLoaded == true){
+                this.soundManager.PlayBossMusic();
+            }
             this.loadingScreen.on("animationend", (e:createjs.Event) => {
                 this.stage.removeChild(this.loadingScreen);
             }, this, true)
