@@ -58,9 +58,6 @@ export default class GameCharacter{
     }
     public RemoveLife():void{
         this.lives = this.lives - 1;
-        if (this.lives <= 0){
-            this.lives = 0;
-        }
     }
 
     public Update():void{

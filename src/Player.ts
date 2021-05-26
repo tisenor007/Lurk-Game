@@ -45,8 +45,8 @@ export default class Player extends GameCharacter{
     }
     public KillMe():void{
         this.soundManager.PlayPlayerDeath();
-        this.RemoveLife();
         this.sprite.on("animationend", (e:createjs.Event) => {
+            this.RemoveLife();
             this.stage.removeChild(this.sprite);
             this.stage.dispatchEvent(this.playerKilled);
         }, this, true)
