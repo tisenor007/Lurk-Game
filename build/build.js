@@ -10167,6 +10167,53 @@ exports.default = Arrow;
 
 /***/ }),
 
+/***/ "./src/ArrowManager.ts":
+/*!*****************************!*\
+  !*** ./src/ArrowManager.ts ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Arrow_1 = __webpack_require__(/*! ./Arrow */ "./src/Arrow.ts");
+const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
+class ArrowManager {
+    constructor(stage, assetManager, world, player, soundManager) {
+        this.arrowCoolDown = 0;
+        this.maxArrowsOnScreen = [];
+        this.stage = stage;
+        this.assetManager = assetManager;
+        this.world = world;
+        this.player = player;
+        this.soundManager = soundManager;
+    }
+    InitArrows() {
+        for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+            this.maxArrowsOnScreen[i] = new Arrow_1.default(this.stage, this.assetManager, this.world, this.player, this.soundManager);
+        }
+    }
+    ResetArrows() {
+        for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+            this.maxArrowsOnScreen[i].remove();
+        }
+    }
+    Update() {
+        this.arrowCoolDown--;
+        if (this.arrowCoolDown <= 0) {
+            this.arrowCoolDown = 0;
+        }
+        for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
+            this.maxArrowsOnScreen[i].Update();
+        }
+    }
+}
+exports.default = ArrowManager;
+
+
+/***/ }),
+
 /***/ "./src/AssetManager.ts":
 /*!*****************************!*\
   !*** ./src/AssetManager.ts ***!
@@ -10722,7 +10769,7 @@ class Enemy extends GameCharacter_1.default {
                 if (this.attackCoolDown >= 1) {
                     this.attackCoolDown--;
                 }
-                else if (this.attackCoolDown == 0) {
+                else if (this.attackCoolDown == 0 && this.player.vitalStatus == GameCharacter_1.default.ALIVE) {
                     this.attackCoolDown = this.attackSpeed;
                     this.player.TakeDamage(this.attackDamage);
                 }
@@ -11050,7 +11097,6 @@ const AssetManager_1 = __webpack_require__(/*! ./AssetManager */ "./src/AssetMan
 const Player_1 = __webpack_require__(/*! ./Player */ "./src/Player.ts");
 const Map_1 = __webpack_require__(/*! ./Map */ "./src/Map.ts");
 const World_1 = __webpack_require__(/*! ./World */ "./src/World.ts");
-const Arrow_1 = __webpack_require__(/*! ./Arrow */ "./src/Arrow.ts");
 const HUD_1 = __webpack_require__(/*! ./HUD */ "./src/HUD.ts");
 const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCharacter.ts");
 const EnemyManager_1 = __webpack_require__(/*! ./EnemyManager */ "./src/EnemyManager.ts");
@@ -11060,11 +11106,11 @@ const ScreenManager_1 = __webpack_require__(/*! ./ScreenManager */ "./src/Screen
 const PickupManager_1 = __webpack_require__(/*! ./PickupManager */ "./src/PickupManager.ts");
 const GameManager_1 = __webpack_require__(/*! ./GameManager */ "./src/GameManager.ts");
 const SoundManager_1 = __webpack_require__(/*! ./SoundManager */ "./src/SoundManager.ts");
+const ArrowManager_1 = __webpack_require__(/*! ./ArrowManager */ "./src/ArrowManager.ts");
 let stage;
 let canvas;
 let player;
-let arrowCoolDown = 0;
-let maxArrowsOnScreen = [];
+let arrowManager;
 let map;
 let world;
 let camera;
@@ -11090,14 +11136,13 @@ function onReady(e) {
     map = new Map_1.default(stage, assetManager, camera);
     enemyManager = new EnemyManager_1.default(stage, assetManager, player, map, soundManager);
     pickupManager = new PickupManager_1.default(stage, assetManager, player, map, soundManager);
-    for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
-        maxArrowsOnScreen[i] = new Arrow_1.default(stage, assetManager, world, player, soundManager);
-    }
-    world = new World_1.default(stage, assetManager, player, maxArrowsOnScreen, enemyManager.enemies, pickupManager.pickups);
+    arrowManager = new ArrowManager_1.default(stage, assetManager, world, player, soundManager);
+    arrowManager.InitArrows();
+    world = new World_1.default(stage, assetManager, player, arrowManager.maxArrowsOnScreen, enemyManager.enemies, pickupManager.pickups);
     hud = new HUD_1.default(stage, assetManager, player);
-    levelManager = new LevelManager_1.default(stage, assetManager, player, map, enemyManager, pickupManager, hud, soundManager);
+    levelManager = new LevelManager_1.default(stage, assetManager, player, map, enemyManager, pickupManager, hud, arrowManager, soundManager);
     screenManager = new ScreenManager_1.default(stage, assetManager, levelManager, soundManager);
-    gameManager = new GameManager_1.default(stage, assetManager, levelManager, screenManager, player, enemyManager, pickupManager, maxArrowsOnScreen, map);
+    gameManager = new GameManager_1.default(stage, assetManager, levelManager, screenManager, player, enemyManager, pickupManager, arrowManager.maxArrowsOnScreen, map);
     screenManager.ShowIntroScreen();
     document.onkeydown = OnKeyDown;
     document.onkeyup = OnKeyUp;
@@ -11108,17 +11153,11 @@ function onReady(e) {
 function onTick(e) {
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
     if (levelManager.gameLoaded == true) {
-        arrowCoolDown--;
-        if (arrowCoolDown <= 0) {
-            arrowCoolDown = 0;
-        }
         enemyManager.UpdateEnemies();
         player.Update();
         map.Update();
-        for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
-            maxArrowsOnScreen[i].Update();
-        }
         hud.Update();
+        arrowManager.Update();
         camera.Update();
         MonitorKeys();
         gameManager.MonitorCollisions(interact);
@@ -11224,10 +11263,10 @@ function MonitorKeys() {
     }
     if (shoot) {
         for (let i = 0; i <= Constants_1.MAX_ARROWS_ON_SCREEN; i++) {
-            if (maxArrowsOnScreen[i].used == false) {
-                if (arrowCoolDown == 0) {
-                    maxArrowsOnScreen[i].Shoot();
-                    arrowCoolDown = Constants_1.ARROW_RELOAD;
+            if (arrowManager.maxArrowsOnScreen[i].used == false) {
+                if (arrowManager.arrowCoolDown == 0) {
+                    arrowManager.maxArrowsOnScreen[i].Shoot();
+                    arrowManager.arrowCoolDown = Constants_1.ARROW_RELOAD;
                 }
             }
         }
@@ -11284,6 +11323,9 @@ class GameCharacter {
     }
     RestoreSheild() {
         this.shield = 50;
+    }
+    RemoveLife() {
+        this.lives = this.lives - 1;
     }
     Update() {
         if (this.health <= 0) {
@@ -11345,7 +11387,6 @@ class GameManager {
         switch (e.type) {
             case "gameStart":
                 this.player.lives = Constants_1.PLAYER_MAX_LIVES;
-                this.player.availableArrows = Constants_1.STARTING_ARROW_AMOUNT;
                 this.levelManager.LoadMainLevel();
                 break;
             case "pKilled":
@@ -11649,7 +11690,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Constants_1 = __webpack_require__(/*! ./Constants */ "./src/Constants.ts");
 const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
 class LevelManager {
-    constructor(stage, assetManager, player, map, enemyManager, pickupManager, hud, soundManager) {
+    constructor(stage, assetManager, player, map, enemyManager, pickupManager, hud, arrowManager, soundManager) {
         this.gameLoaded = false;
         this.stage = stage;
         this.player = player;
@@ -11657,6 +11698,7 @@ class LevelManager {
         this.enemyManager = enemyManager;
         this.pickupManager = pickupManager;
         this.hud = hud;
+        this.arrowManager = arrowManager;
         this.soundManager = soundManager;
         this.darkOverlay = assetManager.getSprite("assets", "other/darkness", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2);
         this.loadingScreen = assetManager.getSprite("assets", "other/loading", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2);
@@ -11666,10 +11708,9 @@ class LevelManager {
         this.stage.removeAllChildren();
         this.gameLoaded = false;
         this.loadingDuration = ToolBox_1.randomNum(50, 100);
+        this.arrowManager.ResetArrows();
+        this.player.ResetStats();
         this.map.LoadMain();
-        this.player.health = Constants_1.PLAYER_MAX_HEALTH;
-        this.player.shield = Constants_1.PLAYER_MAX_SHIELD;
-        this.player.availableArrows = Constants_1.STARTING_ARROW_AMOUNT;
         this.player.SpawnPlayer(20, 30);
         this.enemyManager.InitMainEnemies();
         this.enemyManager.SpawmEnemies();
@@ -11685,6 +11726,7 @@ class LevelManager {
         this.stage.removeAllChildren();
         this.gameLoaded = false;
         this.loadingDuration = ToolBox_1.randomNum(50, 100);
+        this.arrowManager.ResetArrows();
         this.map.LoadBoss();
         this.player.SpawnPlayer(380, 650);
         this.enemyManager.InitBossEnemies();
@@ -12028,7 +12070,7 @@ class PickupManager {
             this.pickups[i] = null;
         }
         this.pickups[0] = new Key_1.default(this.stage, this.assetManager, 30, 680, this.player, this.soundManager);
-        this.pickups[1] = new HealthPotion_1.default(this.stage, this.assetManager, 100, 30, this.player, this.soundManager);
+        this.pickups[1] = new Quiver_1.default(this.stage, this.assetManager, 100, 30, this.player, this.soundManager);
         this.pickups[2] = new Quiver_1.default(this.stage, this.assetManager, 550, 250, this.player, this.soundManager);
         this.pickups[3] = new Sheild_1.default(this.stage, this.assetManager, 20, 300, this.player, this.soundManager);
         this.pickups[4] = new Quiver_1.default(this.stage, this.assetManager, 50, 500, this.player, this.soundManager);
@@ -12103,22 +12145,28 @@ class Player extends GameCharacter_1.default {
         this.availableArrows = Constants_1.STARTING_ARROW_AMOUNT;
     }
     SpawnPlayer(xLoc, yLoc) {
+        this.vitalStatus = GameCharacter_1.default.ALIVE;
         this.originPointX = -xLoc + Constants_1.GENERAL_MAP_SIZE / 2 + Constants_1.STAGE_WIDTH / 2;
         this.originPointY = -yLoc + Constants_1.GENERAL_MAP_SIZE / 2 + Constants_1.STAGE_WIDTH / 2;
         this.direction = 2;
-        this.hasKey = false;
-        this.isDying = false;
-        this.canWalk = true;
-        this.vitalStatus = GameCharacter_1.default.ALIVE;
         this.xLoc = this.originPointX;
         this.yLoc = this.originPointY;
         this.stage.addChild(this.sprite);
     }
+    ResetStats() {
+        this.hasKey = false;
+        this.isDying = false;
+        this.canWalk = true;
+        this.health = Constants_1.PLAYER_MAX_HEALTH;
+        this.shield = Constants_1.PLAYER_MAX_SHIELD;
+        this.availableArrows = Constants_1.STARTING_ARROW_AMOUNT;
+    }
     KillMe() {
         this.soundManager.PlayPlayerDeath();
-        this.lives = this.lives - 1;
         this.sprite.on("animationend", (e) => {
+            this.RemoveLife();
             this.stage.removeChild(this.sprite);
+            this.ResetStats();
             this.stage.dispatchEvent(this.playerKilled);
         }, this, true);
         this.sprite.gotoAndPlay("Player/death");

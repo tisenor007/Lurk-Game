@@ -1,3 +1,4 @@
+import ArrowManager from "./ArrowManager";
 import AssetManager from "./AssetManager";
 import Camera from "./Camera";
 import { PLAYER_MAX_HEALTH, PLAYER_MAX_SHIELD, STAGE_HEIGHT, STAGE_WIDTH, STARTING_ARROW_AMOUNT } from "./Constants";
@@ -19,19 +20,20 @@ export default class LevelManager{
     private enemyManager:EnemyManager;
     private pickupManager:PickupManager;
     private hud:HUD;
-
+    private arrowManager:ArrowManager;
     private loadingScreen:createjs.Sprite;
     private darkOverlay:createjs.Sprite;
     private loadingDuration:number;
     private soundManager:SoundManager;
     
-    constructor(stage:createjs.StageGL, assetManager:AssetManager, player:Player, map:Map, enemyManager:EnemyManager, pickupManager:PickupManager, hud:HUD, soundManager:SoundManager){
+    constructor(stage:createjs.StageGL, assetManager:AssetManager, player:Player, map:Map, enemyManager:EnemyManager, pickupManager:PickupManager, hud:HUD, arrowManager:ArrowManager, soundManager:SoundManager){
         this.stage = stage;
         this.player = player;
         this.map = map;
         this.enemyManager = enemyManager;
         this.pickupManager = pickupManager;
         this.hud = hud;
+        this.arrowManager = arrowManager;
         this.soundManager = soundManager;
         this.darkOverlay = assetManager.getSprite("assets", "other/darkness",STAGE_WIDTH/2, STAGE_HEIGHT/2)
         this.loadingScreen = assetManager.getSprite("assets", "other/loading", STAGE_WIDTH/2, STAGE_HEIGHT/2);
@@ -42,10 +44,10 @@ export default class LevelManager{
         this.stage.removeAllChildren();
         this.gameLoaded = false;
         this.loadingDuration = randomNum(50, 100);
+        
+        this.arrowManager.ResetArrows();
+        this.player.ResetStats();
         this.map.LoadMain();
-        this.player.health = PLAYER_MAX_HEALTH;
-        this.player.shield = PLAYER_MAX_SHIELD;
-        this.player.availableArrows = STARTING_ARROW_AMOUNT;
         this.player.SpawnPlayer(20, 30);
         this.enemyManager.InitMainEnemies();
         this.enemyManager.SpawmEnemies();
@@ -62,6 +64,8 @@ export default class LevelManager{
         this.stage.removeAllChildren();
         this.gameLoaded = false;
         this.loadingDuration = randomNum(50, 100);
+
+        this.arrowManager.ResetArrows();
         this.map.LoadBoss();
         this.player.SpawnPlayer(380, 650);
         this.enemyManager.InitBossEnemies();

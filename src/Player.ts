@@ -32,22 +32,28 @@ export default class Player extends GameCharacter{
     }
 
     public SpawnPlayer(xLoc:number, yLoc:number):void{
+        this.vitalStatus = GameCharacter.ALIVE;
         this.originPointX = -xLoc + GENERAL_MAP_SIZE/2 + STAGE_WIDTH/2;
         this.originPointY = -yLoc + GENERAL_MAP_SIZE/2 + STAGE_WIDTH/2;
         this.direction = 2;
-        this.hasKey = false;
-        this.isDying = false;
-        this.canWalk = true;
-        this.vitalStatus = GameCharacter.ALIVE;
         this.xLoc = this.originPointX;
         this.yLoc = this.originPointY;
         this.stage.addChild(this.sprite);
+    }
+    public ResetStats():void{
+        this.hasKey = false;
+        this.isDying = false;
+        this.canWalk = true;
+        this.health = PLAYER_MAX_HEALTH;
+        this.shield = PLAYER_MAX_SHIELD;
+        this.availableArrows = STARTING_ARROW_AMOUNT;
     }
     public KillMe():void{
         this.soundManager.PlayPlayerDeath();
         this.sprite.on("animationend", (e:createjs.Event) => {
             this.RemoveLife();
             this.stage.removeChild(this.sprite);
+            this.ResetStats();
             this.stage.dispatchEvent(this.playerKilled);
         }, this, true)
         this.sprite.gotoAndPlay("Player/death");

@@ -44,7 +44,6 @@ export default class GameManager{
         switch (e.type){
             case "gameStart":
                 this.player.lives = PLAYER_MAX_LIVES;
-                this.player.availableArrows = STARTING_ARROW_AMOUNT;
                 this.levelManager.LoadMainLevel();
                 break;
             case "pKilled":

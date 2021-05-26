@@ -4,20 +4,13 @@
 // importing createjs framework
 import "createjs";
 // importing game constants
-import { STAGE_WIDTH, STAGE_HEIGHT, FRAME_RATE, ASSET_MANIFEST, MAX_ARROWS_ON_SCREEN, PLAYER_SPEED, ARROW_RELOAD, MAX_ENEMIES, PLAYER_MAX_LIVES, MAX_PICKUPS} from "./Constants";
+import { STAGE_WIDTH, STAGE_HEIGHT, FRAME_RATE, ASSET_MANIFEST, MAX_ARROWS_ON_SCREEN, ARROW_RELOAD} from "./Constants";
 import AssetManager from "./AssetManager";
 import Player from "./Player";
 import Map from "./Map";
 import World from "./World";
-import Arrow from "./Arrow";
 import HUD from "./HUD";
-import { radiusHit, boxHit } from "./ToolBox";
 import GameCharacter from "./GameCharacter";
-import Enemy from "./Enemy";
-import Heavy from "./Heavy";
-import Default from "./Default";
-import Light from "./Light";
-import Boss from "./Boss";
 import EnemyManager from "./EnemyManager";
 import Camera from "./Camera";
 import LevelManager from "./LevelManager";
@@ -25,6 +18,7 @@ import ScreenManager from "./ScreenManager";
 import PickupManager from "./PickupManager";
 import GameManager from "./GameManager";
 import SoundManager from "./SoundManager";
+import ArrowManager from "./ArrowManager";
 
 // game variables
 let stage:createjs.StageGL;
@@ -32,10 +26,7 @@ let canvas:HTMLCanvasElement;
 
 let player:Player;
 
-//let testEnemy:Enemy;
-
-let arrowCoolDown:number = 0;
-let maxArrowsOnScreen:Arrow[] = [];
+let arrowManager:ArrowManager;
 
 let map:Map;
 let world:World;
@@ -69,12 +60,13 @@ function onReady(e:createjs.Event):void {
     map = new Map(stage, assetManager, camera);
     enemyManager = new EnemyManager(stage, assetManager, player, map, soundManager);
     pickupManager = new PickupManager(stage, assetManager, player, map, soundManager);
-    for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){maxArrowsOnScreen[i] = new Arrow(stage, assetManager, world, player, soundManager);}
-    world = new World(stage, assetManager, player, maxArrowsOnScreen, enemyManager.enemies, pickupManager.pickups);
+    arrowManager = new ArrowManager(stage, assetManager, world, player, soundManager);
+    arrowManager.InitArrows();
+    world = new World(stage, assetManager, player, arrowManager.maxArrowsOnScreen, enemyManager.enemies, pickupManager.pickups);
     hud = new HUD(stage, assetManager, player);
-    levelManager = new LevelManager(stage, assetManager, player, map, enemyManager, pickupManager, hud, soundManager);
+    levelManager = new LevelManager(stage, assetManager, player, map, enemyManager, pickupManager, hud, arrowManager, soundManager);
     screenManager = new ScreenManager(stage, assetManager, levelManager, soundManager);
-    gameManager = new GameManager(stage, assetManager, levelManager, screenManager, player, enemyManager, pickupManager, maxArrowsOnScreen, map);
+    gameManager = new GameManager(stage, assetManager, levelManager, screenManager, player, enemyManager, pickupManager, arrowManager.maxArrowsOnScreen, map);
 
     screenManager.ShowIntroScreen();
 
@@ -92,13 +84,11 @@ function onTick(e:createjs.Event):void {
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
     
     if (levelManager.gameLoaded == true){
-        arrowCoolDown--;
-        if (arrowCoolDown <=0){arrowCoolDown = 0;}
         enemyManager.UpdateEnemies();
         player.Update();
         map.Update();
-        for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){maxArrowsOnScreen[i].Update();}
         hud.Update();
+        arrowManager.Update();
         camera.Update();
         MonitorKeys();
         gameManager.MonitorCollisions(interact);
@@ -168,10 +158,10 @@ function MonitorKeys():void{
     else{player.movement = GameCharacter.IDLE;}
     
     if (shoot){for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
-        if (maxArrowsOnScreen[i].used == false){
-            if (arrowCoolDown == 0){
-                maxArrowsOnScreen[i].Shoot();
-                arrowCoolDown = ARROW_RELOAD;
+        if (arrowManager.maxArrowsOnScreen[i].used == false){
+            if (arrowManager.arrowCoolDown == 0){
+                arrowManager.maxArrowsOnScreen[i].Shoot();
+                arrowManager.arrowCoolDown = ARROW_RELOAD;
             }
         }
     }}
