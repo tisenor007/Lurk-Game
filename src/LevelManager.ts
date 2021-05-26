@@ -1,6 +1,6 @@
 import AssetManager from "./AssetManager";
 import Camera from "./Camera";
-import { PLAYER_MAX_HEALTH, PLAYER_MAX_SHIELD, STAGE_HEIGHT, STAGE_WIDTH } from "./Constants";
+import { PLAYER_MAX_HEALTH, PLAYER_MAX_SHIELD, STAGE_HEIGHT, STAGE_WIDTH, STARTING_ARROW_AMOUNT } from "./Constants";
 import EnemyManager from "./EnemyManager";
 import HUD from "./HUD";
 import Map from "./Map";
@@ -45,6 +45,7 @@ export default class LevelManager{
         this.map.LoadMain();
         this.player.health = PLAYER_MAX_HEALTH;
         this.player.shield = PLAYER_MAX_SHIELD;
+        this.player.availableArrows = STARTING_ARROW_AMOUNT;
         this.player.SpawnPlayer(20, 30);
         this.enemyManager.InitMainEnemies();
         this.enemyManager.SpawmEnemies();

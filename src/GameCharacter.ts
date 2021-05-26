@@ -51,6 +51,7 @@ export default class GameCharacter{
     }
     public RegenHealth(hp:number):void{
         this.health = this.health + hp;
+        if (this.health >= 100){this.health = 100;}
     }
     public RestoreSheild():void{
         this.shield = 50;

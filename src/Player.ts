@@ -35,6 +35,7 @@ export default class Player extends GameCharacter{
         this.originPointX = -xLoc + GENERAL_MAP_SIZE/2 + STAGE_WIDTH/2;
         this.originPointY = -yLoc + GENERAL_MAP_SIZE/2 + STAGE_WIDTH/2;
         this.direction = 2;
+        this.hasKey = false;
         this.isDying = false;
         this.canWalk = true;
         this.vitalStatus = GameCharacter.ALIVE;

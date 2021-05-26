@@ -11278,6 +11278,9 @@ class GameCharacter {
     }
     RegenHealth(hp) {
         this.health = this.health + hp;
+        if (this.health >= 100) {
+            this.health = 100;
+        }
     }
     RestoreSheild() {
         this.shield = 50;
@@ -11666,6 +11669,7 @@ class LevelManager {
         this.map.LoadMain();
         this.player.health = Constants_1.PLAYER_MAX_HEALTH;
         this.player.shield = Constants_1.PLAYER_MAX_SHIELD;
+        this.player.availableArrows = Constants_1.STARTING_ARROW_AMOUNT;
         this.player.SpawnPlayer(20, 30);
         this.enemyManager.InitMainEnemies();
         this.enemyManager.SpawmEnemies();
@@ -11799,9 +11803,6 @@ class Map {
         this.centerWallSix = this.assetManager.getSprite("assets", "Mainlevel/wallEleven");
         this.centerWallSeven = this.assetManager.getSprite("assets", "Mainlevel/wallTen");
         this.centerWallEight = this.assetManager.getSprite("assets", "Mainlevel/wallNine");
-        this.mainStartDoor = this.assetManager.getSprite("assets", "other/doorOpenUp");
-        this.mainEndDoor = this.assetManager.getSprite("assets", "other/doorClosedUp");
-        this.bossStartDoor = this.assetManager.getSprite("assets", "other/doorClosedDown");
         this.water = this.assetManager.getSprite("assets", "other/water");
     }
     LoadMain() {
@@ -11810,6 +11811,8 @@ class Map {
         this.southWall = this.assetManager.getSprite("assets", "Mainlevel/SouthWall");
         this.eastWall = this.assetManager.getSprite("assets", "Mainlevel/EastWall");
         this.westWall = this.assetManager.getSprite("assets", "Mainlevel/WestWall");
+        this.mainStartDoor = this.assetManager.getSprite("assets", "other/doorOpenUp");
+        this.mainEndDoor = this.assetManager.getSprite("assets", "other/doorClosedUp");
         this.mainLoaded = true;
         this.bossLoaded = false;
         this.stage.addChild(this.water);
@@ -11837,6 +11840,7 @@ class Map {
         this.southWall = this.assetManager.getSprite("assets", "BossLevel/bossWallThree");
         this.eastWall = this.assetManager.getSprite("assets", "BossLevel/bossWallFour");
         this.westWall = this.assetManager.getSprite("assets", "BossLevel/bossWallOne");
+        this.bossStartDoor = this.assetManager.getSprite("assets", "other/doorClosedDown");
         this.mainLoaded = false;
         this.bossLoaded = true;
         this.stage.addChild(this.water);
@@ -12102,6 +12106,7 @@ class Player extends GameCharacter_1.default {
         this.originPointX = -xLoc + Constants_1.GENERAL_MAP_SIZE / 2 + Constants_1.STAGE_WIDTH / 2;
         this.originPointY = -yLoc + Constants_1.GENERAL_MAP_SIZE / 2 + Constants_1.STAGE_WIDTH / 2;
         this.direction = 2;
+        this.hasKey = false;
         this.isDying = false;
         this.canWalk = true;
         this.vitalStatus = GameCharacter_1.default.ALIVE;
@@ -12266,7 +12271,6 @@ class ScreenManager {
     }
     ShowInfoScreen() {
         this.levelManager.gameLoaded = false;
-        this.soundManager.PlayTitleMusic();
         this.stage.removeAllChildren();
         this.stage.addChild(this.infoScreen);
         this.infoScreen.on("click", (e) => { this.stage.dispatchEvent(this.eventStartGame); }, this, true);

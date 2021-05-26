@@ -51,9 +51,6 @@ export default class Map{
         this.centerWallSeven = this.assetManager.getSprite("assets", "Mainlevel/wallTen");
         this.centerWallEight = this.assetManager.getSprite("assets", "Mainlevel/wallNine");
 
-        this.mainStartDoor = this.assetManager.getSprite("assets", "other/doorOpenUp");
-        this.mainEndDoor = this.assetManager.getSprite("assets", "other/doorClosedUp");
-        this.bossStartDoor = this.assetManager.getSprite("assets", "other/doorClosedDown");
         this.water = this.assetManager.getSprite("assets", "other/water");
     }
 
@@ -64,6 +61,8 @@ export default class Map{
         this.southWall = this.assetManager.getSprite("assets", "Mainlevel/SouthWall");
         this.eastWall = this.assetManager.getSprite("assets", "Mainlevel/EastWall");
         this.westWall = this.assetManager.getSprite("assets", "Mainlevel/WestWall");
+        this.mainStartDoor = this.assetManager.getSprite("assets", "other/doorOpenUp");
+        this.mainEndDoor = this.assetManager.getSprite("assets", "other/doorClosedUp");
 
         this.mainLoaded = true;
         this.bossLoaded = false;
@@ -95,6 +94,7 @@ export default class Map{
         this.southWall = this.assetManager.getSprite("assets", "BossLevel/bossWallThree");
         this.eastWall = this.assetManager.getSprite("assets", "BossLevel/bossWallFour");
         this.westWall = this.assetManager.getSprite("assets", "BossLevel/bossWallOne");
+        this.bossStartDoor = this.assetManager.getSprite("assets", "other/doorClosedDown");
         this.mainLoaded = false;
         this.bossLoaded = true;
 

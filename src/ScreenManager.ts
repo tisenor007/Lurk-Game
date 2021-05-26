@@ -53,7 +53,6 @@ export default class ScreenManager{
 
     public ShowInfoScreen():void{
         this.levelManager.gameLoaded = false;
-        this.soundManager.PlayTitleMusic();
         this.stage.removeAllChildren();
         this.stage.addChild(this.infoScreen);
         this.infoScreen.on("click", (e) =>{ this.stage.dispatchEvent(this.eventStartGame);}, this, true);
