@@ -51,9 +51,9 @@ export default class Map{
         this.centerWallSeven = this.assetManager.getSprite("assets", "Mainlevel/wallTen");
         this.centerWallEight = this.assetManager.getSprite("assets", "Mainlevel/wallNine");
 
-        this.mainStartDoor = this.assetManager.getSprite("assets", "other/door");
-        this.mainEndDoor = this.assetManager.getSprite("assets", "other/door");
-        this.bossStartDoor = this.assetManager.getSprite("assets", "other/door2");
+        this.mainStartDoor = this.assetManager.getSprite("assets", "other/doorOpenUp");
+        this.mainEndDoor = this.assetManager.getSprite("assets", "other/doorClosedUp");
+        this.bossStartDoor = this.assetManager.getSprite("assets", "other/doorClosedDown");
         this.water = this.assetManager.getSprite("assets", "other/water");
     }
 
@@ -143,9 +143,9 @@ export default class Map{
             this.centerWallEight.y = this.camera.offsetY + 64;
 
             this.mainStartDoor.x = this.camera.offsetX -350;
-            this.mainStartDoor.y = this.camera.offsetY -400;
+            this.mainStartDoor.y = this.camera.offsetY -400 + 15;
             this.mainEndDoor.x = this.camera.offsetX +350;
-            this.mainEndDoor.y = this.camera.offsetY +240;
+            this.mainEndDoor.y = this.camera.offsetY +240 + 15;
         }
         if (this.bossLoaded == true){
             this.water.x = STAGE_WIDTH/2;
@@ -159,7 +159,7 @@ export default class Map{
             this.westWall.x = this.camera.offsetX - (this.mapSize/2 + 19.5);
             this.westWall.y = this.camera.offsetY + 0.5;
             this.bossStartDoor.x = this.camera.offsetX;
-            this.bossStartDoor.y = this.camera.offsetY +(this.mapSize/2 + 16);
+            this.bossStartDoor.y = this.camera.offsetY +(this.mapSize/2 + 16) - 15;
         }
         
     }

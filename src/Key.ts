@@ -14,6 +14,7 @@ export default class Key extends Pickup{
         super.UsePickup();
         if (this.used == false){
             this.player.hasKey = true;
+            this.stage.dispatchEvent(this.player.playerHasKey);
             this.used = true;
         }
     }

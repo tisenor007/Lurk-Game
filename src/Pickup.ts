@@ -5,13 +5,13 @@ import SoundManager from "./SoundManager";
 
 export default class Pickup{
 
+    public stage:createjs.StageGL;
     public originPointX:number;
     public originPointY:number;
     public sprite:createjs.Sprite;
     public form:string;
     public used:boolean = false;
     protected player:Player;
-    private stage:createjs.StageGL;
     private soundManager:SoundManager;
     
 

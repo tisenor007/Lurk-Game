@@ -7,6 +7,7 @@ import SoundManager from "./SoundManager";
 export default class Player extends GameCharacter{
 
     public playerKilled:createjs.Event;
+    public playerHasKey:createjs.Event;
     public hasKey:boolean;
     public canWalk:boolean;
     public movement:number;
@@ -17,6 +18,7 @@ export default class Player extends GameCharacter{
     constructor(stage:createjs.StageGL, assetmanager:AssetManager, soundManager:SoundManager){
         super(stage, assetmanager, "Player/Idle_down", soundManager);
         this.playerKilled = new createjs.Event("pKilled", true, false);
+        this.playerHasKey = new createjs.Event("pHasKey", true, false);
         this.isDying = false;
         this.canWalk = true;
         this.lives = PLAYER_MAX_LIVES;

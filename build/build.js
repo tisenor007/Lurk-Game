@@ -10496,18 +10496,18 @@ class Default extends Enemy_1.default {
         this.speed = 1;
         this.attackDamage = 5;
         this.health = 50;
-        this.formIdleDown = "Default/Default";
-        this.formIdleUp = "Default/Default";
-        this.formIdleLeft = "Default/Default";
-        this.formIdleRight = "Default/Default";
-        this.formWalkUp = "Default/Default";
-        this.formWalkDown = "Default/Default";
-        this.formWalkLeft = "Default/Default";
-        this.formWalkRight = "Default/Default";
-        this.formAttackUp = "Default/Default";
-        this.formAttackDown = "Default/Default";
-        this.formAttackLeft = "Default/Default";
-        this.formAttackRight = "Default/Default";
+        this.formIdleDown = "Default/idleDown";
+        this.formIdleUp = "Default/idleUp";
+        this.formIdleLeft = "Default/idleLeft";
+        this.formIdleRight = "Default/idleRight";
+        this.formWalkUp = "Default/walkUp";
+        this.formWalkDown = "Default/walkDown";
+        this.formWalkLeft = "Default/walkLeft";
+        this.formWalkRight = "Default/walkRight";
+        this.formAttackUp = "Default/attack";
+        this.formAttackDown = "Default/attack";
+        this.formAttackLeft = "Default/attack";
+        this.formAttackRight = "Default/attack";
     }
     Spawn() {
         super.Spawn();
@@ -10520,7 +10520,7 @@ class Default extends Enemy_1.default {
             this.stage.removeChild(this.healthBar);
             this.stage.removeChild(this.healthBarBack);
         }, this, true);
-        this.sprite.gotoAndPlay("Default/Default");
+        this.sprite.gotoAndPlay("Default/death");
     }
     TakeDamage(damage) {
         super.TakeDamage(damage);
@@ -10582,6 +10582,7 @@ class Enemy extends GameCharacter_1.default {
         this.state = Enemy.ROAMING;
     }
     KillMe() {
+        this.attackCoolDown = 0;
         this.vitalStatus = GameCharacter_1.default.DEAD;
     }
     TakeDamage(damage) {
@@ -10737,13 +10738,13 @@ class Enemy extends GameCharacter_1.default {
                         this.isAttacking = true;
                     }
                 }
-                if (this.direction == 3) {
+                if (this.direction == 4) {
                     if (this.isAttacking == false) {
                         this.sprite.gotoAndPlay(this.formAttackRight);
                         this.isAttacking = true;
                     }
                 }
-                if (this.direction == 4) {
+                if (this.direction == 3) {
                     if (this.isAttacking == false) {
                         this.sprite.gotoAndPlay(this.formAttackLeft);
                         this.isAttacking = true;
@@ -10799,20 +10800,22 @@ class EnemyManager {
         this.enemies[0] = new Default_1.default(this.stage, this.assetManager, 200, 50, this.player, this.soundManager);
         this.enemies[1] = new Light_1.default(this.stage, this.assetManager, 550, 200, this.player, this.soundManager);
         this.enemies[2] = new Heavy_1.default(this.stage, this.assetManager, 400, 400, this.player, this.soundManager);
-        this.enemies[3] = new Default_1.default(this.stage, this.assetManager, 600, 680, this.player, this.soundManager);
+        this.enemies[3] = new Default_1.default(this.stage, this.assetManager, 600, 735, this.player, this.soundManager);
         this.enemies[4] = new Light_1.default(this.stage, this.assetManager, 10, 650, this.player, this.soundManager);
         this.enemies[5] = new Default_1.default(this.stage, this.assetManager, 10, 350, this.player, this.soundManager);
         this.enemies[6] = new Light_1.default(this.stage, this.assetManager, 600, 350, this.player, this.soundManager);
-        this.enemies[7] = new Light_1.default(this.stage, this.assetManager, 350, 650, this.player, this.soundManager);
+        this.enemies[7] = new Light_1.default(this.stage, this.assetManager, 350, 540, this.player, this.soundManager);
         this.enemies[8] = new Default_1.default(this.stage, this.assetManager, 400, 50, this.player, this.soundManager);
         this.enemies[9] = new Heavy_1.default(this.stage, this.assetManager, 10, 450, this.player, this.soundManager);
-        this.enemies[10] = new Default_1.default(this.stage, this.assetManager, 250, 650, this.player, this.soundManager);
+        this.enemies[10] = new Default_1.default(this.stage, this.assetManager, 250, 720, this.player, this.soundManager);
     }
     InitBossEnemies() {
         for (let i = 0; i <= Constants_1.MAX_ENEMIES; i++) {
             this.enemies[i] = null;
         }
         this.enemies[0] = new Boss_1.default(this.stage, this.assetManager, 300, 300, this.player, this.soundManager);
+        this.enemies[1] = new Light_1.default(this.stage, this.assetManager, 100, 100, this.player, this.soundManager);
+        this.enemies[2] = new Light_1.default(this.stage, this.assetManager, 600, 600, this.player, this.soundManager);
     }
     SpawmEnemies() {
         for (let i = 0; i <= Constants_1.MAX_ENEMIES; i++) {
@@ -11321,6 +11324,7 @@ class GameManager {
     constructor(stage, assetManager, levelManager, screenManager, player, enemyManager, pickupManager, maxArrowsOnScreen, map) {
         this.maxArrowsOnScreen = [];
         this.stage = stage;
+        this.assetManager = assetManager;
         this.player = player;
         this.map = map;
         this.enemyManager = enemyManager;
@@ -11332,6 +11336,7 @@ class GameManager {
         this.stage.on("gameRestart", this.OnGameEvent, this);
         this.stage.on("pKilled", this.OnGameEvent, this);
         this.stage.on("gameWon", this.OnGameEvent, this);
+        this.stage.on("pHasKey", this.OnGameEvent, this);
     }
     OnGameEvent(e) {
         switch (e.type) {
@@ -11349,10 +11354,14 @@ class GameManager {
                 }
                 break;
             case "gameWon":
+                this.map.bossStartDoor.gotoAndStop("other/doorOpenDown");
                 this.screenManager.ShowGameWinScreen();
                 break;
             case "gameRestart":
                 this.screenManager.ShowIntroScreen();
+                break;
+            case "pHasKey":
+                this.map.mainEndDoor.gotoAndStop("other/doorOpenUp");
                 break;
         }
     }
@@ -11552,18 +11561,18 @@ class Heavy extends Enemy_1.default {
         this.speed = 0.5;
         this.attackDamage = 10;
         this.health = 75;
-        this.formIdleDown = "Heavy/Heavy";
-        this.formIdleUp = "Heavy/Heavy";
-        this.formIdleLeft = "Heavy/Heavy";
-        this.formIdleRight = "Heavy/Heavy";
-        this.formWalkUp = "Heavy/Heavy";
-        this.formWalkDown = "Heavy/Heavy";
-        this.formWalkLeft = "Heavy/Heavy";
-        this.formWalkRight = "Heavy/Heavy";
-        this.formAttackUp = "Heavy/Heavy";
-        this.formAttackDown = "Heavy/Heavy";
-        this.formAttackLeft = "Heavy/Heavy";
-        this.formAttackRight = "Heavy/Heavy";
+        this.formIdleDown = "Heavy/idleDown";
+        this.formIdleUp = "Heavy/idleUp";
+        this.formIdleLeft = "Heavy/idleLeft";
+        this.formIdleRight = "Heavy/idleRight";
+        this.formWalkUp = "Heavy/walkUp";
+        this.formWalkDown = "Heavy/walkDown";
+        this.formWalkLeft = "Heavy/walkLeft";
+        this.formWalkRight = "Heavy/walkRight";
+        this.formAttackUp = "Heavy/attackUp";
+        this.formAttackDown = "Heavy/attackDown";
+        this.formAttackLeft = "Heavy/attackLeft";
+        this.formAttackRight = "Heavy/attackRight";
     }
     Spawn() {
         super.Spawn();
@@ -11576,7 +11585,7 @@ class Heavy extends Enemy_1.default {
             this.stage.removeChild(this.healthBar);
             this.stage.removeChild(this.healthBarBack);
         }, this, true);
-        this.sprite.gotoAndPlay("Heavy/Heavy");
+        this.sprite.gotoAndPlay("Heavy/death");
     }
     TakeDamage(damage) {
         super.TakeDamage(damage);
@@ -11614,6 +11623,7 @@ class Key extends Pickup_1.default {
         super.UsePickup();
         if (this.used == false) {
             this.player.hasKey = true;
+            this.stage.dispatchEvent(this.player.playerHasKey);
             this.used = true;
         }
     }
@@ -11789,9 +11799,9 @@ class Map {
         this.centerWallSix = this.assetManager.getSprite("assets", "Mainlevel/wallEleven");
         this.centerWallSeven = this.assetManager.getSprite("assets", "Mainlevel/wallTen");
         this.centerWallEight = this.assetManager.getSprite("assets", "Mainlevel/wallNine");
-        this.mainStartDoor = this.assetManager.getSprite("assets", "other/door");
-        this.mainEndDoor = this.assetManager.getSprite("assets", "other/door");
-        this.bossStartDoor = this.assetManager.getSprite("assets", "other/door2");
+        this.mainStartDoor = this.assetManager.getSprite("assets", "other/doorOpenUp");
+        this.mainEndDoor = this.assetManager.getSprite("assets", "other/doorClosedUp");
+        this.bossStartDoor = this.assetManager.getSprite("assets", "other/doorClosedDown");
         this.water = this.assetManager.getSprite("assets", "other/water");
     }
     LoadMain() {
@@ -11870,9 +11880,9 @@ class Map {
             this.centerWallEight.x = this.camera.offsetX + 224;
             this.centerWallEight.y = this.camera.offsetY + 64;
             this.mainStartDoor.x = this.camera.offsetX - 350;
-            this.mainStartDoor.y = this.camera.offsetY - 400;
+            this.mainStartDoor.y = this.camera.offsetY - 400 + 15;
             this.mainEndDoor.x = this.camera.offsetX + 350;
-            this.mainEndDoor.y = this.camera.offsetY + 240;
+            this.mainEndDoor.y = this.camera.offsetY + 240 + 15;
         }
         if (this.bossLoaded == true) {
             this.water.x = Constants_1.STAGE_WIDTH / 2;
@@ -11886,7 +11896,7 @@ class Map {
             this.westWall.x = this.camera.offsetX - (this.mapSize / 2 + 19.5);
             this.westWall.y = this.camera.offsetY + 0.5;
             this.bossStartDoor.x = this.camera.offsetX;
-            this.bossStartDoor.y = this.camera.offsetY + (this.mapSize / 2 + 16);
+            this.bossStartDoor.y = this.camera.offsetY + (this.mapSize / 2 + 16) - 15;
         }
     }
     IsCollidingWithWall(character, direction, wall, speed) {
@@ -12023,6 +12033,7 @@ class PickupManager {
         this.pickups[7] = new Sheild_1.default(this.stage, this.assetManager, 500, 30, this.player, this.soundManager);
         this.pickups[8] = new Quiver_1.default(this.stage, this.assetManager, 750, 750, this.player, this.soundManager);
         this.pickups[9] = new HealthPotion_1.default(this.stage, this.assetManager, 20, 450, this.player, this.soundManager);
+        this.pickups[10] = new Sheild_1.default(this.stage, this.assetManager, 400, 750, this.player, this.soundManager);
     }
     InitBossPickups() {
         for (let i = 0; i <= Constants_1.MAX_PICKUPS; i++) {
@@ -12075,6 +12086,7 @@ class Player extends GameCharacter_1.default {
     constructor(stage, assetmanager, soundManager) {
         super(stage, assetmanager, "Player/Idle_down", soundManager);
         this.playerKilled = new createjs.Event("pKilled", true, false);
+        this.playerHasKey = new createjs.Event("pHasKey", true, false);
         this.isDying = false;
         this.canWalk = true;
         this.lives = Constants_1.PLAYER_MAX_LIVES;
@@ -12237,7 +12249,7 @@ class ScreenManager {
         this.introScreen = new createjs.Container();
         this.introScreen.addChild(assetManager.getSprite("assets", "other/MainMenu", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2));
         this.infoScreen = new createjs.Container();
-        this.infoScreen.addChild(assetManager.getSprite("assets", "other/InfoScreen", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2));
+        this.infoScreen.addChild(assetManager.getSprite("assets", "other/infoScreen", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2));
         this.gameOverScreen = new createjs.Container();
         this.gameOverScreen.addChild(assetManager.getSprite("assets", "other/GameOverScreen", Constants_1.STAGE_WIDTH / 2, Constants_1.STAGE_HEIGHT / 2));
         this.gameWinScreen = new createjs.Container();

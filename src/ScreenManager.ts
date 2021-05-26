@@ -31,7 +31,7 @@ export default class ScreenManager{
         this.introScreen.addChild(assetManager.getSprite("assets", "other/MainMenu", STAGE_WIDTH/2, STAGE_HEIGHT/2));
 
         this.infoScreen = new createjs.Container();
-        this.infoScreen.addChild(assetManager.getSprite("assets", "other/InfoScreen", STAGE_WIDTH/2, STAGE_HEIGHT/2));
+        this.infoScreen.addChild(assetManager.getSprite("assets", "other/infoScreen", STAGE_WIDTH/2, STAGE_HEIGHT/2));
 
         this.gameOverScreen = new createjs.Container();
         this.gameOverScreen.addChild(assetManager.getSprite("assets", "other/GameOverScreen", STAGE_WIDTH/2, STAGE_HEIGHT/2));

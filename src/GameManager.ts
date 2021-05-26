@@ -20,9 +20,11 @@ export default class GameManager{
     private map:Map;
     private player:Player;
     private maxArrowsOnScreen:Arrow[] = [];
+    private assetManager:AssetManager;
 
     constructor(stage:createjs.StageGL, assetManager:AssetManager, levelManager:LevelManager, screenManager:ScreenManager, player:Player, enemyManager:EnemyManager, pickupManager:PickupManager, maxArrowsOnScreen:Arrow[], map:Map){
         this.stage = stage;
+        this.assetManager = assetManager;
         this.player = player;
         this.map = map;
         this.enemyManager = enemyManager;
@@ -35,6 +37,7 @@ export default class GameManager{
         this.stage.on("gameRestart", this.OnGameEvent, this);
         this.stage.on("pKilled", this.OnGameEvent, this);
         this.stage.on("gameWon", this.OnGameEvent, this);
+        this.stage.on("pHasKey", this.OnGameEvent, this);
     }
 
     public OnGameEvent(e:createjs.Event):void{
@@ -49,10 +52,14 @@ export default class GameManager{
                 else if (this.player.lives < 0){this.screenManager.ShowGameOverScreen();}
                 break;
             case "gameWon":
+                this.map.bossStartDoor.gotoAndStop("other/doorOpenDown");
                 this.screenManager.ShowGameWinScreen();
                 break;
             case "gameRestart":
                 this.screenManager.ShowIntroScreen();
+                break;
+            case "pHasKey" :
+                this.map.mainEndDoor.gotoAndStop("other/doorOpenUp");
                 break;
         }
     }

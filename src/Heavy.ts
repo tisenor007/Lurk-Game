@@ -16,22 +16,22 @@ export default class Heavy extends Enemy{
         this.health = 75;
 
         //idle animations
-        this.formIdleDown = "Heavy/Heavy";
-        this.formIdleUp = "Heavy/Heavy";
-        this.formIdleLeft = "Heavy/Heavy";
-        this.formIdleRight = "Heavy/Heavy";
+        this.formIdleDown = "Heavy/idleDown";
+        this.formIdleUp = "Heavy/idleUp";
+        this.formIdleLeft = "Heavy/idleLeft";
+        this.formIdleRight = "Heavy/idleRight";
 
         //walk animations
-        this.formWalkUp = "Heavy/Heavy";
-        this.formWalkDown = "Heavy/Heavy";
-        this.formWalkLeft = "Heavy/Heavy";
-        this.formWalkRight = "Heavy/Heavy";
+        this.formWalkUp = "Heavy/walkUp";
+        this.formWalkDown = "Heavy/walkDown";
+        this.formWalkLeft = "Heavy/walkLeft";
+        this.formWalkRight = "Heavy/walkRight";
 
         //attack animations
-        this.formAttackUp = "Heavy/Heavy";
-        this.formAttackDown = "Heavy/Heavy";
-        this.formAttackLeft = "Heavy/Heavy";
-        this.formAttackRight = "Heavy/Heavy";
+        this.formAttackUp = "Heavy/attackUp";
+        this.formAttackDown = "Heavy/attackDown";
+        this.formAttackLeft = "Heavy/attackLeft";
+        this.formAttackRight = "Heavy/attackRight";
     }
 
     public Spawn():void{
@@ -46,7 +46,7 @@ export default class Heavy extends Enemy{
             this.stage.removeChild(this.healthBar);
             this.stage.removeChild(this.healthBarBack);
         }, this, true)
-        this.sprite.gotoAndPlay("Heavy/Heavy");
+        this.sprite.gotoAndPlay("Heavy/death");
     }
 
     public TakeDamage(damage:number):void{

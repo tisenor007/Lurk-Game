@@ -356,7 +356,142 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">Default/Default.png</key>
+            <key type="filename">Default/attack_1.png</key>
+            <key type="filename">Default/attack_10.png</key>
+            <key type="filename">Default/attack_11.png</key>
+            <key type="filename">Default/attack_12.png</key>
+            <key type="filename">Default/attack_13.png</key>
+            <key type="filename">Default/attack_14.png</key>
+            <key type="filename">Default/attack_15.png</key>
+            <key type="filename">Default/attack_16.png</key>
+            <key type="filename">Default/attack_2.png</key>
+            <key type="filename">Default/attack_3.png</key>
+            <key type="filename">Default/attack_4.png</key>
+            <key type="filename">Default/attack_5.png</key>
+            <key type="filename">Default/attack_6.png</key>
+            <key type="filename">Default/attack_7.png</key>
+            <key type="filename">Default/attack_8.png</key>
+            <key type="filename">Default/attack_9.png</key>
+            <key type="filename">Default/death_1.png</key>
+            <key type="filename">Default/death_2.png</key>
+            <key type="filename">Default/death_3.png</key>
+            <key type="filename">Default/death_4.png</key>
+            <key type="filename">Default/death_5.png</key>
+            <key type="filename">Default/death_6.png</key>
+            <key type="filename">Default/death_7.png</key>
+            <key type="filename">Default/death_8.png</key>
+            <key type="filename">Default/idleDown.png</key>
+            <key type="filename">Default/idleLeft.png</key>
+            <key type="filename">Default/idleRight.png</key>
+            <key type="filename">Default/idleUp.png</key>
+            <key type="filename">Default/walkDown_1.png</key>
+            <key type="filename">Default/walkDown_2.png</key>
+            <key type="filename">Default/walkDown_3.png</key>
+            <key type="filename">Default/walkDown_4.png</key>
+            <key type="filename">Default/walkDown_5.png</key>
+            <key type="filename">Default/walkDown_6.png</key>
+            <key type="filename">Default/walkDown_7.png</key>
+            <key type="filename">Default/walkDown_8.png</key>
+            <key type="filename">Default/walkLeft_1.png</key>
+            <key type="filename">Default/walkLeft_2.png</key>
+            <key type="filename">Default/walkLeft_3.png</key>
+            <key type="filename">Default/walkLeft_4.png</key>
+            <key type="filename">Default/walkLeft_5.png</key>
+            <key type="filename">Default/walkLeft_6.png</key>
+            <key type="filename">Default/walkLeft_7.png</key>
+            <key type="filename">Default/walkLeft_8.png</key>
+            <key type="filename">Default/walkRight_1.png</key>
+            <key type="filename">Default/walkRight_2.png</key>
+            <key type="filename">Default/walkRight_3.png</key>
+            <key type="filename">Default/walkRight_4.png</key>
+            <key type="filename">Default/walkRight_5.png</key>
+            <key type="filename">Default/walkRight_6.png</key>
+            <key type="filename">Default/walkRight_7.png</key>
+            <key type="filename">Default/walkRight_8.png</key>
+            <key type="filename">Default/walkUp_1.png</key>
+            <key type="filename">Default/walkUp_2.png</key>
+            <key type="filename">Default/walkUp_3.png</key>
+            <key type="filename">Default/walkUp_4.png</key>
+            <key type="filename">Default/walkUp_5.png</key>
+            <key type="filename">Default/walkUp_6.png</key>
+            <key type="filename">Default/walkUp_7.png</key>
+            <key type="filename">Default/walkUp_8.png</key>
+            <key type="filename">Heavy/attackDown_1.png</key>
+            <key type="filename">Heavy/attackDown_2.png</key>
+            <key type="filename">Heavy/attackDown_3.png</key>
+            <key type="filename">Heavy/attackDown_4.png</key>
+            <key type="filename">Heavy/attackDown_5.png</key>
+            <key type="filename">Heavy/attackDown_6.png</key>
+            <key type="filename">Heavy/attackDown_7.png</key>
+            <key type="filename">Heavy/attackDown_8.png</key>
+            <key type="filename">Heavy/attackLeft_1.png</key>
+            <key type="filename">Heavy/attackLeft_2.png</key>
+            <key type="filename">Heavy/attackLeft_3.png</key>
+            <key type="filename">Heavy/attackLeft_4.png</key>
+            <key type="filename">Heavy/attackLeft_5.png</key>
+            <key type="filename">Heavy/attackLeft_6.png</key>
+            <key type="filename">Heavy/attackLeft_7.png</key>
+            <key type="filename">Heavy/attackLeft_8.png</key>
+            <key type="filename">Heavy/attackRight_1.png</key>
+            <key type="filename">Heavy/attackRight_2.png</key>
+            <key type="filename">Heavy/attackRight_3.png</key>
+            <key type="filename">Heavy/attackRight_4.png</key>
+            <key type="filename">Heavy/attackRight_5.png</key>
+            <key type="filename">Heavy/attackRight_6.png</key>
+            <key type="filename">Heavy/attackRight_7.png</key>
+            <key type="filename">Heavy/attackRight_8.png</key>
+            <key type="filename">Heavy/attackUp_1.png</key>
+            <key type="filename">Heavy/attackUp_2.png</key>
+            <key type="filename">Heavy/attackUp_3.png</key>
+            <key type="filename">Heavy/attackUp_4.png</key>
+            <key type="filename">Heavy/attackUp_5.png</key>
+            <key type="filename">Heavy/attackUp_6.png</key>
+            <key type="filename">Heavy/attackUp_7.png</key>
+            <key type="filename">Heavy/attackUp_8.png</key>
+            <key type="filename">Heavy/death_1.png</key>
+            <key type="filename">Heavy/death_2.png</key>
+            <key type="filename">Heavy/death_3.png</key>
+            <key type="filename">Heavy/death_4.png</key>
+            <key type="filename">Heavy/death_5.png</key>
+            <key type="filename">Heavy/death_6.png</key>
+            <key type="filename">Heavy/death_7.png</key>
+            <key type="filename">Heavy/death_8.png</key>
+            <key type="filename">Heavy/idleDown.png</key>
+            <key type="filename">Heavy/idleLeft.png</key>
+            <key type="filename">Heavy/idleRight.png</key>
+            <key type="filename">Heavy/idleUp.png</key>
+            <key type="filename">Heavy/walkDown_1.png</key>
+            <key type="filename">Heavy/walkDown_2.png</key>
+            <key type="filename">Heavy/walkDown_3.png</key>
+            <key type="filename">Heavy/walkDown_4.png</key>
+            <key type="filename">Heavy/walkDown_5.png</key>
+            <key type="filename">Heavy/walkDown_6.png</key>
+            <key type="filename">Heavy/walkDown_7.png</key>
+            <key type="filename">Heavy/walkDown_8.png</key>
+            <key type="filename">Heavy/walkLeft_1.png</key>
+            <key type="filename">Heavy/walkLeft_2.png</key>
+            <key type="filename">Heavy/walkLeft_3.png</key>
+            <key type="filename">Heavy/walkLeft_4.png</key>
+            <key type="filename">Heavy/walkLeft_5.png</key>
+            <key type="filename">Heavy/walkLeft_6.png</key>
+            <key type="filename">Heavy/walkLeft_7.png</key>
+            <key type="filename">Heavy/walkLeft_8.png</key>
+            <key type="filename">Heavy/walkRight_1.png</key>
+            <key type="filename">Heavy/walkRight_2.png</key>
+            <key type="filename">Heavy/walkRight_3.png</key>
+            <key type="filename">Heavy/walkRight_4.png</key>
+            <key type="filename">Heavy/walkRight_5.png</key>
+            <key type="filename">Heavy/walkRight_6.png</key>
+            <key type="filename">Heavy/walkRight_7.png</key>
+            <key type="filename">Heavy/walkRight_8.png</key>
+            <key type="filename">Heavy/walkUp_1.png</key>
+            <key type="filename">Heavy/walkUp_2.png</key>
+            <key type="filename">Heavy/walkUp_3.png</key>
+            <key type="filename">Heavy/walkUp_4.png</key>
+            <key type="filename">Heavy/walkUp_5.png</key>
+            <key type="filename">Heavy/walkUp_6.png</key>
+            <key type="filename">Heavy/walkUp_7.png</key>
+            <key type="filename">Heavy/walkUp_8.png</key>
             <key type="filename">Light/attack_1.png</key>
             <key type="filename">Light/attack_10.png</key>
             <key type="filename">Light/attack_11.png</key>
@@ -462,6 +597,10 @@
             <key type="filename">Player/walk_up_6.png</key>
             <key type="filename">Player/walk_up_7.png</key>
             <key type="filename">Player/walk_up_8.png</key>
+            <key type="filename">other/doorClosedDown.png</key>
+            <key type="filename">other/doorClosedUp.png</key>
+            <key type="filename">other/doorOpenDown.png</key>
+            <key type="filename">other/doorOpenUp.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -473,21 +612,6 @@
                 <rect>16,16,32,32</rect>
                 <key>scale9Paddings</key>
                 <rect>16,16,32,32</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">Heavy/Heavy.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>18,18,35,35</rect>
-                <key>scale9Paddings</key>
-                <rect>18,18,35,35</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
@@ -721,9 +845,9 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">other/InfoScreen.png</key>
             <key type="filename">other/WinScreen.png</key>
             <key type="filename">other/darkness.png</key>
+            <key type="filename">other/infoScreen.png</key>
             <key type="filename">other/loading_1.png</key>
             <key type="filename">other/loading_10.png</key>
             <key type="filename">other/loading_11.png</key>
@@ -779,36 +903,6 @@
                 <rect>100,100,200,200</rect>
                 <key>scale9Paddings</key>
                 <rect>100,100,200,200</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">other/door.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>12,8,23,16</rect>
-                <key>scale9Paddings</key>
-                <rect>12,8,23,16</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">other/door2.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>16,8,32,16</rect>
-                <key>scale9Paddings</key>
-                <rect>16,8,32,16</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>

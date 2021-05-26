@@ -73,6 +73,7 @@ export default class Enemy extends GameCharacter{
     }
 
     public KillMe():void{
+        this.attackCoolDown = 0;
         this.vitalStatus = GameCharacter.DEAD;
     }
     public TakeDamage(damage:number):void{
@@ -217,8 +218,8 @@ export default class Enemy extends GameCharacter{
                 }
                 if (this.direction == 1){if(this.isAttacking == false){this.sprite.gotoAndPlay(this.formAttackUp);this.isAttacking = true;}}
                 if (this.direction == 2){if(this.isAttacking == false){this.sprite.gotoAndPlay(this.formAttackDown);this.isAttacking = true;}}
-                if (this.direction == 3){if(this.isAttacking == false){this.sprite.gotoAndPlay(this.formAttackRight);this.isAttacking = true;}}
-                if (this.direction == 4){if(this.isAttacking == false){this.sprite.gotoAndPlay(this.formAttackLeft);this.isAttacking = true;}}
+                if (this.direction == 4){if(this.isAttacking == false){this.sprite.gotoAndPlay(this.formAttackRight);this.isAttacking = true;}}
+                if (this.direction == 3){if(this.isAttacking == false){this.sprite.gotoAndPlay(this.formAttackLeft);this.isAttacking = true;}}
             }
             if (this.stateDuration <= 0){
                 this.state = Enemy.ROAMING;

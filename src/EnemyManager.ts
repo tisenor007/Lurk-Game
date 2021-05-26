@@ -35,14 +35,14 @@ export default class EnemyManager{
         this.enemies[0] = new Default(this.stage, this.assetManager, 200, 50, this.player, this.soundManager);
         this.enemies[1] = new Light(this.stage, this.assetManager, 550, 200, this.player, this.soundManager);
         this.enemies[2] = new Heavy(this.stage, this.assetManager, 400, 400, this.player, this.soundManager);
-        this.enemies[3] = new Default(this.stage, this.assetManager, 600, 680, this.player, this.soundManager);
+        this.enemies[3] = new Default(this.stage, this.assetManager, 600, 735, this.player, this.soundManager);
         this.enemies[4] = new Light(this.stage, this.assetManager, 10, 650, this.player, this.soundManager);
         this.enemies[5] = new Default(this.stage, this.assetManager, 10, 350, this.player, this.soundManager);
         this.enemies[6] = new Light(this.stage, this.assetManager, 600, 350, this.player, this.soundManager);
-        this.enemies[7] = new Light(this.stage, this.assetManager, 350, 650, this.player, this.soundManager);
+        this.enemies[7] = new Light(this.stage, this.assetManager, 350, 540, this.player, this.soundManager);
         this.enemies[8] = new Default(this.stage, this.assetManager, 400, 50, this.player, this.soundManager);
         this.enemies[9] = new Heavy(this.stage, this.assetManager, 10, 450, this.player, this.soundManager);
-        this.enemies[10] = new Default(this.stage, this.assetManager, 250, 650, this.player, this.soundManager);
+        this.enemies[10] = new Default(this.stage, this.assetManager, 250, 720, this.player, this.soundManager);
     }
     public InitBossEnemies():void{
         for (let i:number = 0; i <= MAX_ENEMIES; i++){
