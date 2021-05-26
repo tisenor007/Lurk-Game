@@ -56,6 +56,12 @@ export default class GameCharacter{
     public RestoreSheild():void{
         this.shield = 50;
     }
+    public RemoveLife():void{
+        this.lives = this.lives - 1;
+        if (this.lives <= 0){
+            this.lives = 0;
+        }
+    }
 
     public Update():void{
         if (this.health <= 0){

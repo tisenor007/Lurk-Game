@@ -212,7 +212,7 @@ export default class Enemy extends GameCharacter{
                 if (this.attackCoolDown >= 1){
                     this.attackCoolDown--;
                 }
-                else if (this.attackCoolDown == 0){
+                else if (this.attackCoolDown == 0 && this.player.vitalStatus == GameCharacter.ALIVE){
                     this.attackCoolDown = this.attackSpeed;
                     this.player.TakeDamage(this.attackDamage);
                 }

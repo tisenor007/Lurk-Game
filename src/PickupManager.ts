@@ -33,7 +33,7 @@ export default class PickupManager{
             this.pickups[i] = null;
         }
         this.pickups[0] = new Key(this.stage, this.assetManager, 30, 680, this.player, this.soundManager);
-        this.pickups[1] = new HealthPotion(this.stage, this.assetManager, 100, 30, this.player, this.soundManager);
+        this.pickups[1] = new Quiver(this.stage, this.assetManager, 100, 30, this.player, this.soundManager);
         this.pickups[2] = new Quiver(this.stage, this.assetManager, 550, 250, this.player, this.soundManager);
         this.pickups[3] = new Sheild(this.stage, this.assetManager, 20, 300, this.player, this.soundManager);
         this.pickups[4] = new Quiver(this.stage, this.assetManager, 50, 500, this.player, this.soundManager);
