@@ -28,7 +28,9 @@ export default class PickupManager{
         this.soundManager = soundManager;
     }
     
+    //inits pickups for main level...
     public InitMainPickups():void{
+        //every item set to null at first for level changes.....
         for (let i:number = 0; i <= MAX_PICKUPS; i++){
             this.pickups[i] = null;
         }
@@ -44,6 +46,8 @@ export default class PickupManager{
         this.pickups[9] = new HealthPotion(this.stage, this.assetManager, 20, 450, this.player, this.soundManager);
         this.pickups[10] = new Sheild(this.stage, this.assetManager, 400, 750, this.player, this.soundManager);
     }
+
+    //inits pickups for boss level...
     public InitBossPickups():void{
         for (let i:number = 0; i <= MAX_PICKUPS; i++){
             this.pickups[i] = null;
@@ -54,6 +58,7 @@ export default class PickupManager{
         this.pickups[3] = new HealthPotion(this.stage, this.assetManager, 600, 100, this.player, this.soundManager);
     }
 
+    //spawns pickups
     public SpawmPickups():void{
         for (let i:number = 0; i <= MAX_PICKUPS; i++){
             if (this.pickups[i] == null){}
@@ -63,6 +68,7 @@ export default class PickupManager{
         }
     }
 
+    //monitors collisions for player when player picks up pickup...
     public MonitorCollisions(interact:boolean):void{
         for (let p:number = 0; p <= MAX_PICKUPS; p++){
             if (this.pickups[p] == null){return;}

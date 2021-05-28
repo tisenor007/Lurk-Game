@@ -10,6 +10,7 @@ export default class Sheild extends Pickup{
         this.form = "Item/armor";
     }
 
+    //acts accordingly
     public UsePickup():void{
         super.UsePickup();
         if (this.used == false){

@@ -28,6 +28,7 @@ export default class EnemyManager{
         this.assetManager = assetManager;
     }   
 
+    //inits enemy based off level.....
     public InitMainEnemies():void{
         for (let i:number = 0; i <= MAX_ENEMIES; i++){
             this.enemies[i] = null;
@@ -54,6 +55,7 @@ export default class EnemyManager{
     }
     
 
+    //spawns enemies
     public SpawmEnemies():void{
         for (let i:number = 0; i <= MAX_ENEMIES; i++){
             if (this.enemies[i] == null){}
@@ -63,6 +65,7 @@ export default class EnemyManager{
         }
     }
 
+    //updates enemies
     public UpdateEnemies():void{
         for (let i:number = 0; i <= MAX_ENEMIES; i++){
             if (this.enemies[i] == null){}
@@ -72,6 +75,7 @@ export default class EnemyManager{
         }
     }
 
+    //monitors collision to know when it should attacking the player or not......
     public MonitorCollisions():void{
         for (let i:number = 0; i <= MAX_ENEMIES; i++){
             if (this.enemies[i] == null){}
@@ -97,6 +101,7 @@ export default class EnemyManager{
                     }
                 }
                 
+                //wall collision checking.......
                 //SUHHUUPER Messy but very accurate
                 if (this.map.IsCollidingWithWall(this.enemies[i].sprite, this.enemies[i].direction, this.map.westWall,  this.enemies[i].speed) == true){
                     if (this.enemies[i].direction == 1){this.enemies[i].wallHitUp = true;}

@@ -39,9 +39,11 @@ export default class LevelManager{
         this.loadingScreen = assetManager.getSprite("assets", "other/loading", STAGE_WIDTH/2, STAGE_HEIGHT/2);
     }
 
+    //loads everything in main level.....
     public LoadMainLevel():void{
         this.soundManager.StopMusic();
         this.stage.removeAllChildren();
+        //will load loading screen for random amount of time.....
         this.gameLoaded = false;
         this.loadingDuration = randomNum(50, 100);
         
@@ -59,6 +61,7 @@ export default class LevelManager{
         this.loadingScreen.play();
     }
 
+    //loads everything in boss level.....
     public LoadBossLevel():void{
         this.soundManager.StopMusic();
         this.stage.removeAllChildren();
@@ -82,12 +85,14 @@ export default class LevelManager{
         this.loadingDuration--;
         if (this.loadingDuration == 0){
             this.gameLoaded = true;
+            //plays music based on level....
             if (this.map.mainLoaded == true){
                 this.soundManager.PlayGameMusic();
             }
             if (this.map.bossLoaded == true){
                 this.soundManager.PlayBossMusic();
             }
+            //removes screen a little after game is loaded...
             this.loadingScreen.on("animationend", (e:createjs.Event) => {
                 this.stage.removeChild(this.loadingScreen);
             }, this, true)

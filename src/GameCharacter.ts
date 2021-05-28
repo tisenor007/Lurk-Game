@@ -38,6 +38,7 @@ export default class GameCharacter{
         this.sprite = assetManager.getSprite("assets", animation);
     }
 
+    //general take damage method for game characters.......
     public TakeDamage(damage:number):void{
         let remainingDamage:number = damage - this.shield;
         this.shield = this.shield - damage;
@@ -49,17 +50,20 @@ export default class GameCharacter{
             this.health = 0;
         }
     }
+    //general health regeneration method
     public RegenHealth(hp:number):void{
         this.health = this.health + hp;
         if (this.health >= 100){this.health = 100;}
     }
+    //general restore sheild method
     public RestoreSheild():void{
         this.shield = 50;
     }
+    //general remove life method
     public RemoveLife():void{
         this.lives = this.lives - 1;
     }
-
+    //will detect if a game character is dead or alive (bug proofing...)
     public Update():void{
         if (this.health <= 0){
             this.vitalStatus = GameCharacter.DEAD;
@@ -71,6 +75,5 @@ export default class GameCharacter{
             this.health = 0;
             this.shield = 0;
         }
-        //if vitalstatus play dead animation / restart level
     }
 }

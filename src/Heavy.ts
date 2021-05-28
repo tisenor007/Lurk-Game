@@ -41,6 +41,7 @@ export default class Heavy extends Enemy{
     public KillMe():void{
         super.KillMe();
         this.soundManager.PlayEnemyDeath();
+        //removes enemy on death.....
         this.sprite.on("animationend", (e:createjs.Event) => {
             this.stage.removeChild(this.sprite);
             this.stage.removeChild(this.healthBar);
@@ -49,6 +50,7 @@ export default class Heavy extends Enemy{
         this.sprite.gotoAndPlay("Heavy/death");
     }
 
+    //hurt sound for enemy when damage is removed....
     public TakeDamage(damage:number):void{
         super.TakeDamage(damage);
         this.soundManager.PlayEnemyHurt();
@@ -56,7 +58,7 @@ export default class Heavy extends Enemy{
 
     public Update():void{
         super.Update();
-
+        //when enemy is attacking, attack sound plays
         if (this.attackCoolDown == this.attackSpeed){
             this.soundManager.PlayEnemyAttack();
         }

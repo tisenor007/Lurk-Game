@@ -32,7 +32,8 @@ export default class GameManager{
         this.screenManager = screenManager;
         this.pickupManager = pickupManager;
         this.maxArrowsOnScreen = maxArrowsOnScreen;
-        
+
+        //adds listeners for every game event on construction
         this.stage.on("gameStart", this.OnGameEvent, this);
         this.stage.on("gameRestart", this.OnGameEvent, this);
         this.stage.on("pKilled", this.OnGameEvent, this);
@@ -40,6 +41,7 @@ export default class GameManager{
         this.stage.on("pHasKey", this.OnGameEvent, this);
     }
 
+    //if game event is heard, game will act accordingly
     public OnGameEvent(e:createjs.Event):void{
         switch (e.type){
             case "gameStart":
@@ -63,8 +65,10 @@ export default class GameManager{
         }
     }
 
+    //monitors game collisions....
     public MonitorCollisions(interact:boolean):void{
         if (this.map.mainLoaded == true){
+            //player wall collsions
             if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.eastWall, this.player.speed) == true){this.player.canWalk = false;}
             else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.northWall, this.player.speed) == true){this.player.canWalk = false;}
             else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.westWall, this.player.speed) == true){this.player.canWalk = false;}
@@ -78,11 +82,13 @@ export default class GameManager{
             else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.centerWallSeven, this.player.speed) == true){this.player.canWalk = false;}
             else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.centerWallEight, this.player.speed) == true){this.player.canWalk = false;}
             else{ this.player.canWalk = true;}
+            //player enter door collision....
             if (radiusHit(this.player.sprite, 1, this.map.mainEndDoor, 30) && this.player.hasKey == true && interact == true){
                 this.levelManager.LoadBossLevel();
             }
         }
         if (this.map.bossLoaded == true){
+            //boss level wall collsions.....
             if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.eastWall, this.player.speed) == true){this.player.canWalk = false;}
             else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.northWall, this.player.speed) == true){this.player.canWalk = false;}
             else if (this.map.IsCollidingWithWall(this.player.sprite, this.player.direction, this.map.westWall, this.player.speed) == true){this.player.canWalk = false;}
@@ -92,9 +98,11 @@ export default class GameManager{
         else{//nothing
         }
     
+        //enemy and pickmanager collision detection......
         this.pickupManager.MonitorCollisions(interact);
         this.enemyManager.MonitorCollisions();
         
+        //enemy being hit by arrow collision detection.....
         for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
             for (let e:number = 0; e <= MAX_ENEMIES; e++){
                 if (this.enemyManager.enemies[e] == null){return;
@@ -102,6 +110,7 @@ export default class GameManager{
                 if (boxHit(this.maxArrowsOnScreen[i].sprite, this.enemyManager.enemies[e].sprite)){
                     if (this.enemyManager.enemies[e].vitalStatus == GameCharacter.ALIVE && this.maxArrowsOnScreen[i].used == true){
                         this.enemyManager.enemies[e].TakeDamage(this.player.attackDamage);
+                        //arrow is removed if hits enemy.....
                         this.maxArrowsOnScreen[i].remove();
                     }
                 }

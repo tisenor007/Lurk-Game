@@ -10,6 +10,7 @@ export default class Quiver extends Pickup{
         this.form = "Item/arrows";
     }
 
+    //acts accordingly....
     public UsePickup():void{
         super.UsePickup();
         if (this.used == false){

@@ -40,7 +40,7 @@ export default class Map{
         this.camera = camera;
         this.assetManager = assetManager;
 
-        //Main Level Components
+        //Non changing map compnents
         this.centerWallOne = this.assetManager.getSprite("assets", "Mainlevel/wallFive");
         this.centerWallTwo = this.assetManager.getSprite("assets", "Mainlevel/wallSix");
         this.centerWallThree = this.assetManager.getSprite("assets", "Mainlevel/wallEight");
@@ -51,9 +51,11 @@ export default class Map{
         this.centerWallSeven = this.assetManager.getSprite("assets", "Mainlevel/wallTen");
         this.centerWallEight = this.assetManager.getSprite("assets", "Mainlevel/wallNine");
 
+        //background water....
         this.water = this.assetManager.getSprite("assets", "other/water");
     }
 
+    //loads main map with manual locations
     public LoadMain():void{
         //General Level Components
         this.floor = this.assetManager.getSprite("assets", "Mainlevel/floor");
@@ -88,6 +90,7 @@ export default class Map{
         this.mapSize = GENERAL_MAP_SIZE;
     }
 
+    //loads boss map with manual locations
     public LoadBoss():void{
         this.floor = this.assetManager.getSprite("assets", "BossLevel/bossFloor");
         this.northWall = this.assetManager.getSprite("assets", "BossLevel/bossWallTwo");
@@ -110,6 +113,7 @@ export default class Map{
         this.mapSize = 639;
     }
 
+    //updates map to stay whever offset sets it....
     public Update():void{
         this.floor.x = this.camera.offsetX;
         this.floor.y = this.camera.offsetY;

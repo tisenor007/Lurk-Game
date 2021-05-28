@@ -22,68 +22,63 @@ export default class World{
         this.pickups = pickups;
     }
 
+     //updates world items based off player movement.....
     public OffSetWorld():void{
-       
-           
-                
-                    if (this.player.movement == GameCharacter.LEFT && this.player.vitalStatus == GameCharacter.ALIVE)
-                    { 
-                        for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
-                        if (this.maxArrowsOnScreen[i].used == true){this.maxArrowsOnScreen[i].sprite.x = this.maxArrowsOnScreen[i].sprite.x + PLAYER_SPEED;}
-                        }
-                        for (let e:number = 0; e <= MAX_ENEMIES; e++){
-                        if (this.enemies[e] == null){}
-                        else{this.enemies[e].sprite.x = this.enemies[e].sprite.x + PLAYER_SPEED;}
-                        }
-                        for (let p:number = 0; p <= MAX_PICKUPS; p++){
-                        if (this.pickups[p] == null){}
-                        else{this.pickups[p].sprite.x = this.pickups[p].sprite.x + PLAYER_SPEED;}
-                        }
-                    }
-                    if (this.player.movement == GameCharacter.RIGHT && this.player.vitalStatus == GameCharacter.ALIVE)
-                    {
-                        for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
-                        if (this.maxArrowsOnScreen[i].used == true){this.maxArrowsOnScreen[i].sprite.x = this.maxArrowsOnScreen[i].sprite.x - PLAYER_SPEED;}
-                        }
-                        for (let e:number = 0; e <= MAX_ENEMIES; e++){
-                        if (this.enemies[e] == null){}
-                        else{this.enemies[e].sprite.x = this.enemies[e].sprite.x - PLAYER_SPEED;}
-                        }
-                        for (let p:number = 0; p <= MAX_PICKUPS; p++){
-                        if (this.pickups[p] == null){}
-                        else{this.pickups[p].sprite.x = this.pickups[p].sprite.x - PLAYER_SPEED;}
-                        }
-                    }
-                    if (this.player.movement == GameCharacter.UP && this.player.vitalStatus == GameCharacter.ALIVE)
-                    {
-                        for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
-                        if (this.maxArrowsOnScreen[i].used == true){this.maxArrowsOnScreen[i].sprite.y = this.maxArrowsOnScreen[i].sprite.y + PLAYER_SPEED;}
-                        }
-                        for (let e:number = 0; e <= MAX_ENEMIES; e++){
-                        if (this.enemies[e] == null){}
-                        else {this.enemies[e].sprite.y = this.enemies[e].sprite.y + PLAYER_SPEED;}
-                        }
-                        for (let p:number = 0; p <= MAX_PICKUPS; p++){
-                        if (this.pickups[p] == null){}
-                        else{this.pickups[p].sprite.y = this.pickups[p].sprite.y + PLAYER_SPEED;}
-                        }
-                    }
-                    if (this.player.movement == GameCharacter.DOWN && this.player.vitalStatus == GameCharacter.ALIVE)
-                    {
-                        for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
-                        if (this.maxArrowsOnScreen[i].used == true){this.maxArrowsOnScreen[i].sprite.y = this.maxArrowsOnScreen[i].sprite.y - PLAYER_SPEED;}
-                        }
-                        for (let e:number = 0; e <= MAX_ENEMIES; e++){
-                        if (this.enemies[e] == null){}
-                        else{this.enemies[e].sprite.y = this.enemies[e].sprite.y - PLAYER_SPEED;}
-                        }
-                        for (let p:number = 0; p <= MAX_PICKUPS; p++){
-                        if (this.pickups[p] == null){}
-                        else{this.pickups[p].sprite.y = this.pickups[p].sprite.y - PLAYER_SPEED;}
-                        }
-                    }
-                
-            
-        
+        if (this.player.movement == GameCharacter.LEFT && this.player.vitalStatus == GameCharacter.ALIVE)
+        { 
+            for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
+                if (this.maxArrowsOnScreen[i].used == true){this.maxArrowsOnScreen[i].sprite.x = this.maxArrowsOnScreen[i].sprite.x + PLAYER_SPEED;}
+            }
+            for (let e:number = 0; e <= MAX_ENEMIES; e++){
+                if (this.enemies[e] == null){}
+                else{this.enemies[e].sprite.x = this.enemies[e].sprite.x + PLAYER_SPEED;}
+            }
+            for (let p:number = 0; p <= MAX_PICKUPS; p++){
+                if (this.pickups[p] == null){}
+                else{this.pickups[p].sprite.x = this.pickups[p].sprite.x + PLAYER_SPEED;}
+            }
+        }
+        if (this.player.movement == GameCharacter.RIGHT && this.player.vitalStatus == GameCharacter.ALIVE)
+        {
+            for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
+                if (this.maxArrowsOnScreen[i].used == true){this.maxArrowsOnScreen[i].sprite.x = this.maxArrowsOnScreen[i].sprite.x - PLAYER_SPEED;}
+            }
+            for (let e:number = 0; e <= MAX_ENEMIES; e++){
+                if (this.enemies[e] == null){}
+                else{this.enemies[e].sprite.x = this.enemies[e].sprite.x - PLAYER_SPEED;}
+            }
+            for (let p:number = 0; p <= MAX_PICKUPS; p++){
+                if (this.pickups[p] == null){}
+                else{this.pickups[p].sprite.x = this.pickups[p].sprite.x - PLAYER_SPEED;}
+            }
+        }
+        if (this.player.movement == GameCharacter.UP && this.player.vitalStatus == GameCharacter.ALIVE)
+        {
+            for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
+                if (this.maxArrowsOnScreen[i].used == true){this.maxArrowsOnScreen[i].sprite.y = this.maxArrowsOnScreen[i].sprite.y + PLAYER_SPEED;}
+            }
+            for (let e:number = 0; e <= MAX_ENEMIES; e++){
+                if (this.enemies[e] == null){}
+                else {this.enemies[e].sprite.y = this.enemies[e].sprite.y + PLAYER_SPEED;}
+            }
+            for (let p:number = 0; p <= MAX_PICKUPS; p++){
+                if (this.pickups[p] == null){}
+                else{this.pickups[p].sprite.y = this.pickups[p].sprite.y + PLAYER_SPEED;}
+            }
+        }
+        if (this.player.movement == GameCharacter.DOWN && this.player.vitalStatus == GameCharacter.ALIVE)
+        {
+            for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
+                if (this.maxArrowsOnScreen[i].used == true){this.maxArrowsOnScreen[i].sprite.y = this.maxArrowsOnScreen[i].sprite.y - PLAYER_SPEED;}
+            }
+            for (let e:number = 0; e <= MAX_ENEMIES; e++){
+                if (this.enemies[e] == null){}
+                else{this.enemies[e].sprite.y = this.enemies[e].sprite.y - PLAYER_SPEED;}
+            }
+            for (let p:number = 0; p <= MAX_PICKUPS; p++){
+                if (this.pickups[p] == null){}
+                else{this.pickups[p].sprite.y = this.pickups[p].sprite.y - PLAYER_SPEED;}
+            }
+        }
     }
 }

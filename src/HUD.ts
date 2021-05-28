@@ -22,6 +22,7 @@ export default class HUD{
         this.stage = stage;
         this.player = player;
 
+        //gives text definition
         this.livesTxt = new createjs.BitmapText("LIVES", assetManager.getSpriteSheet("glyphs"));
         this.livesNumber = new createjs.BitmapText("00", assetManager.getSpriteSheet("glyphs"));
 
@@ -36,6 +37,7 @@ export default class HUD{
     }
 
     public ShowHUD():void{
+        //puts everything to desired screen position.......
         this.livesTxt.x = STAGE_WIDTH - 140;
         this.livesTxt.y = -17;
         this.livesNumber.x = STAGE_WIDTH - 30;
@@ -56,6 +58,7 @@ export default class HUD{
         this.arrowAmtNumber.x = 142;
         this.arrowAmtNumber.y = -17;
 
+        //adds all text as HUD
         this.stage.addChild(this.livesTxt);
         this.stage.addChild(this.livesNumber);
         this.stage.addChild(this.healthTxt);
@@ -67,6 +70,7 @@ export default class HUD{
     }
 
     public Update():void{
+        //updates values in hud....
         this.livesNumber.text = this.player.lives.toString();
         this.healthNumber.text = this.player.health.toString();
         this.shieldNumber.text = this.player.shield.toString();

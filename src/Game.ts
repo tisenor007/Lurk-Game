@@ -23,17 +23,15 @@ import ArrowManager from "./ArrowManager";
 // game variables
 let stage:createjs.StageGL;
 let canvas:HTMLCanvasElement;
-
+//player
 let player:Player;
-
-let arrowManager:ArrowManager;
-
+//world aspects
 let map:Map;
 let world:World;
 let camera:Camera;
-
+//hud
 let hud:HUD;
-// assetmanager object
+//Managers....
 let assetManager:AssetManager;
 let levelManager:LevelManager;
 let enemyManager:EnemyManager;
@@ -41,7 +39,9 @@ let screenManager:ScreenManager;
 let pickupManager:PickupManager;
 let gameManager:GameManager;
 let soundManager:SoundManager;
+let arrowManager:ArrowManager;
 
+//key press booleans.....
 let left:boolean = false;
 let right:boolean = false;
 let up:boolean = false;
@@ -83,6 +83,7 @@ function onTick(e:createjs.Event):void {
     // TESTING FPS
     document.getElementById("fps").innerHTML = String(createjs.Ticker.getMeasuredFPS());
     
+    //if game loaded, game aspects update
     if (levelManager.gameLoaded == true){
         enemyManager.UpdateEnemies();
         player.Update();
@@ -93,8 +94,12 @@ function onTick(e:createjs.Event):void {
         MonitorKeys();
         gameManager.MonitorCollisions(interact);
     }
-    else{//nothing
+    //looks strange but works...
+    else
+    {
+        //nothing
     }
+    //if game isn't loaded the loading screen is updated.......
     if (levelManager.gameLoaded == false){
         levelManager.UpdateLoadingScreen();
     }
@@ -104,6 +109,7 @@ function onTick(e:createjs.Event):void {
 }
 
 function OnKeyDown(e:KeyboardEvent):void{
+    //if key is pressed player is still, direction will change......
     if (e.key == "a"){if (player.movement == GameCharacter.IDLE){left = true;} else{return;}}
     else if (e.key == "w"){if (player.movement == GameCharacter.IDLE){up = true} else{return;}}
     else if (e.key == "d"){if (player.movement == GameCharacter.IDLE){right = true;} else{return;}}
@@ -126,38 +132,40 @@ function MonitorKeys():void{
     if (left)
     { 
         player.direction = 3;
+        //will only move things if character can walk......
         if (player.canWalk == true){
-        player.movement = GameCharacter.LEFT;
-        world.OffSetWorld();
+            player.movement = GameCharacter.LEFT;
+            world.OffSetWorld();
         }   
     }
     else if (right)
     {
         player.direction = 4;
         if (player.canWalk == true){
-        player.movement = GameCharacter.RIGHT;
-        world.OffSetWorld();
+            player.movement = GameCharacter.RIGHT;
+            world.OffSetWorld();
         }
     }
     else if (up)
     {
         player.direction = 1;
         if (player.canWalk == true){
-        player.movement = GameCharacter.UP;
-        world.OffSetWorld();
+            player.movement = GameCharacter.UP;
+            world.OffSetWorld();
         }
     }
     else if (down)
     {
         player.direction = 2;
         if (player.canWalk == true){
-        player.movement = GameCharacter.DOWN;
-        world.OffSetWorld();
+            player.movement = GameCharacter.DOWN;
+            world.OffSetWorld();
         }
     }
     else{player.movement = GameCharacter.IDLE;}
     
     if (shoot){for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++){
+        //if arrow isn't used it can be used......
         if (arrowManager.maxArrowsOnScreen[i].used == false){
             if (arrowManager.arrowCoolDown == 0){
                 arrowManager.maxArrowsOnScreen[i].Shoot();

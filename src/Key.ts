@@ -10,10 +10,12 @@ export default class Key extends Pickup{
         this.form = "Item/key";
     }
 
+    //acts accordingly.....
     public UsePickup():void{
         super.UsePickup();
         if (this.used == false){
             this.player.hasKey = true;
+            //to open boss door....
             this.stage.dispatchEvent(this.player.playerHasKey);
             this.used = true;
         }

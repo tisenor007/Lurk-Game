@@ -10,6 +10,7 @@ export default class HealthPotion extends Pickup{
         this.form = "Item/potion";
     }
 
+    //acts accordingly
     public UsePickup():void{
         super.UsePickup();
         if (this.used == false){

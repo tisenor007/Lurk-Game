@@ -43,6 +43,7 @@ export default class Boss extends Enemy{
     public KillMe():void{
         super.KillMe();
         this.soundManager.PlayBossDeath();
+        //after death anim, boss will be removed, along with visible healthbar. Then will dispatch a game event that game has been won.......
         this.sprite.on("animationend", (e:createjs.Event) => {
             this.stage.removeChild(this.sprite);
             this.stage.removeChild(this.healthBar);
@@ -59,7 +60,7 @@ export default class Boss extends Enemy{
 
     public Update():void{
         super.Update();
-
+        //essentially plays attack sound whenever the boss is attacking.....
         if (this.attackCoolDown == this.attackSpeed){
             this.soundManager.PlayBossAttack();
         }

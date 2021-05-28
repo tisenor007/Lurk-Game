@@ -43,6 +43,7 @@ export default class ScreenManager{
         this.eventRestartGame = new createjs.Event("gameRestart", true, false);
     }
 
+    //intro screen
     public ShowIntroScreen():void{
         this.levelManager.gameLoaded = false;
         this.soundManager.PlayTitleMusic();
@@ -51,6 +52,7 @@ export default class ScreenManager{
         this.introScreen.on("click", this.ShowInfoScreen, this);
     }
 
+    //info screen
     public ShowInfoScreen():void{
         this.levelManager.gameLoaded = false;
         this.stage.removeAllChildren();
@@ -58,6 +60,7 @@ export default class ScreenManager{
         this.infoScreen.on("click", (e) =>{ this.stage.dispatchEvent(this.eventStartGame);}, this, true);
     }
 
+    //game over screen
     public ShowGameOverScreen():void{
         this.levelManager.gameLoaded = false;
         this.soundManager.PlayLossMusic();
@@ -67,6 +70,7 @@ export default class ScreenManager{
         this.gameOverScreen.on("click", (e) =>{ this.stage.dispatchEvent(this.eventRestartGame);}, this, true);
     }
 
+    //game lose screen
     public ShowGameWinScreen():void{
         this.levelManager.gameLoaded = false;
         this.soundManager.PlayWinMusic();

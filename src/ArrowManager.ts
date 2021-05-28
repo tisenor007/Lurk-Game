@@ -24,12 +24,14 @@ export default class ArrowManager{
     }
 
     public InitArrows():void{
+        //initiates every arrow
         for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++)
         {
             this.maxArrowsOnScreen[i] = new Arrow(this.stage, this.assetManager, this.world, this.player, this.soundManager);
         }
     }
 
+    //method used for level changes to prevent arrow, level warping
     public ResetArrows():void{
         for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++)
         {
@@ -38,9 +40,11 @@ export default class ArrowManager{
     }
     
     public Update():void{
+        //drains arrow's reload / cooldown to prevent rapid fire
         this.arrowCoolDown--;
         if (this.arrowCoolDown <=0){this.arrowCoolDown = 0;}
 
+        //updates every arrow
         for (let i:number = 0; i <= MAX_ARROWS_ON_SCREEN; i++)
         {
             this.maxArrowsOnScreen[i].Update();

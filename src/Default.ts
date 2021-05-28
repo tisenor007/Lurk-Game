@@ -41,6 +41,7 @@ export default class Default extends Enemy{
     public KillMe():void{
         super.KillMe();
         this.soundManager.PlayEnemyDeath();
+        //after death anim, enemy will be removed, along with visible healthbar
         this.sprite.on("animationend", (e:createjs.Event) => {
             this.stage.removeChild(this.sprite);
             this.stage.removeChild(this.healthBar);
@@ -48,14 +49,16 @@ export default class Default extends Enemy{
         }, this, true)
         this.sprite.gotoAndPlay("Default/death");
     }
+    
     public TakeDamage(damage:number):void{
         super.TakeDamage(damage);
+        //if enemy takes damage hurt sound will play......
         this.soundManager.PlayEnemyHurt();
     }
 
     public Update():void{
         super.Update();
-        
+        //when enemy attacks, attack sound will play
         if (this.attackCoolDown == this.attackSpeed){
             this.soundManager.PlayEnemyAttack();
         }

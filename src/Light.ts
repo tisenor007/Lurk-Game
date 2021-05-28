@@ -41,6 +41,7 @@ export default class Light extends Enemy{
     public KillMe():void{
         super.KillMe();
         this.soundManager.PlayEnemyDeath();
+        //enemy is removed when killed....
         this.sprite.on("animationend", (e:createjs.Event) => {
             this.stage.removeChild(this.sprite);
             this.stage.removeChild(this.healthBar);
@@ -48,6 +49,8 @@ export default class Light extends Enemy{
         }, this, true)
         this.sprite.gotoAndPlay("Light/death");
     }
+
+    //plays hurt sound when damage is taken...
     public TakeDamage(damage:number):void{
         super.TakeDamage(damage);
         this.soundManager.PlayEnemyHurt();
@@ -56,6 +59,7 @@ export default class Light extends Enemy{
     public Update():void{
         super.Update();
 
+        //attack sound is played when enemy attacks
         if (this.attackCoolDown == this.attackSpeed){
             this.soundManager.PlayEnemyAttack();
         }

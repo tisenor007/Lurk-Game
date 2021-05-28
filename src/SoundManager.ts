@@ -11,6 +11,7 @@ export default class SoundManager{
         createjs.Sound.setVolume(0.20);
     }
 
+    //methods for each sound... could add more to each method for more effect...
     public PlayArrowShoot():void{
         createjs.Sound.play("arrowFire");
     }
@@ -43,6 +44,7 @@ export default class SoundManager{
     }
     public PlayTitleMusic():void{
         createjs.Sound.stop();
+        //loops sound...
         createjs.Sound.play("titleMusic").loop = Infinity;
     }
     public PlayGameMusic():void{

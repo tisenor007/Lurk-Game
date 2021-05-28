@@ -31,6 +31,7 @@ export default class Player extends GameCharacter{
         this.availableArrows = STARTING_ARROW_AMOUNT;
     }
 
+    //spawns player 
     public SpawnPlayer(xLoc:number, yLoc:number):void{
         this.vitalStatus = GameCharacter.ALIVE;
         this.originPointX = -xLoc + GENERAL_MAP_SIZE/2 + STAGE_WIDTH/2;
@@ -40,6 +41,7 @@ export default class Player extends GameCharacter{
         this.yLoc = this.originPointY;
         this.stage.addChild(this.sprite);
     }
+    //restes stats (in name.....)
     public ResetStats():void{
         this.hasKey = false;
         this.isDying = false;
@@ -48,6 +50,7 @@ export default class Player extends GameCharacter{
         this.shield = PLAYER_MAX_SHIELD;
         this.availableArrows = STARTING_ARROW_AMOUNT;
     }
+    //kills player
     public KillMe():void{
         this.soundManager.PlayPlayerDeath();
         this.sprite.on("animationend", (e:createjs.Event) => {
@@ -58,15 +61,17 @@ export default class Player extends GameCharacter{
         }, this, true)
         this.sprite.gotoAndPlay("Player/death");
     }
+    //for when player takes damage....
     public TakeDamage(damage:number):void{
         super.TakeDamage(damage);
         this.soundManager.PlayPlayerHurt();
     }
-
+    //for when a player picks up more arrows...
     public IncreaseArrows(arrowAmount:number):void{
         this.availableArrows = this.availableArrows + arrowAmount;
     }
 
+    //updates player....
     public Update():void{
         super.Update();
         if (this.isDying == false){

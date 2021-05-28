@@ -15,6 +15,7 @@ export default class Camera{
     }
 
     public Update():void{
+        // takes in player location to offset other things in world to fake camera effect......
         this.offsetX = this.player.xLoc;
         this.offsetY = this.player.yLoc;
     }

@@ -24,6 +24,7 @@ export default class Pickup{
         this.originPointY = +(player.originPointY - GENERAL_MAP_SIZE/2) + yLoc;
     }
 
+    //add pickup
     public Spawn():void{
         this.used = false;
         this.sprite.gotoAndPlay(this.form);
@@ -32,6 +33,7 @@ export default class Pickup{
         this.stage.addChild(this.sprite);
     }
 
+    //removes pickup and plays sound....
     public UsePickup():void{
         this.soundManager.PlayItemPickup();
         this.stage.removeChild(this.sprite);
