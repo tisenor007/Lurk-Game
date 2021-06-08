@@ -10600,7 +10600,7 @@ const GameCharacter_1 = __webpack_require__(/*! ./GameCharacter */ "./src/GameCh
 const ToolBox_1 = __webpack_require__(/*! ./ToolBox */ "./src/ToolBox.ts");
 class Enemy extends GameCharacter_1.default {
     constructor(stage, assetManager, xLoc, yLoc, player, soundManager) {
-        super(stage, assetManager, "Default/Default", soundManager);
+        super(stage, assetManager, "Default/idleUp", soundManager);
         this.isIdle = true;
         this.wallHitUp = false;
         this.wallHitDown = false;
@@ -10614,7 +10614,7 @@ class Enemy extends GameCharacter_1.default {
         this.originPointY = +(player.originPointY - Constants_1.GENERAL_MAP_SIZE / 2) + yLoc;
         this.attackCoolDown = 0;
         this.shield = 0;
-        this.lives = 1;
+        this.lives = 0;
     }
     Spawn() {
         this.vitalStatus = GameCharacter_1.default.ALIVE;
@@ -11110,7 +11110,6 @@ const ArrowManager_1 = __webpack_require__(/*! ./ArrowManager */ "./src/ArrowMan
 let stage;
 let canvas;
 let player;
-let arrowManager;
 let map;
 let world;
 let camera;
@@ -11122,6 +11121,7 @@ let screenManager;
 let pickupManager;
 let gameManager;
 let soundManager;
+let arrowManager;
 let left = false;
 let right = false;
 let up = false;
@@ -12458,7 +12458,7 @@ exports.default = SoundManager;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.pointHit = exports.boxHit = exports.radiusHit = exports.randomNum = void 0;
+exports.boxHit = exports.radiusHit = exports.randomNum = void 0;
 function randomNum(low, high) {
     let randomNum = 0;
     randomNum = Math.floor(Math.random() * (high - low + 1)) + low;
@@ -12493,28 +12493,6 @@ function boxHit(sprite1, sprite2) {
     }
 }
 exports.boxHit = boxHit;
-function pointHit(sprite1, sprite2, sprite1HitX = 0, sprite1HitY = 0, stage = null) {
-    if (stage != null) {
-        let markerPoint = sprite1.localToGlobal(sprite1HitX, sprite1HitY);
-        let marker = new createjs.Shape();
-        marker.graphics.beginFill("#FF00EC");
-        marker.graphics.drawRect(0, 0, 4, 4);
-        marker.regX = 2;
-        marker.regY = 2;
-        marker.x = markerPoint.x;
-        marker.y = markerPoint.y;
-        marker.cache(0, 0, 4, 4);
-        stage.addChild(marker);
-    }
-    let point = sprite1.localToLocal(sprite1HitX, sprite1HitY, sprite2);
-    if (sprite2.hitTest(point.x, point.y)) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-exports.pointHit = pointHit;
 
 
 /***/ }),
