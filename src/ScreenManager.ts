@@ -13,10 +13,17 @@ export default class ScreenManager{
 
     private stage:createjs.StageGL;
 
+    //screens
     private introScreen:createjs.Container;
     private infoScreen:createjs.Container;
     private gameOverScreen:createjs.Container;
     private gameWinScreen:createjs.Container;
+    private optionsScreen:createjs.Container;
+    private difficultyScreen:createjs.Container;
+
+    //buttons
+    private optionsButton:createjs.Sprite;
+
     private soundManager:SoundManager;
 
     
@@ -26,6 +33,8 @@ export default class ScreenManager{
         this.stage = stage;
         this.levelManager = levelManager;
         this.soundManager = soundManager;
+
+        this.optionsButton = assetManager.getSprite("assets", "")
 
         this.introScreen = new createjs.Container();
         this.introScreen.addChild(assetManager.getSprite("assets", "other/MainMenu", STAGE_WIDTH/2, STAGE_HEIGHT/2));
@@ -39,6 +48,12 @@ export default class ScreenManager{
         this.gameWinScreen = new createjs.Container();
         this.gameWinScreen.addChild(assetManager.getSprite("assets", "other/WinScreen", STAGE_WIDTH/2, STAGE_HEIGHT/2));
 
+        this.optionsScreen = new createjs.Container();
+        this.optionsScreen.addChild(assetManager.getSprite("assets", "other/MainOptionsMenu", STAGE_WIDTH/2, STAGE_HEIGHT/2));
+
+        this.difficultyScreen = new createjs.Container();
+        this.difficultyScreen.addChild(assetManager.getSprite("assets", "other/MainDifficultyScreen", STAGE_WIDTH/2, STAGE_HEIGHT/2));
+
         this.eventStartGame = new createjs.Event("gameStart", true, false);
         this.eventRestartGame = new createjs.Event("gameRestart", true, false);
     }
@@ -50,6 +65,12 @@ export default class ScreenManager{
         this.stage.removeAllChildren();
         this.stage.addChild(this.introScreen);
         this.introScreen.on("click", this.ShowInfoScreen, this);
+    }
+
+    public ShowOptionsMenu():void{
+        this.levelManager.gameLoaded = false;
+        this.stage.removeAllChildren();
+        this.stage.addChild(this.optionsScreen);
     }
 
     //info screen

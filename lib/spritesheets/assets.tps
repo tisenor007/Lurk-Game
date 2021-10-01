@@ -869,6 +869,44 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">glyphs.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>208,6,416,13</rect>
+                <key>scale9Paddings</key>
+                <rect>208,6,416,13</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">other/BackButton.png</key>
+            <key type="filename">other/DifficultyButton.png</key>
+            <key type="filename">other/EasyButtonNonSelected.png</key>
+            <key type="filename">other/EasyButtonSelected.png</key>
+            <key type="filename">other/HardButtonNonSelected.png</key>
+            <key type="filename">other/HardButtonSelected.png</key>
+            <key type="filename">other/NormalButtonNonSelected.png</key>
+            <key type="filename">other/NormalButtonSelected.png</key>
+            <key type="filename">other/OptionsButton.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>25,13,50,25</rect>
+                <key>scale9Paddings</key>
+                <rect>25,13,50,25</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">other/GameOverScreen.png</key>
             <key type="filename">other/MainMenu.png</key>
             <struct type="IndividualSpriteSettings">
@@ -885,6 +923,8 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">other/MainDifficultyScreen.png</key>
+            <key type="filename">other/MainOptionsMenu.png</key>
             <key type="filename">other/WinScreen.png</key>
             <key type="filename">other/darkness.png</key>
             <key type="filename">other/infoScreen.png</key>
